@@ -1,0 +1,36 @@
+---
+import { content, type Locale } from '../i18n/content';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = content[locale];
+---
+
+<section id="expertise" class="section" aria-labelledby="industry-title">
+  <div class="container industry">
+    <p class="eyebrow" data-reveal>{t.industry.label}</p>
+    <h2 id="industry-title" class="industry__title" data-reveal>
+      {t.industry.h2}
+    </h2>
+    <p class="industry__text lead" data-reveal>{t.industry.text}</p>
+  </div>
+</section>
+
+<style>
+  .industry {
+    max-width: var(--container-narrow);
+  }
+
+  .industry__title {
+    margin-top: var(--space-3);
+    font-size: var(--fs-h2);
+  }
+
+  .industry__text {
+    margin-top: var(--space-5);
+    color: var(--color-text-muted);
+  }
+</style>

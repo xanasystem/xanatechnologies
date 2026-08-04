@@ -1,0 +1,102 @@
+---
+import { content, type Locale } from '../i18n/content';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = content[locale];
+
+const year = 2026; // Update or make dynamic at build time as needed.
+const altHref = locale === 'es' ? '/' : '/es/';
+---
+
+<footer class="site-footer section--dark">
+  <div class="container site-footer__inner">
+    <div class="site-footer__brand">
+      <a class="brand" href={locale === 'es' ? '/es/' : '/'} aria-label="Xana Technologies — home">
+        <span class="brand__mark" aria-hidden="true">X</span>
+        <span class="brand__name">Xana Technologies</span>
+      </a>
+      <p class="site-footer__tagline">
+        {locale === 'es' ? 'Startup tecnológica · Spain — USA' : 'Technology startup · Spain — USA'}
+      </p>
+    </div>
+
+    <nav class="site-footer__legal" aria-label={locale === 'es' ? 'Enlaces legales' : 'Legal links'}>
+      <ul>
+        {
+          t.footer.legalLinks.map((link) => (
+            <li>
+              <a href={link.href}>{link.label}</a>
+            </li>
+          ))
+        }
+        <li>
+          <a href={altHref} hreflang={locale === 'es' ? 'en' : 'es'}>
+            {t.footer.languageSwitch}
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+
+  <div class="container site-footer__bottom">
+    <p class="site-footer__copyright">© {year} {t.footer.copyright}</p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    padding-top: var(--space-8);
+    padding-bottom: var(--space-6);
+  }
+
+  .site-footer__inner {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--space-6);
+    padding-bottom: var(--space-6);
+    border-bottom: 1px solid color-mix(in srgb, var(--color-on-dark) 16%, transparent);
+  }
+
+  .site-footer .brand__name {
+    font-size: 1.0625rem;
+    color: var(--color-on-dark);
+  }
+
+  .site-footer__tagline {
+    margin-top: var(--space-3);
+    color: var(--color-on-dark-muted);
+    font-size: 0.9rem;
+  }
+
+  .site-footer__legal ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4) var(--space-5);
+    list-style: none;
+    padding: 0;
+  }
+
+  .site-footer__legal a {
+    font-size: 0.92rem;
+    color: var(--color-on-dark-muted);
+    transition: color var(--dur-fast) var(--ease-out);
+  }
+
+  .site-footer__legal a:hover {
+    color: var(--color-on-dark);
+  }
+
+  .site-footer__bottom {
+    margin-top: var(--space-5);
+  }
+
+  .site-footer__copyright {
+    font-size: 0.85rem;
+    color: var(--color-on-dark-muted);
+  }
+</style>

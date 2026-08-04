@@ -1,0 +1,133 @@
+/* =============================================================================
+   DESIGN TOKENS — Xana Technologies · "Horizonte" (single, final direction)
+   -----------------------------------------------------------------------------
+   Deep-space navy canvas, violet→blue brand gradient, cinematic imagery.
+   Palette keyed off the official logo/manual. Swap values here to re-skin.
+   ========================================================================== */
+
+:root {
+  /* --- Brand palette --------------------------------------------------- */
+  --bg: #05050f; /* page canvas (near-black navy) */
+  --bg-2: #0c0d18; /* raised panels / cards        */
+  --bg-3: #12132133; /* subtle fills                 */
+  --paper: #f4f6fb; /* light contrast sections      */
+
+  --c1: #7523ed; /* violet   */
+  --c2: #1f63c8; /* blue     */
+  --c3: #c77bf0; /* lilac    */
+  --c4: #d45ac0; /* magenta  */
+  --atmo: #8a5cf0; /* atmospheric accent */
+
+  --grad: linear-gradient(135deg, #7523ed, #1f63c8);
+  --grad-text: linear-gradient(120deg, #ffffff 8%, #c77bf0 55%, #6ea8ff 100%);
+
+  --brand: #6e5af0;
+
+  --text: #edeef6; /* primary text on dark      */
+  --dim: #a6a9c0; /* secondary text            */
+  --faint: #6c6f88; /* tertiary / mono labels    */
+  --ink: #0c0d16; /* text on light (paper)     */
+  --ink-dim: #3a3d52;
+
+  --line: rgba(255, 255, 255, 0.1);
+  --line-2: rgba(255, 255, 255, 0.16);
+
+  --hero-img: url('/img/hero/horizonte.jpg');
+  --glow-1: #7523ed;
+  --glow-2: #1f63c8;
+
+  /* --- Typography ------------------------------------------------------- */
+  --font-display: 'Mona Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'Mona Sans Mono', ui-monospace, 'Cascadia Code', 'SF Mono',
+    Consolas, monospace;
+
+  /* Fluid type scale (min → max) */
+  --fs-eyebrow: 0.75rem; /* mono labels */
+  --fs-body: clamp(1rem, 0.97rem + 0.16vw, 1.0625rem); /* 16 → 17 */
+  --fs-lead: clamp(1.125rem, 1.03rem + 0.42vw, 1.375rem); /* 18 → 22 */
+  --fs-h3: clamp(1.25rem, 1.08rem + 0.7vw, 1.55rem);
+  --fs-h2: clamp(1.75rem, 1.25rem + 2.1vw, 2.85rem); /* 28 → 46 */
+  --fs-h1: clamp(2.6rem, 1.5rem + 4.6vw, 4.5rem); /* 42 → 72 */
+  --fs-metric: clamp(2.75rem, 1.8rem + 4.2vw, 4.75rem);
+
+  /* Line-heights */
+  --lh-tight: 1;
+  --lh-snug: 1.14;
+  --lh-body: 1.62;
+
+  /* Weights */
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+  --fw-extrabold: 800;
+
+  /* Display weights per level */
+  --fw-h1: 800;
+  --fw-h2: 720;
+  --fw-h3: 680;
+
+  /* Letter-spacing (display tightens as it scales up) */
+  --ls-h1: -0.04em;
+  --ls-h2: -0.03em;
+  --ls-h3: -0.02em;
+  --ls-mono: 0.16em;
+
+  /* --- Spacing ---------------------------------------------------------- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+  --space-9: 6rem;
+  --space-10: 8rem;
+  --section-y: clamp(4rem, 2.5rem + 6vw, 8rem);
+
+  /* --- Layout ----------------------------------------------------------- */
+  --container-max: 1200px;
+  --container-narrow: 780px;
+  --gutter: clamp(1.25rem, 0.5rem + 3vw, 2.5rem);
+
+  /* --- Radii ------------------------------------------------------------ */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+  --radius-xl: 30px;
+  --radius-pill: 999px;
+  --border-width: 1px;
+
+  /* --- Motion ----------------------------------------------------------- */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-fast: 140ms;
+  --dur-base: 260ms;
+  --dur-slow: 520ms;
+
+  /* --- Compatibility aliases (older components) ------------------------- */
+  --color-surface: var(--bg);
+  --color-surface-2: var(--bg-2);
+  --color-surface-dark: var(--bg);
+  --color-text: var(--text);
+  --color-text-muted: var(--dim);
+  --color-on-dark: var(--text);
+  --color-on-dark-muted: var(--dim);
+  --color-line: var(--line);
+  --color-brand: var(--c2);
+  --color-brand-strong: var(--c1);
+  --color-brand-soft: var(--c3);
+  --color-accent: var(--c1);
+  --color-error: #ff6b81;
+  --color-success: #46d6a0;
+  --focus-ring: 0 0 0 3px color-mix(in srgb, var(--atmo) 60%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-fast: 0ms;
+    --dur-base: 0ms;
+    --dur-slow: 0ms;
+  }
+}

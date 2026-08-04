@@ -1,0 +1,156 @@
+---
+import {
+  content,
+  type Locale,
+  XANA_SYSTEM_URL,
+  WOMAN_ON_MARS_URL,
+} from '../i18n/content';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = content[locale];
+
+// Both brands are rendered with identical structure and weight so neither
+// dominates — a briefing requirement ("visibilidad equivalente").
+const brands = [
+  {
+    id: 'xana-system',
+    label: t.xanaSystem.label,
+    name: t.xanaSystem.h2,
+    text: t.xanaSystem.text,
+    cta: t.xanaSystem.cta,
+    href: XANA_SYSTEM_URL,
+    external: t.xanaSystem.externalLabel,
+    variant: 'system',
+  },
+  {
+    id: 'woman-on-mars',
+    label: t.womanOnMars.label,
+    name: t.womanOnMars.h2,
+    text: t.womanOnMars.text,
+    cta: t.womanOnMars.cta,
+    href: WOMAN_ON_MARS_URL,
+    external: t.womanOnMars.externalLabel,
+    variant: 'mars',
+  },
+];
+---
+
+<section class="section section--alt" aria-label={locale === 'es' ? 'Las dos marcas' : 'The two brands'}>
+  <div class="container">
+    <div class="brands">
+      {
+        brands.map((brand) => (
+          <article
+            id={brand.id}
+            class:list={['brand-card', `brand-card--${brand.variant}`]}
+            data-reveal
+          >
+            <p class="eyebrow brand-card__label">{brand.label}</p>
+            <h2 class="brand-card__name">{brand.name}</h2>
+            <p class="brand-card__text">{brand.text}</p>
+            <a
+              class="btn btn--primary brand-card__cta"
+              href={brand.href}
+              rel="noopener"
+              aria-label={`${brand.cta} — ${brand.external}`}
+            >
+              {brand.cta}
+              <span class="visually-hidden">{brand.external}</span>
+              <svg
+                class="brand-card__arrow"
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                aria-hidden="true"
+              >
+                <path
+                  d="M7 17L17 7M17 7H9M17 7v8"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </a>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .brands {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-5);
+  }
+
+  .brand-card {
+    display: flex;
+    flex-direction: column;
+    padding: clamp(1.75rem, 1rem + 2.5vw, 3rem);
+    background: var(--color-surface);
+    border: var(--border-width) solid var(--color-line);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow var(--dur-base) var(--ease-out),
+      transform var(--dur-base) var(--ease-out);
+  }
+
+  .brand-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-3px);
+  }
+
+  /* A restrained accent stripe distinguishes the two brands without changing
+     their relative weight. Colors come from tokens. */
+  .brand-card {
+    border-top: 3px solid var(--color-brand);
+  }
+
+  .brand-card--mars {
+    border-top-color: var(--color-accent);
+  }
+
+  .brand-card__name {
+    font-size: var(--fs-h2);
+    margin-top: var(--space-3);
+  }
+
+  .brand-card__text {
+    margin-top: var(--space-4);
+    color: var(--color-text-muted);
+    font-size: var(--fs-lead);
+    line-height: var(--lh-snug);
+    flex: 1;
+  }
+
+  .brand-card__cta {
+    margin-top: var(--space-6);
+    align-self: flex-start;
+  }
+
+  .brand-card--mars .brand-card__cta {
+    background: var(--color-ink);
+  }
+
+  .brand-card__arrow {
+    transition: transform var(--dur-fast) var(--ease-out);
+  }
+
+  .brand-card__cta:hover .brand-card__arrow {
+    transform: translate(2px, -2px);
+  }
+
+  @media (max-width: 800px) {
+    .brands {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

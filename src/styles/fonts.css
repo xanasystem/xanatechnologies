@@ -1,0 +1,29 @@
+/* =============================================================================
+   FONTS — self-hosted variable fonts (no external CDN)
+   Mona Sans (display) · Mona Sans Mono (technical labels) · Inter (body)
+   All OFL-licensed. Files in /public/fonts.
+   ========================================================================== */
+
+@font-face {
+  font-family: 'Mona Sans';
+  src: url('/fonts/mona-sans-var.woff2') format('woff2');
+  font-weight: 200 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Mona Sans Mono';
+  src: url('/fonts/mona-sans-mono-var.woff2') format('woff2');
+  font-weight: 200 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/inter-var.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}

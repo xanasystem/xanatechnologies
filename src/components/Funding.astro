@@ -1,0 +1,92 @@
+---
+import { content, type Locale } from '../i18n/content';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = content[locale];
+
+// PLACEHOLDER program logos. Replace with the official, currently-valid grant
+// programs, wording, links and logos — do not rewrite legal/institutional
+// claims (pending confirmation before final design).
+const programs: { name: string; logo?: string; href?: string }[] = [];
+---
+
+<section class="section section--alt" aria-labelledby="funding-title">
+  <div class="container funding">
+    <h2 id="funding-title" class="funding__title" data-reveal>{t.funding.h2}</h2>
+    <p class="funding__intro" data-reveal>{t.funding.intro}</p>
+
+    <div class="funding__logos" data-reveal>
+      {
+        programs.length === 0 ? (
+          <p class="funding__placeholder">
+            {locale === 'es'
+              ? 'Espacio reservado para los logotipos y textos oficiales de los programas y ayudas vigentes.'
+              : 'Reserved space for the official logos and wording of current programs and grants.'}
+          </p>
+        ) : (
+          programs.map((p) =>
+            p.href ? (
+              <a class="funding__logo" href={p.href} rel="noopener">
+                <img src={p.logo} alt={p.name} loading="lazy" />
+              </a>
+            ) : (
+              <div class="funding__logo">
+                <img src={p.logo} alt={p.name} loading="lazy" />
+              </div>
+            )
+          )
+        )
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .funding {
+    max-width: var(--container-narrow);
+  }
+
+  .funding__title {
+    font-size: var(--fs-h3);
+  }
+
+  .funding__intro {
+    margin-top: var(--space-3);
+    color: var(--color-text-muted);
+  }
+
+  .funding__logos {
+    margin-top: var(--space-6);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-6);
+  }
+
+  .funding__placeholder {
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+    padding: var(--space-5);
+    border: 1px dashed var(--color-line);
+    border-radius: var(--radius-md);
+    width: 100%;
+  }
+
+  .funding__logo img {
+    max-height: 56px;
+    width: auto;
+    filter: grayscale(1);
+    opacity: 0.75;
+    transition: filter var(--dur-base) var(--ease-out),
+      opacity var(--dur-base) var(--ease-out);
+  }
+
+  .funding__logo:hover img {
+    filter: grayscale(0);
+    opacity: 1;
+  }
+</style>

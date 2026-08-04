@@ -1,0 +1,87 @@
+---
+import { content, type Locale } from '../i18n/content';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = content[locale];
+---
+
+<section class="section" aria-labelledby="spain-usa-title">
+  <div class="container spain-usa">
+    <div class="spain-usa__text-col" data-reveal>
+      <h2 id="spain-usa-title" class="spain-usa__title">{t.spainUsa.h2}</h2>
+      <p class="spain-usa__text lead">{t.spainUsa.text}</p>
+    </div>
+    <div class="spain-usa__flags" aria-hidden="true" data-reveal>
+      <span class="spain-usa__flag">ES</span>
+      <span class="spain-usa__link"></span>
+      <span class="spain-usa__flag">US</span>
+    </div>
+  </div>
+</section>
+
+<style>
+  .spain-usa {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    align-items: center;
+    gap: var(--space-7);
+  }
+
+  .spain-usa__title {
+    font-size: var(--fs-h2);
+    letter-spacing: 0.01em;
+  }
+
+  .spain-usa__text {
+    margin-top: var(--space-4);
+    color: var(--color-text-muted);
+    max-width: 46ch;
+  }
+
+  .spain-usa__flags {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-4);
+  }
+
+  .spain-usa__flag {
+    display: grid;
+    place-items: center;
+    width: clamp(80px, 10vw, 120px);
+    aspect-ratio: 1;
+    border-radius: var(--radius-md);
+    border: var(--border-width) solid var(--color-line);
+    background: var(--color-surface-2);
+    font-family: var(--font-display);
+    font-weight: var(--fw-bold);
+    font-size: 1.5rem;
+    letter-spacing: 0.06em;
+    color: var(--color-brand);
+  }
+
+  .spain-usa__link {
+    flex: 1;
+    max-width: 90px;
+    height: 2px;
+    background: linear-gradient(
+      90deg,
+      var(--color-brand),
+      var(--color-accent)
+    );
+  }
+
+  @media (max-width: 800px) {
+    .spain-usa {
+      grid-template-columns: 1fr;
+      gap: var(--space-5);
+    }
+    .spain-usa__flags {
+      justify-content: flex-start;
+    }
+  }
+</style>

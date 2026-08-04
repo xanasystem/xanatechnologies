@@ -1,0 +1,28 @@
+---
+import { type Locale } from '../i18n/content';
+import Hero from './Hero.astro';
+import Ecosystem from './Ecosystem.astro';
+import Brands from './Brands.astro';
+import Numbers from './Numbers.astro';
+import Industry from './Industry.astro';
+import CustomSolutions from './CustomSolutions.astro';
+import SpainUsa from './SpainUsa.astro';
+import Contact from './Contact.astro';
+import Funding from './Funding.astro';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+---
+
+<Hero locale={locale} />
+<Ecosystem locale={locale} />
+<Brands locale={locale} />
+<Numbers locale={locale} />
+<Industry locale={locale} />
+<CustomSolutions locale={locale} />
+<SpainUsa locale={locale} />
+<Contact locale={locale} />
+<Funding locale={locale} />

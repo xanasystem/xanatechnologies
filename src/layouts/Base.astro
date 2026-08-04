@@ -1,0 +1,195 @@
+---
+import '../styles/global.css';
+import { content, type Locale } from '../i18n/content';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = content[locale];
+
+// Canonical + alternate URLs for hreflang. English lives at "/", Spanish at "/es/".
+const site = Astro.site ?? new URL('https://xanatechnologies.com');
+const urls: Record<Locale, string> = {
+  en: new URL('/', site).href,
+  es: new URL('/es/', site).href,
+};
+const canonical = urls[locale];
+const ogImage = new URL('/og-image.jpg', site).href;
+
+// Structured data: Organization + WebSite (JSON-LD).
+const organizationSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'Xana Technologies',
+  url: site.href,
+  description: t.meta.description,
+  brand: [
+    { '@type': 'Brand', name: 'Xana System', url: 'https://xanasystem.com' },
+    { '@type': 'Brand', name: 'Woman on Mars', url: 'https://womanonmars.com' },
+  ],
+};
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'Xana Technologies',
+  url: site.href,
+  inLanguage: [t.meta.lang],
+};
+---
+
+<!doctype html>
+<html lang={t.meta.lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link rel="icon" type="image/png" href="/favicon-xana.png" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- Preload self-hosted variable fonts -->
+    <link rel="preload" href="/fonts/mona-sans-var.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin />
+
+    <title>{t.meta.title}</title>
+    <meta name="description" content={t.meta.description} />
+    <link rel="canonical" href={canonical} />
+
+    <!-- Bilingual hreflang -->
+    <link rel="alternate" hreflang="en" href={urls.en} />
+    <link rel="alternate" hreflang="es" href={urls.es} />
+    <link rel="alternate" hreflang="x-default" href={urls.en} />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Xana Technologies" />
+    <meta property="og:locale" content={t.meta.ogLocale} />
+    <meta property="og:title" content={t.meta.title} />
+    <meta property="og:description" content={t.meta.description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={t.meta.title} />
+    <meta name="twitter:description" content={t.meta.description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify(organizationSchema)}
+    />
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify(websiteSchema)}
+    />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">{t.nav.skipToContent}</a>
+    <Header locale={locale} />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer locale={locale} />
+
+    <!-- PREVIEW ONLY: design-direction switcher (remove before publish). -->
+    <div class="theme-switch" role="group" aria-label="Design direction (preview)">
+      <span class="theme-switch__label">Preview</span>
+      <button type="button" data-theme-btn="horizonte">Horizonte</button>
+      <button type="button" data-theme-btn="flujo">Flujo</button>
+    </div>
+    <script is:inline>
+      (function () {
+        var root = document.documentElement;
+        var btns = document.querySelectorAll('[data-theme-btn]');
+        function sync() {
+          var cur = root.dataset.theme;
+          btns.forEach(function (b) {
+            b.setAttribute('aria-pressed', String(b.dataset.themeBtn === cur));
+          });
+        }
+        btns.forEach(function (b) {
+          b.addEventListener('click', function () {
+            root.dataset.theme = b.dataset.themeBtn;
+            try {
+              localStorage.setItem('xana-theme', b.dataset.themeBtn);
+            } catch (e) {}
+            sync();
+          });
+        });
+        sync();
+      })();
+    </script>
+    <style>
+      .theme-switch {
+        position: fixed;
+        right: 16px;
+        bottom: 16px;
+        z-index: 200;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        padding: 5px;
+        border-radius: 999px;
+        background: color-mix(in srgb, var(--bg) 78%, transparent);
+        border: 1px solid var(--line-2);
+        backdrop-filter: blur(12px);
+        box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.6);
+        font-family: var(--font-mono);
+      }
+      .theme-switch__label {
+        font-size: 10px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--faint);
+        padding: 0 8px;
+      }
+      .theme-switch button {
+        border: 0;
+        cursor: pointer;
+        padding: 7px 14px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-family: var(--font-mono);
+        color: var(--dim);
+        background: transparent;
+        transition: color 0.2s, background 0.2s;
+      }
+      .theme-switch button[aria-pressed='true'] {
+        color: #fff;
+        background: var(--grad);
+      }
+      @media print {
+        .theme-switch {
+          display: none;
+        }
+      }
+    </style>
+
+    <!-- Reveal-on-scroll: progressive enhancement, respects reduced motion. -->
+    <script>
+      const items = document.querySelectorAll('[data-reveal]');
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduce || !('IntersectionObserver' in window)) {
+        items.forEach((el) => el.classList.add('is-visible'));
+      } else {
+        const io = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+                io.unobserve(entry.target);
+              }
+            });
+          },
+          { rootMargin: '0px 0px -10% 0px', threshold: 0.1 }
+        );
+        items.forEach((el) => io.observe(el));
+      }
+    </script>
+  </body>
+</html>

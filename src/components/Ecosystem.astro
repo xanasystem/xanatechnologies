@@ -1,0 +1,35 @@
+---
+import { content, type Locale } from '../i18n/content';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = content[locale];
+---
+
+<section id="ecosystem" class="section" aria-labelledby="ecosystem-title">
+  <div class="container ecosystem">
+    <h2 id="ecosystem-title" class="ecosystem__title" data-reveal>
+      {t.ecosystem.h2}
+    </h2>
+    <p class="ecosystem__text lead" data-reveal>{t.ecosystem.text}</p>
+  </div>
+</section>
+
+<style>
+  .ecosystem {
+    max-width: var(--container-narrow);
+  }
+
+  .ecosystem__title {
+    font-size: var(--fs-h2);
+  }
+
+  .ecosystem__text {
+    margin-top: var(--space-5);
+    font-size: var(--fs-lead);
+    color: var(--color-text-muted);
+  }
+</style>

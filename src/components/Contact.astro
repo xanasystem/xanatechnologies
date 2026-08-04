@@ -1,0 +1,422 @@
+---
+import { content, type Locale } from '../i18n/content';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = content[locale];
+const c = t.contact;
+
+// Privacy policy link differs per locale.
+const privacyHref = locale === 'es' ? '/es/privacidad' : '/privacy';
+
+// Privacy consent rendered with the policy name as an inline link.
+const privacyPolicyName = locale === 'es' ? 'Política de Privacidad' : 'Privacy Policy';
+const privacyPrefix = locale === 'es' ? 'He leído y acepto la ' : 'I have read and accept the ';
+---
+
+<section id="contact" class="section section--dark" aria-labelledby="contact-title">
+  <div class="container contact">
+    <div class="contact__intro" data-reveal>
+      <p class="eyebrow">{c.label}</p>
+      <h2 id="contact-title" class="contact__title">{c.h2}</h2>
+      <p class="contact__text lead">{c.text}</p>
+    </div>
+
+    <form
+      class="contact-form"
+      data-contact-form
+      novalidate
+      method="post"
+      action=""
+      data-reveal
+    >
+      <!-- Field: Name (required) -->
+      <div class="field">
+        <label class="field__label" for="cf-name">{c.fields.name}</label>
+        <input
+          class="field__input"
+          id="cf-name"
+          name="name"
+          type="text"
+          autocomplete="name"
+          required
+          aria-required="true"
+          aria-describedby="cf-name-error"
+        />
+        <p class="field__error" id="cf-name-error" data-error hidden></p>
+      </div>
+
+      <!-- Field: Company (optional) -->
+      <div class="field">
+        <label class="field__label" for="cf-company">
+          {c.fields.company}
+          <span class="field__optional">{c.optionalHelper}</span>
+        </label>
+        <input
+          class="field__input"
+          id="cf-company"
+          name="company"
+          type="text"
+          autocomplete="organization"
+        />
+      </div>
+
+      <!-- Field: Email (required) -->
+      <div class="field">
+        <label class="field__label" for="cf-email">{c.fields.email}</label>
+        <input
+          class="field__input"
+          id="cf-email"
+          name="email"
+          type="email"
+          autocomplete="email"
+          required
+          aria-required="true"
+          aria-describedby="cf-email-error"
+        />
+        <p class="field__error" id="cf-email-error" data-error hidden></p>
+      </div>
+
+      <!-- Field: Phone (optional) -->
+      <div class="field">
+        <label class="field__label" for="cf-phone">
+          {c.fields.phone}
+          <span class="field__optional">{c.optionalHelper}</span>
+        </label>
+        <input
+          class="field__input"
+          id="cf-phone"
+          name="phone"
+          type="tel"
+          autocomplete="tel"
+        />
+      </div>
+
+      <!-- Field: Message (required) -->
+      <div class="field field--full">
+        <label class="field__label" for="cf-message">{c.fields.message}</label>
+        <textarea
+          class="field__input field__textarea"
+          id="cf-message"
+          name="message"
+          rows="5"
+          required
+          aria-required="true"
+          aria-describedby="cf-message-error"></textarea>
+        <p class="field__error" id="cf-message-error" data-error hidden></p>
+      </div>
+
+      <!-- Privacy consent (required) -->
+      <div class="field field--full consent">
+        <label class="consent__label">
+          <input
+            class="consent__box"
+            type="checkbox"
+            name="privacy"
+            required
+            aria-required="true"
+            aria-describedby="cf-privacy-error"
+          />
+          <span>
+            {privacyPrefix}
+            <a href={privacyHref} class="consent__link">{privacyPolicyName}</a>.
+          </span>
+        </label>
+        <p class="field__error" id="cf-privacy-error" data-error hidden></p>
+      </div>
+
+      <!-- Marketing consent (optional, unchecked by default) -->
+      <div class="field field--full consent">
+        <label class="consent__label">
+          <input class="consent__box" type="checkbox" name="marketing" />
+          <span>{c.marketingConsent}</span>
+        </label>
+      </div>
+
+      <div class="field--full contact-form__submit">
+        <button class="btn btn--primary" type="submit" data-submit>
+          {c.submit}
+        </button>
+        <!-- Live region announces async states to assistive tech. -->
+        <p
+          class="form-status"
+          data-status
+          role="status"
+          aria-live="polite"
+          hidden
+        ></p>
+      </div>
+    </form>
+  </div>
+</section>
+
+<script
+  define:vars={{
+    strings: {
+      required: c.errors.required,
+      email: c.errors.email,
+      privacy: c.errors.privacy,
+      sending: c.stateSending,
+      success: c.stateSuccess,
+      error: c.stateError,
+    },
+  }}
+>
+  const form = document.querySelector('[data-contact-form]');
+  if (form) {
+    const status = form.querySelector('[data-status]');
+    const submitBtn = form.querySelector('[data-submit]');
+    const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    function fieldError(input) {
+      const wrap = input.closest('.field');
+      return wrap ? wrap.querySelector('[data-error]') : null;
+    }
+
+    function showError(input, message) {
+      const el = fieldError(input);
+      input.setAttribute('aria-invalid', 'true');
+      if (el) {
+        el.textContent = message;
+        el.hidden = false;
+      }
+    }
+
+    function clearError(input) {
+      const el = fieldError(input);
+      input.removeAttribute('aria-invalid');
+      if (el) {
+        el.textContent = '';
+        el.hidden = true;
+      }
+    }
+
+    function validateField(input) {
+      if (input.name === 'email') {
+        if (!input.value.trim()) return showError(input, strings.required), false;
+        if (!emailRe.test(input.value.trim()))
+          return showError(input, strings.email), false;
+      } else if (input.type === 'checkbox' && input.name === 'privacy') {
+        if (!input.checked) return showError(input, strings.privacy), false;
+      } else if (input.required) {
+        if (!input.value.trim()) return showError(input, strings.required), false;
+      }
+      clearError(input);
+      return true;
+    }
+
+    // Re-validate a field once the user has interacted with it.
+    form.querySelectorAll('input, textarea').forEach((input) => {
+      input.addEventListener('blur', () => {
+        if (input.getAttribute('aria-invalid') === 'true') validateField(input);
+      });
+      input.addEventListener('input', () => {
+        if (input.getAttribute('aria-invalid') === 'true') validateField(input);
+      });
+    });
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const required = form.querySelectorAll('[required]');
+      let firstInvalid = null;
+      let valid = true;
+      required.forEach((input) => {
+        if (!validateField(input)) {
+          valid = false;
+          if (!firstInvalid) firstInvalid = input;
+        }
+      });
+
+      if (!valid) {
+        status.hidden = true;
+        if (firstInvalid) firstInvalid.focus();
+        return;
+      }
+
+      // --- Async submission --------------------------------------------------
+      // NOTE: wire `action`/endpoint to the chosen form backend (API route,
+      // Formspree, email service…). Until then this simulates the state flow.
+      status.hidden = false;
+      status.dataset.state = 'sending';
+      status.textContent = strings.sending;
+      submitBtn.disabled = true;
+
+      try {
+        const endpoint = form.getAttribute('action');
+        if (endpoint) {
+          const res = await fetch(endpoint, {
+            method: 'POST',
+            body: new FormData(form),
+            headers: { Accept: 'application/json' },
+          });
+          if (!res.ok) throw new Error('Bad response');
+        } else {
+          // No endpoint configured yet — treat as success for the demo flow.
+          await new Promise((r) => setTimeout(r, 700));
+        }
+        status.dataset.state = 'success';
+        status.textContent = strings.success;
+        form.reset();
+      } catch (err) {
+        status.dataset.state = 'error';
+        status.textContent = strings.error;
+      } finally {
+        submitBtn.disabled = false;
+      }
+    });
+  }
+</script>
+
+<style>
+  .contact {
+    display: grid;
+    grid-template-columns: 0.9fr 1.1fr;
+    gap: var(--space-8);
+    align-items: start;
+  }
+
+  .contact__title {
+    margin-top: var(--space-3);
+    font-size: var(--fs-h2);
+    color: var(--color-on-dark);
+  }
+
+  .contact__text {
+    margin-top: var(--space-4);
+    color: var(--color-on-dark-muted);
+    max-width: 40ch;
+  }
+
+  .contact-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4) var(--space-5);
+    background: var(--color-surface);
+    color: var(--color-text);
+    padding: clamp(1.5rem, 1rem + 2vw, 2.5rem);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .field--full {
+    grid-column: 1 / -1;
+  }
+
+  .field__label {
+    font-size: 0.9rem;
+    font-weight: var(--fw-semibold);
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2);
+  }
+
+  .field__optional {
+    font-weight: var(--fw-regular);
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+  }
+
+  .field__input {
+    width: 100%;
+    padding: 0.7em 0.85em;
+    border: var(--border-width) solid var(--color-line);
+    border-radius: var(--radius-sm);
+    background: var(--color-surface);
+    transition: border-color var(--dur-fast) var(--ease-out),
+      box-shadow var(--dur-fast) var(--ease-out);
+  }
+
+  .field__input:focus-visible {
+    border-color: var(--color-brand);
+    box-shadow: var(--focus-ring);
+  }
+
+  .field__input[aria-invalid='true'] {
+    border-color: var(--color-error);
+  }
+
+  .field__textarea {
+    resize: vertical;
+    min-height: 120px;
+  }
+
+  .field__error {
+    font-size: 0.85rem;
+    color: var(--color-error);
+    font-weight: var(--fw-medium);
+  }
+
+  .consent {
+    gap: var(--space-2);
+  }
+
+  .consent__label {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-3);
+    align-items: start;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: var(--color-text-muted);
+    cursor: pointer;
+  }
+
+  .consent__box {
+    margin-top: 0.2em;
+    width: 1.15em;
+    height: 1.15em;
+    accent-color: var(--color-brand);
+    flex-shrink: 0;
+  }
+
+  .consent__link {
+    color: var(--color-brand);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .contact-form__submit {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+    margin-top: var(--space-2);
+  }
+
+  .form-status {
+    font-size: 0.92rem;
+    font-weight: var(--fw-medium);
+  }
+
+  .form-status[data-state='sending'] {
+    color: var(--color-text-muted);
+  }
+  .form-status[data-state='success'] {
+    color: var(--color-success);
+  }
+  .form-status[data-state='error'] {
+    color: var(--color-error);
+  }
+
+  @media (max-width: 900px) {
+    .contact {
+      grid-template-columns: 1fr;
+      gap: var(--space-6);
+    }
+  }
+
+  @media (max-width: 520px) {
+    .contact-form {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
