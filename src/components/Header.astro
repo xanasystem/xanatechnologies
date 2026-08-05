@@ -70,8 +70,12 @@ const homeHref = locale === 'es' ? '/es/' : '/';
       <ul class="mobile-nav__list">
         {
           t.nav.sections.map((section) => (
-            <li>
-              <a class="mobile-nav__link" href={`#${section.id}`} data-mobile-link>
+            <li class:list={[{ 'mobile-nav__cta-item': section.id === 'contact' }]}>
+              <a
+                class:list={['mobile-nav__link', { 'mobile-nav__link--cta': section.id === 'contact' }]}
+                href={`#${section.id}`}
+                data-mobile-link
+              >
                 {section.label}
               </a>
             </li>
@@ -175,8 +179,8 @@ const homeHref = locale === 'es' ? '/es/' : '/';
     align-items: center;
     justify-content: center;
     background: color-mix(in srgb, var(--text) 5%, transparent);
-    border: 1px solid var(--line-2);
-    border-radius: var(--radius-sm);
+    border: none;
+    border-radius: 50%;
     cursor: pointer;
   }
   .nav-toggle__bar {
@@ -187,7 +191,10 @@ const homeHref = locale === 'es' ? '/es/' : '/';
     transition: transform var(--dur-base) var(--ease-out),
       opacity var(--dur-base) var(--ease-out);
   }
-  .nav-toggle[aria-expanded='true'] .nav-toggle__bar:first-child {
+  /* The two bars are the last two children (a visually-hidden label is the
+     first child), so anchor from the end — not :first-child, which matched
+     the label and left the top bar un-rotated. */
+  .nav-toggle[aria-expanded='true'] .nav-toggle__bar:nth-last-child(2) {
     transform: translateY(3.5px) rotate(45deg);
   }
   .nav-toggle[aria-expanded='true'] .nav-toggle__bar:last-child {
@@ -224,6 +231,28 @@ const homeHref = locale === 'es' ? '/es/' : '/';
     color: var(--text);
   }
 
+  /* Contact rendered as a full-width primary CTA at the foot of the menu,
+     set off from the plain links above by a hairline + extra spacing. */
+  .mobile-nav__cta-item {
+    margin-top: var(--space-2);
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--line);
+  }
+  .mobile-nav__link--cta {
+    text-align: center;
+    background: var(--btn-primary-bg);
+    color: var(--btn-primary-ink);
+    font-family: var(--font-display);
+    font-weight: var(--fw-medium);
+    padding: 0.55rem 1rem;
+    border-radius: var(--radius-pill);
+  }
+  .mobile-nav__link--cta:hover {
+    background: var(--btn-primary-bg);
+    color: var(--btn-primary-ink);
+    filter: brightness(0.94);
+  }
+
   @media (max-width: 900px) {
     .site-nav,
     .header-cta {
@@ -231,6 +260,24 @@ const homeHref = locale === 'es' ? '/es/' : '/';
     }
     .nav-toggle {
       display: inline-flex;
+    }
+
+    /* Tall menu: nav links at the top, Contact CTA anchored near the bottom
+       so the panel reaches almost to the foot of the screen. */
+    .mobile-nav:not([hidden]) {
+      display: flex;
+      flex-direction: column;
+      height: 50dvh;
+    }
+    .mobile-nav__list {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .mobile-nav__cta-item {
+      margin-top: auto;
+      padding-top: 0;
+      border-top: none;
     }
   }
 </style>

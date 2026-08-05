@@ -23,6 +23,7 @@ const leadWords = words.join(' ');
   <div class="hero__bg" aria-hidden="true"></div>
   <div class="hero__scrim" aria-hidden="true"></div>
   <div class="hero__glow" aria-hidden="true"></div>
+  <canvas class="hero__stars" aria-hidden="true"></canvas>
 
   <div class="container hero__inner">
     <p class="hero__badge" data-reveal>
@@ -78,12 +79,9 @@ const leadWords = words.join(' ');
     align-items: center;
     text-align: center;
     padding-block: clamp(6rem, 4rem + 10vw, 11rem);
-    /* pull up under the transparent header for an immersive full-bleed hero */
     margin-top: -72px;
   }
 
-  /* Per-theme background image (set via --hero-img in tokens).
-     Over-scanned vertically so the scroll-driven rise never reveals a gap. */
   .hero__bg {
     position: absolute;
     left: 0;
@@ -97,20 +95,17 @@ const leadWords = words.join(' ');
     will-change: transform;
   }
 
-  /* Scrim: keep text legible and blend the image bottom into the page. */
   .hero__scrim {
     position: absolute;
     inset: 0;
     z-index: -2;
     background:
-      /* soft central pool so centered text stays legible over the image */
       radial-gradient(
         68% 62% at 50% 46%,
         color-mix(in srgb, var(--bg) 62%, transparent) 0%,
         color-mix(in srgb, var(--bg) 20%, transparent) 62%,
         transparent 100%
       ),
-      /* vertical fade: gentle top, blend the bottom into the page */
       linear-gradient(
         180deg,
         color-mix(in srgb, var(--bg) 50%, transparent) 0%,
@@ -120,10 +115,9 @@ const leadWords = words.join(' ');
       );
   }
 
-  /* Ambient brand glow */
   .hero__glow {
     position: absolute;
-    z-index: -1;
+    z-index: -2;
     inset: 0;
     background:
       radial-gradient(
@@ -137,6 +131,20 @@ const leadWords = words.join(' ');
         transparent 70%
       );
     pointer-events: none;
+    will-change: transform;
+  }
+
+  /* Starfield — drifting, twinkling stars + the occasional shooting star.
+     Slightly larger than the hero so mouse-parallax never reveals an edge. */
+  .hero__stars {
+    position: absolute;
+    top: -60px;
+    left: -60px;
+    width: calc(100% + 120px);
+    height: calc(100% + 120px);
+    z-index: -1;
+    pointer-events: none;
+    will-change: transform;
   }
 
   .hero__inner {
@@ -147,7 +155,6 @@ const leadWords = words.join(' ');
     align-items: center;
   }
 
-  /* Pill badge (replaces the underlined eyebrow for a centered hero) */
   .hero__badge {
     display: inline-flex;
     align-items: center;
@@ -206,8 +213,6 @@ const leadWords = words.join(' ');
     gap: var(--space-4);
   }
 
-  /* Scroll cue — invites the eye downward. A light "comet" travels down the
-     hairline on a loop (matches the badge-dot's ambient life). */
   .hero__scroll {
     position: absolute;
     left: 50%;
@@ -218,7 +223,6 @@ const leadWords = words.join(' ');
     flex-direction: column;
     align-items: center;
     gap: 0.85rem;
-    /* button reset */
     appearance: none;
     background: transparent;
     border: 0;
@@ -232,7 +236,6 @@ const leadWords = words.join(' ');
     font-weight: var(--fw-regular);
     letter-spacing: 0.32em;
     text-transform: uppercase;
-    /* nudge right to optically re-center against the trailing letter-spacing */
     padding-left: 0.32em;
     color: color-mix(in srgb, var(--text) 58%, transparent);
     transition: color var(--dur-base) var(--ease-out);
@@ -240,12 +243,8 @@ const leadWords = words.join(' ');
   .hero__scroll:hover .hero__scroll-label {
     color: var(--text);
   }
-  /* nudge the whole cue down a touch on hover for a subtle "pull" */
   .hero__scroll:hover .hero__scroll-line {
     transform: translateY(3px);
-  }
-  .hero__scroll-line {
-    transition: transform var(--dur-base) var(--ease-out);
   }
   .hero__scroll-line {
     position: relative;
@@ -253,6 +252,7 @@ const leadWords = words.join(' ');
     height: 46px;
     overflow: hidden;
     background: color-mix(in srgb, var(--text) 15%, transparent);
+    transition: transform var(--dur-base) var(--ease-out);
   }
   .hero__scroll-line::after {
     content: '';
@@ -270,27 +270,15 @@ const leadWords = words.join(' ');
     100% { transform: translateY(240%); opacity: 0; }
   }
 
-  /* Hide the scroll cue when it would crowd the CTAs: short viewports, and on
-     phones where the taller stacked hero pushes the buttons down onto it. */
-  @media (max-height: 640px), (max-width: 640px) {
-    .hero__scroll {
-      display: none;
-    }
+  @media (max-height: 640px) {
+    .hero__scroll { display: none; }
   }
-
   @media (max-width: 560px) {
-    .hero__actions {
-      width: 100%;
-    }
-    .hero__actions .btn {
-      flex: 1 1 100%;
-    }
+    .hero__actions { width: 100%; }
+    .hero__actions .btn { flex: 1 1 100%; }
   }
-
   @media (prefers-reduced-motion: reduce) {
-    .hero__badge-dot {
-      animation: none;
-    }
+    .hero__badge-dot { animation: none; }
     .hero__scroll-line::after {
       animation: none;
       transform: translateY(60%);
@@ -299,40 +287,149 @@ const leadWords = words.join(' ');
 </style>
 
 <script>
-  // Scroll-driven parallax: the planet background rises as you scroll.
-  const bg = document.querySelector<HTMLElement>('.hero__bg');
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const finePointer = window.matchMedia('(pointer: fine)').matches;
 
-  // Scroll cue: smooth-scroll to the first section after the hero. Sibling
-  // combinator skips dev-injected <script> nodes between sections. We compute
-  // the target with window.scrollTo (rather than scrollIntoView) so it behaves
-  // predictably regardless of which element is the scroll container.
+  const hero = document.querySelector<HTMLElement>('.hero');
+  const bg = document.querySelector<HTMLElement>('.hero__bg');
+  const glow = document.querySelector<HTMLElement>('.hero__glow');
+  const canvas = document.querySelector<HTMLCanvasElement>('.hero__stars');
+
+  // Scroll cue → scroll to the first section after the hero (if any).
   const cue = document.querySelector<HTMLButtonElement>('[data-scroll-cue]');
-  const next = document.querySelector('.hero ~ section');
+  const next = document.querySelector('.hero ~ section') || document.querySelector('.after');
   if (cue && next) {
     cue.addEventListener('click', () => {
       const top = next.getBoundingClientRect().top + window.scrollY;
       window.scrollTo({ top, behavior: reduce ? 'auto' : 'smooth' });
     });
   }
-  if (bg && !reduce) {
-    const RISE = 30; // vh the planet climbs over one viewport of scroll
-    let ticking = false;
-    const update = () => {
-      const p = Math.min(window.scrollY / window.innerHeight, 1);
-      bg.style.transform = `translate3d(0, ${p * -RISE}vh, 0)`;
-      ticking = false;
+
+  const RISE = 30; // vh the planet climbs over one viewport of scroll
+
+  if (hero && bg && canvas) {
+    const ctx = canvas.getContext('2d')!;
+    let W = 0, H = 0, dpr = 1;
+    let stars: any[] = [];
+    let shoot: any = null;
+    let nextShoot = 5000 + Math.random() * 7000;
+
+    let sp = 0;                 // scroll progress 0..1
+    let tmx = 0, tmy = 0;       // target mouse (-1..1)
+    let mx = 0, my = 0;         // eased mouse
+
+    const resize = () => {
+      const r = canvas.getBoundingClientRect();
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      W = r.width; H = r.height;
+      canvas.width = Math.round(W * dpr);
+      canvas.height = Math.round(H * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const n = Math.min(200, Math.round((W * H) / 8500));
+      stars = Array.from({ length: n }, () => ({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        r: Math.random() * 1.1 + 0.3,
+        a: Math.random() * 0.5 + 0.22,
+        tw: Math.random() * Math.PI * 2,
+        tws: Math.random() * 0.8 + 0.3,
+        vx: (Math.random() - 0.5) * 0.05,
+        vy: Math.random() * 0.05 + 0.01,
+        blue: Math.random() < 0.22,
+      }));
     };
-    window.addEventListener(
-      'scroll',
-      () => {
-        if (!ticking) {
-          requestAnimationFrame(update);
-          ticking = true;
-        }
-      },
-      { passive: true }
-    );
-    update();
+
+    const drawShooting = (dt: number) => {
+      nextShoot -= dt;
+      if (!shoot && nextShoot <= 0) {
+        const dir = Math.random() < 0.5 ? 1 : -1;
+        const speed = (W * 0.0016) * (14 + Math.random() * 8);
+        shoot = {
+          x: dir > 0 ? Math.random() * W * 0.45 : W * 0.55 + Math.random() * W * 0.45,
+          y: Math.random() * H * 0.35,
+          vx: dir * speed,
+          vy: speed * (0.35 + Math.random() * 0.25),
+          life: 0,
+        };
+        nextShoot = 9000 + Math.random() * 10000;
+      }
+      if (shoot) {
+        shoot.life += dt;
+        shoot.x += shoot.vx * (dt / 16);
+        shoot.y += shoot.vy * (dt / 16);
+        const tx = shoot.x - shoot.vx * 9;
+        const ty = shoot.y - shoot.vy * 9;
+        const g = ctx.createLinearGradient(shoot.x, shoot.y, tx, ty);
+        g.addColorStop(0, 'rgba(255,255,255,0.95)');
+        g.addColorStop(1, 'rgba(255,255,255,0)');
+        ctx.strokeStyle = g;
+        ctx.lineWidth = 1.6;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(shoot.x, shoot.y);
+        ctx.lineTo(tx, ty);
+        ctx.stroke();
+        if (shoot.x < -60 || shoot.x > W + 60 || shoot.y > H + 60 || shoot.life > 1400) shoot = null;
+      }
+    };
+
+    let t = 0;
+    const draw = (dt: number) => {
+      ctx.clearRect(0, 0, W, H);
+      t += dt;
+      for (const s of stars) {
+        s.x += s.vx; s.y += s.vy;
+        if (s.y > H + 2) { s.y = -2; s.x = Math.random() * W; }
+        if (s.x < -2) s.x = W + 2; else if (s.x > W + 2) s.x = -2;
+        const tw = 0.5 + 0.5 * Math.sin(s.tw + t * 0.001 * s.tws * 6);
+        const alpha = s.a * (0.35 + 0.65 * tw);
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx.fillStyle = s.blue
+          ? `rgba(180,196,255,${alpha})`
+          : `rgba(255,255,255,${alpha})`;
+        ctx.fill();
+      }
+      if (!reduce) drawShooting(dt);
+    };
+
+    // scroll → parallax progress
+    window.addEventListener('scroll', () => {
+      sp = Math.min(window.scrollY / window.innerHeight, 1);
+    }, { passive: true });
+
+    // mouse → depth parallax (desktop only)
+    if (finePointer && !reduce) {
+      hero.addEventListener('mousemove', (e) => {
+        const r = hero.getBoundingClientRect();
+        tmx = ((e.clientX - r.left) / r.width - 0.5) * 2;
+        tmy = ((e.clientY - r.top) / r.height - 0.5) * 2;
+      });
+      hero.addEventListener('mouseleave', () => { tmx = 0; tmy = 0; });
+    }
+
+    window.addEventListener('resize', resize);
+    resize();
+
+    if (reduce) {
+      draw(16); // one static frame
+      bg.style.transform = 'none';
+    } else {
+      draw(16); // paint an initial starfield so there's no blank first frame
+      let last = 0;
+      const frame = (now: number) => {
+        const dt = last ? Math.min(now - last, 50) : 16;
+        last = now;
+        mx += (tmx - mx) * 0.06;
+        my += (tmy - my) * 0.06;
+        const risePx = sp * (-RISE / 100) * window.innerHeight;
+        bg.style.transform = `translate3d(${mx * -8}px, ${risePx + my * -8}px, 0)`;
+        if (glow) glow.style.transform = `translate3d(${mx * -16}px, ${my * -16}px, 0)`;
+        canvas.style.transform = `translate3d(${mx * -26}px, ${my * -26}px, 0)`;
+        draw(dt);
+        requestAnimationFrame(frame);
+      };
+      requestAnimationFrame(frame);
+    }
   }
 </script>

@@ -58,12 +58,15 @@
 
   /* Fluid type scale (min → max) */
   --fs-eyebrow: 0.75rem; /* mono labels */
-  --fs-body: clamp(1rem, 0.95rem + 0.2vw, 1.0625rem); /* 16 → 17 */
+  /* Mobile ends (clamp minimums) bumped up so text isn't cramped on phones;
+     the maximums (= desktop) are unchanged, so desktop stays exactly as-is. */
+  --fs-body: 1.0625rem; /* 17 flat (mobile raised from 16; desktop was 17) */
   --fs-lead: 1.0625rem; /* 17 (matches body max; kept flat per request) */
-  --fs-h3: clamp(1.25rem, 1.08rem + 0.7vw, 1.55rem);
-  --fs-h2: clamp(1.75rem, 1.25rem + 2.1vw, 2.85rem); /* 28 → 46 */
-  --fs-h1: clamp(2.6rem, 1.5rem + 4.6vw, 4.5rem); /* 42 → 72 */
-  --fs-metric: clamp(2.75rem, 1.8rem + 4.2vw, 4.75rem);
+  --fs-h3: clamp(1.4rem, 1.08rem + 0.7vw, 1.55rem); /* mobile 20→22.4, desktop 24.8 */
+  --fs-h2: clamp(2.5rem, 1.25rem + 2.1vw, 2.85rem); /* mobile 40, desktop 46 */
+  --fs-h2-lg: var(--fs-h1); /* large section titles = hero/contact scale */
+  --fs-h1: clamp(3.3rem, 1.5rem + 4.6vw, 4.5rem); /* mobile 52.8, desktop 72 */
+  --fs-metric: clamp(3.1rem, 1.8rem + 4.2vw, 4.75rem); /* mobile 44→49.6, desktop 76 */
 
   /* Line-heights */
   --lh-tight: 1;

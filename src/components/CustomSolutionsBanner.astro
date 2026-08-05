@@ -1,0 +1,172 @@
+---
+import { content, type Locale } from '../i18n/content';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = content[locale];
+---
+
+<section id="custom-solutions" class="csbanner" aria-labelledby="custom-title">
+  <div class="csbanner__sticky">
+    <!-- padding is animated by JS → the card shrinks, revealing the dark page -->
+    <div class="csbanner__pad">
+      <div class="csbanner__card">
+        <div class="csbanner__bg" aria-hidden="true"></div>
+        <div class="csbanner__scrim" aria-hidden="true"></div>
+
+        <div class="csbanner__content">
+          <div class="container csbanner__inner">
+            <p class="eyebrow eyebrow--pill csbanner__eyebrow" data-reveal>
+              {t.customSolutions.label}
+            </p>
+            <h2 id="custom-title" class="csbanner__title" data-reveal>
+              {t.customSolutions.h2}
+            </h2>
+            <p class="csbanner__text" data-reveal>{t.customSolutions.text}</p>
+
+            <div class="csbanner__action" data-reveal>
+              <!-- CTA routes to the corporate form, never directly to a brand. -->
+              <a class="btn btn--primary" href="#contact">
+                {t.customSolutions.cta}
+                <svg class="btn__arrow" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M7 17L17 7M17 7H9M17 7v8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Scroll track that drives the shrink (taller than the viewport). */
+  .csbanner {
+    height: 186vh;
+  }
+  .csbanner__sticky {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    background: var(--bg); /* dark margins around the shrinking card */
+  }
+  .csbanner__pad {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+  }
+
+  .csbanner__card {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background: var(--bg);
+    box-shadow: 0 40px 120px -40px rgba(0, 0, 0, 0.85);
+    will-change: border-radius, padding;
+  }
+
+  .csbanner__bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background-image: url('/img/stock/solutions.jpg');
+    background-size: cover;
+    background-position: center;
+  }
+
+  /* Readability wash over the bright image (no top/bottom fade). */
+  .csbanner__scrim {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: radial-gradient(
+      58% 62% at 50% 52%,
+      rgba(6, 4, 16, 0.5),
+      rgba(6, 4, 16, 0.12) 78%
+    );
+  }
+
+  .csbanner__content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+  }
+  .csbanner__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .csbanner__eyebrow {
+    margin-bottom: var(--space-5);
+  }
+
+  .csbanner__title {
+    font-size: var(--fs-h2);
+    line-height: 1.08;
+    color: #fff;
+    max-width: 20ch;
+    text-shadow: 0 2px 24px rgba(0, 0, 0, 0.4);
+  }
+  .csbanner__text {
+    margin-top: var(--space-5);
+    max-width: 56ch;
+    font-size: var(--fs-lead);
+    line-height: var(--lh-snug);
+    color: rgba(255, 255, 255, 0.92);
+    text-shadow: 0 1px 16px rgba(0, 0, 0, 0.35);
+  }
+  .csbanner__action {
+    margin-top: var(--space-7);
+  }
+</style>
+
+<script>
+  const section = document.querySelector<HTMLElement>('.csbanner');
+  const pad = document.querySelector<HTMLElement>('.csbanner__pad');
+  const card = document.querySelector<HTMLElement>('.csbanner__card');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (section && pad && card && !reduce) {
+    const PAD_X = 8; // vw inset on each side at full scroll
+    const PAD_Y = 60; // px inset top & bottom at full scroll
+    const RADIUS = 34; // px corner radius at full scroll
+    const clamp = (v: number) => Math.max(0, Math.min(1, v));
+    let ticking = false;
+
+    const update = () => {
+      const rect = section.getBoundingClientRect();
+      const total = Math.max(section.offsetHeight - window.innerHeight, 1);
+      // 0 while the sticky is pinned at the top, 1 by the end of the track.
+      const p = clamp(-rect.top / total);
+      pad.style.paddingTop = p * PAD_Y + 'px';
+      pad.style.paddingBottom = p * PAD_Y + 'px';
+      pad.style.paddingLeft = p * PAD_X + 'vw';
+      pad.style.paddingRight = p * PAD_X + 'vw';
+      card.style.borderRadius = p * RADIUS + 'px';
+      ticking = false;
+    };
+
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (!ticking) {
+          requestAnimationFrame(update);
+          ticking = true;
+        }
+      },
+      { passive: true }
+    );
+    window.addEventListener('resize', update);
+    update();
+  }
+</script>

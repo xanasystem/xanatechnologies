@@ -119,6 +119,18 @@ p {
   --btn-primary-bg: #0c1020;
   --btn-primary-ink: #ffffff;
 
+  /* Remap the compatibility aliases too — several older components (Numbers,
+     Contact) colour their text through these. They're resolved from --text at
+     :root under the dark theme and would otherwise stay light on this light
+     surface. Re-point them here so those components flip correctly. */
+  --color-on-dark: var(--text);
+  --color-on-dark-muted: var(--dim);
+  --color-text: var(--text);
+  --color-text-muted: var(--dim);
+  --color-line: var(--line);
+  --color-surface: var(--bg-2);
+  --color-surface-2: var(--bg);
+
   background: var(--bg);
   color: var(--text);
 }

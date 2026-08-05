@@ -3,13 +3,18 @@ import { content, type Locale } from '../i18n/content';
 
 interface Props {
   locale: Locale;
+  /** 'light' flips this section to a light surface (used by v2). */
+  surface?: 'dark' | 'light';
 }
 
-const { locale } = Astro.props;
+const { locale, surface = 'dark' } = Astro.props;
 const t = content[locale];
 ---
 
-<section class="section section--dark" aria-labelledby="numbers-title">
+<section
+  class:list={['section', 'section--dark', surface === 'light' && 'surface-light']}
+  aria-labelledby="numbers-title"
+>
   <div class="container numbers">
     <h2 id="numbers-title" class="numbers__title" data-reveal>
       {t.numbers.h2}
@@ -87,9 +92,90 @@ const t = content[locale];
   }
 
   @media (max-width: 720px) {
+    /* Phones: stack the figures, one under the other, and make them large. */
     .numbers__grid {
       grid-template-columns: 1fr;
-      gap: var(--space-5);
+      gap: var(--space-6);
+    }
+    .numbers {
+      padding-inline: var(--space-4);
+      text-align: center;
+    }
+    .numbers__title {
+      margin-inline: auto;
+    }
+    .metric {
+      padding-top: var(--space-4);
+    }
+    .metric__value {
+      font-size: clamp(2.5rem, 13vw, 4rem);
+    }
+    .metric__label {
+      margin-top: var(--space-2);
+      font-size: var(--fs-lead);
     }
   }
 </style>
+
+<script>
+  // v2 only: count the figures up from zero when they scroll into view. The
+  // server-rendered final value stays put for v1 / no-JS / reduced-motion.
+  const isV2 = document.documentElement.getAttribute('data-theme') === 'v2';
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const values = Array.from(
+    document.querySelectorAll<HTMLElement>('.numbers .metric__value')
+  );
+
+  if (isV2 && !reduce && values.length && 'IntersectionObserver' in window) {
+    const parse = (raw: string) => {
+      const firstDigit = raw.search(/\d/);
+      let lastDigit = raw.length;
+      for (let i = raw.length - 1; i >= 0; i--) {
+        if (/\d/.test(raw[i])) { lastDigit = i + 1; break; }
+      }
+      const target = parseInt(raw.replace(/\D/g, '') || '0', 10);
+      const prefix = firstDigit < 0 ? '' : raw.slice(0, firstDigit);
+      const suffix = raw.slice(lastDigit);
+      const grouped = /[.,]/.test(raw);
+      const localeFmt = raw.includes('.') ? 'de-DE' : 'en-US';
+      return { target, prefix, suffix, grouped, localeFmt };
+    };
+    const format = (n: number, grouped: boolean, localeFmt: string) =>
+      grouped ? n.toLocaleString(localeFmt) : String(n);
+    const ease = (t: number) => 1 - Math.pow(1 - t, 3);
+
+    const run = (el: HTMLElement) => {
+      const { target, prefix, suffix, grouped, localeFmt } = parse(el.dataset.raw || '');
+      const dur = 1500;
+      let start = 0;
+      const step = (ts: number) => {
+        if (!start) start = ts;
+        const t = Math.min((ts - start) / dur, 1);
+        el.textContent =
+          prefix + format(Math.round(ease(t) * target), grouped, localeFmt) + suffix;
+        if (t < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    };
+
+    values.forEach((el) => {
+      const raw = el.textContent || '';
+      el.dataset.raw = raw;
+      const { prefix, suffix, grouped, localeFmt } = parse(raw);
+      el.textContent = prefix + format(0, grouped, localeFmt) + suffix; // start at 0
+    });
+
+    const io = new IntersectionObserver(
+      (entries, obs) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            run(e.target as HTMLElement);
+            obs.unobserve(e.target);
+          }
+        });
+      },
+      { threshold: 0.4 }
+    );
+    values.forEach((el) => io.observe(el));
+  }
+</script>

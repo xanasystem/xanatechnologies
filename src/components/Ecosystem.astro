@@ -3,13 +3,19 @@ import { content, type Locale } from '../i18n/content';
 
 interface Props {
   locale: Locale;
+  /** 'light' flips this section to a light surface (used by v2). */
+  surface?: 'dark' | 'light';
 }
 
-const { locale } = Astro.props;
+const { locale, surface = 'dark' } = Astro.props;
 const t = content[locale];
 ---
 
-<section id="ecosystem" class="section ecosystem" aria-labelledby="ecosystem-title">
+<section
+  id="ecosystem"
+  class:list={['section', 'ecosystem', surface === 'light' && 'surface-light']}
+  aria-labelledby="ecosystem-title"
+>
   <div class="container ecosystem__grid">
     <h2 id="ecosystem-title" class="ecosystem__title" data-reveal>
       {t.ecosystem.h2}
@@ -57,8 +63,7 @@ const t = content[locale];
     line-height: var(--lh-body);
   }
 
-  /* Subtle structural grid, echoing the reference: a hairline base + a short
-     vertical tick rising from it near the left. */
+  /* Subtle structural separator: a hairline that fades in from both ends. */
   .ecosystem__grid::after {
     content: '';
     position: absolute;
@@ -76,26 +81,22 @@ const t = content[locale];
       transparent 100%
     );
   }
-  .ecosystem__grid::before {
-    content: '';
-    position: absolute;
-    left: clamp(3rem, 18%, 16rem);
-    bottom: 0;
-    width: 1px;
-    height: clamp(2rem, 4vw, 3.5rem);
-    background: var(--line);
-  }
 
   @media (max-width: 800px) {
     .ecosystem__grid {
       grid-template-columns: 1fr;
       gap: var(--space-5);
+      /* centre the stacked block and trim the excess space before the divider */
+      text-align: center;
+      padding-bottom: var(--space-5);
+    }
+    .ecosystem__title {
+      max-width: none;
+      margin-inline: auto;
     }
     .ecosystem__body {
       padding-top: 0;
-    }
-    .ecosystem__grid::before {
-      display: none;
+      margin-inline: auto;
     }
   }
 </style>

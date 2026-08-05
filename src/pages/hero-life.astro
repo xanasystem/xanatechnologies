@@ -1,0 +1,95 @@
+---
+/**
+ * /hero-life — throwaway test page: the hero only, with the "living space"
+ * effects (drifting/twinkling starfield, occasional shooting star, mouse
+ * parallax). Not part of the real site (noindex). Delete when decided.
+ */
+import '../styles/global.css';
+import HeroLife from '../components/HeroLife.astro';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Hero — life test</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="preload" href="/fonts/mona-sans-var.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin />
+  </head>
+  <body>
+    <!-- counteract the hero's -72px (this test page has no header) -->
+    <div class="wrap">
+      <HeroLife locale="en" />
+    </div>
+
+    <!-- a little scroll distance so the planet parallax is testable -->
+    <section class="after">
+      <div class="container">
+        <p class="eyebrow">Scroll test</p>
+        <h2>Baja para el parallax del planeta</h2>
+        <p class="lead">
+          Mueve el ratón sobre el hero para el efecto de profundidad (estrellas,
+          planeta y glow reaccionan). Baja para ver subir el planeta. Espera unos
+          segundos para alguna estrella fugaz.
+        </p>
+      </div>
+    </section>
+
+    <style>
+      body {
+        overflow-x: hidden;
+        background: var(--bg);
+      }
+      .wrap {
+        padding-top: 72px;
+      }
+      .after {
+        min-height: 92vh;
+        display: flex;
+        align-items: center;
+        padding-block: var(--section-y);
+      }
+      .after h2 {
+        margin-top: var(--space-3);
+        font-size: var(--fs-h2);
+        color: var(--text);
+      }
+      .after .lead {
+        margin-top: var(--space-4);
+        max-width: 54ch;
+      }
+    </style>
+
+    <!-- Reveal-on-scroll (same as Base): unhide the hero's data-reveal items. -->
+    <script>
+      const items = document.querySelectorAll('[data-reveal]');
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const seen = new Map<Element, number>();
+      items.forEach((el) => {
+        const parent = el.parentElement;
+        if (!parent) return;
+        const i = seen.get(parent) ?? 0;
+        (el as HTMLElement).style.setProperty('--reveal-i', String(Math.min(i, 6)));
+        seen.set(parent, i + 1);
+      });
+      if (reduce || !('IntersectionObserver' in window)) {
+        items.forEach((el) => el.classList.add('is-visible'));
+      } else {
+        const io = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+                io.unobserve(entry.target);
+              }
+            });
+          },
+          { rootMargin: '0px 0px -10% 0px', threshold: 0.1 }
+        );
+        items.forEach((el) => io.observe(el));
+      }
+    </script>
+  </body>
+</html>

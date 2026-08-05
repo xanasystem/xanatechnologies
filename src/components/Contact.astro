@@ -3,9 +3,11 @@ import { content, type Locale } from '../i18n/content';
 
 interface Props {
   locale: Locale;
+  /** 'light' flips this section to a light surface (used by v2). */
+  surface?: 'dark' | 'light';
 }
 
-const { locale } = Astro.props;
+const { locale, surface = 'dark' } = Astro.props;
 const t = content[locale];
 const c = t.contact;
 
@@ -23,7 +25,11 @@ const titleAccent = titleWords.slice(-accentCount).join(' ');
 const titleLead = titleWords.slice(0, -accentCount).join(' ');
 ---
 
-<section id="contact" class="section section--dark" aria-labelledby="contact-title">
+<section
+  id="contact"
+  class:list={['section', 'section--dark', surface === 'light' && 'surface-light']}
+  aria-labelledby="contact-title"
+>
   <span class="contact-sep" aria-hidden="true"></span>
 
   <div class="container contact">
@@ -33,6 +39,11 @@ const titleLead = titleWords.slice(0, -accentCount).join(' ');
         {titleLead}{' '}<span class="grad-text">{titleAccent}</span>
       </h2>
       <p class="contact__text lead">{c.text}</p>
+
+      <!-- v2 only: decorative particle globe under the intro copy (hidden in v1). -->
+      <div class="contact__globe" aria-hidden="true">
+        <img src="/img/stock/globe.jpg" alt="" loading="lazy" />
+      </div>
     </div>
 
     <form
@@ -330,8 +341,8 @@ const titleLead = titleWords.slice(0, -accentCount).join(' ');
     background: linear-gradient(
       90deg,
       transparent 0%,
-      color-mix(in srgb, var(--text) 8%, transparent) 28%,
-      color-mix(in srgb, var(--text) 8%, transparent) 72%,
+      color-mix(in srgb, var(--text) 12%, transparent) 28%,
+      color-mix(in srgb, var(--text) 12%, transparent) 72%,
       transparent 100%
     );
   }
@@ -477,6 +488,65 @@ const titleLead = titleWords.slice(0, -accentCount).join(' ');
     color: var(--color-error);
   }
 
+  /* --- Light surface (v2) --------------------------------------------------
+     Drop the coloured bottom bloom (reads wrong on a light band) and give the
+     form real contrast: white card on the light grey section, crisp inputs. */
+  #contact.surface-light::before {
+    background: none;
+  }
+  #contact.surface-light .contact-form {
+    background: #ffffff;
+    box-shadow: 0 24px 60px -30px rgba(12, 16, 32, 0.35);
+  }
+  #contact.surface-light .field__input {
+    background: #f7f8fc;
+  }
+
+  /* Decorative particle globe (v2) — hidden by default so v1 is untouched.
+     `screen` blend drops the image's black so only the glowing particles show,
+     floating over the section. */
+  .contact__globe {
+    display: none;
+  }
+  :global(:root[data-theme='v2']) .contact__globe {
+    display: block;
+    width: 100%;
+    /* much larger — fills the intro column and bleeds off to the right */
+    max-width: 680px;
+    margin-top: var(--space-5);
+    margin-left: 12%;
+    margin-right: -16%;
+  }
+  .contact__globe img {
+    width: 100%;
+    height: auto;
+    opacity: 0.85;
+    mix-blend-mode: screen;
+    transform-origin: center;
+    will-change: transform;
+  }
+
+  /* v2: lighter bottom bloom using the headline-gradient tints (light blue →
+     lilac → pink), no dark wash — airier than the deep logo colours. */
+  :global(:root[data-theme='v2']) #contact::before {
+    background:
+      radial-gradient(
+        88% 64% at 16% 102%,
+        color-mix(in srgb, #79b0ff 88%, transparent),
+        transparent 72%
+      ),
+      radial-gradient(
+        74% 62% at 50% 106%,
+        color-mix(in srgb, #b98cff 90%, transparent),
+        transparent 72%
+      ),
+      radial-gradient(
+        90% 64% at 84% 102%,
+        color-mix(in srgb, #ff8fe0 85%, transparent),
+        transparent 74%
+      );
+  }
+
   @media (max-width: 900px) {
     .contact {
       grid-template-columns: 1fr;
@@ -489,4 +559,55 @@ const titleLead = titleWords.slice(0, -accentCount).join(' ');
       grid-template-columns: 1fr;
     }
   }
+
+  /* Phones only: bring the title down to the hero H1 scale so it stops
+     out-scaling the hero. Desktop keeps its larger statement size. */
+  @media (max-width: 600px) {
+    .contact__title {
+      font-size: var(--fs-h1);
+    }
+    .contact__intro {
+      text-align: center;
+    }
+    .contact__text {
+      margin-inline: auto;
+    }
+  }
 </style>
+
+<script>
+  // v2 only: parallax the intro globe — it expands and drifts a little as the
+  // section scrolls through the viewport.
+  const isV2 = document.documentElement.getAttribute('data-theme') === 'v2';
+  const globe = document.querySelector<HTMLElement>('.contact__globe img');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (isV2 && globe && !reduce) {
+    const clamp = (v: number) => Math.max(0, Math.min(1, v));
+    let ticking = false;
+
+    const update = () => {
+      const r = globe.getBoundingClientRect();
+      const vh = window.innerHeight;
+      // 0 as it enters from the bottom, 1 as it leaves past the top.
+      const p = clamp((vh - r.top) / (vh + r.height));
+      const scale = 1.1 + p * 0.65; // starts big (1.1) → grows strongly to ~1.75
+      const ty = (p - 0.5) * 56; // −28px → +28px drift
+      globe.style.transform = `translateY(${ty}px) scale(${scale})`;
+      ticking = false;
+    };
+
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (!ticking) {
+          requestAnimationFrame(update);
+          ticking = true;
+        }
+      },
+      { passive: true }
+    );
+    window.addEventListener('resize', update);
+    update();
+  }
+</script>

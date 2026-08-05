@@ -41,6 +41,7 @@ const brands = [
 ---
 
 <section id="brands" class="section section--alt" aria-label={locale === 'es' ? 'Las dos marcas' : 'The two brands'}>
+  <span class="brands-glow" aria-hidden="true"></span>
   <div class="container">
     <div class="brands">
       {
@@ -93,6 +94,56 @@ const brands = [
     padding-top: clamp(1.5rem, 0.75rem + 2.5vw, 3.5rem);
   }
 
+  /* Ambient brand glow behind the (translucent) cards — gives the section
+     colour, gently breathing like the Custom Solutions section. */
+  #brands {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+  }
+  .brands-glow {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      radial-gradient(
+        50% 56% at 26% 38%,
+        color-mix(in srgb, var(--c1) 31%, transparent),
+        transparent 70%
+      ),
+      radial-gradient(
+        50% 56% at 78% 50%,
+        color-mix(in srgb, var(--c2) 26%, transparent),
+        transparent 72%
+      );
+    /* feather the top bottom edges so the glow never hard-cuts at the
+       section boundary (the overflow clip was showing a line). */
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      transparent 0%,
+      #000 12%,
+      #000 52%,
+      transparent 82%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 0%,
+      #000 12%,
+      #000 52%,
+      transparent 82%
+    );
+    will-change: opacity, transform;
+    animation: brands-glow 9s ease-in-out infinite alternate;
+  }
+  @keyframes brands-glow {
+    from { opacity: 0.76; transform: scale(0.96); }
+    to { opacity: 1; transform: scale(1.06); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .brands-glow { animation: none; }
+  }
+
   .brands {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -111,19 +162,19 @@ const brands = [
     border-radius: 22px;
     box-shadow: 0 1px 0 rgba(255, 255, 255, 0.03) inset,
       0 24px 60px -30px rgba(0, 0, 0, 0.7);
-    transition: transform var(--dur-base) var(--ease-out),
-      border-color var(--dur-base) var(--ease-out),
-      box-shadow var(--dur-base) var(--ease-out);
+    transition: transform var(--dur-slow) var(--ease-out),
+      border-color var(--dur-slow) var(--ease-out),
+      box-shadow var(--dur-slow) var(--ease-out);
   }
 
   .brand-card:hover {
-    transform: translateY(-3px);
-    /* border lights up with the brand accent + a soft glow around it */
-    border-color: color-mix(in srgb, var(--atmo) 55%, transparent);
+    transform: translateY(-2px);
+    /* border + soft glow light up in white — very subtle */
+    border-color: rgba(255, 255, 255, 0.28);
     box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05) inset,
-      0 0 0 1px color-mix(in srgb, var(--atmo) 28%, transparent),
-      0 0 26px -2px color-mix(in srgb, var(--atmo) 40%, transparent),
-      0 30px 70px -30px rgba(0, 0, 0, 0.8);
+      0 0 0 1px rgba(255, 255, 255, 0.1),
+      0 0 22px -4px rgba(255, 255, 255, 0.1),
+      0 28px 64px -30px rgba(0, 0, 0, 0.8);
   }
 
   /* Top row: category label (left) + destination tag (right) */
@@ -141,7 +192,14 @@ const brands = [
     font-weight: var(--fw-semibold);
     letter-spacing: var(--ls-eyebrow);
     text-transform: uppercase;
-    color: var(--dim);
+    /* brand gradient fill: lilac → violet → blue, in light tints so the small
+       uppercase label stays legible on the dark card (the deep --c1/--c2 hues
+       read as near-black at this size) */
+    background: linear-gradient(90deg, #f0a6dc, #ad84f2 52%, #93bdff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
   }
 
   .brand-card__tag {
@@ -213,6 +271,17 @@ const brands = [
   .brand-card__cta:hover .brand-card__arrow {
     transform: translate(2px, -2px);
     color: var(--text);
+  }
+
+  /* --- v2: quieter cards — keep the structure, drop the glowing hover border
+     and flatten the bright hairline divider for a cleaner, editorial look. --- */
+  :global(:root[data-theme='v2']) .brand-card:hover {
+    border-color: var(--line-2);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05) inset,
+      0 30px 70px -30px rgba(0, 0, 0, 0.8);
+  }
+  :global(:root[data-theme='v2']) .brand-card__divider {
+    background: var(--line);
   }
 
   @media (max-width: 800px) {
