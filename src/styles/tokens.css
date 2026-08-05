@@ -23,6 +23,11 @@
 
   --brand: #6e5af0;
 
+  /* Primary-button surface (flips per surface context — see .surface-light) */
+  --btn-primary-bg: #ffffff;
+  --btn-primary-ink: var(--ink);
+  --eyebrow-color: color-mix(in srgb, var(--text) 62%, transparent);
+
   --text: #edeef6; /* primary text on dark      */
   --dim: #a6a9c0; /* secondary text            */
   --faint: #6c6f88; /* tertiary / mono labels    */
@@ -31,6 +36,15 @@
 
   --line: rgba(255, 255, 255, 0.1);
   --line-2: rgba(255, 255, 255, 0.16);
+
+  /* Glass chip / pill surface — frosted, menu-style. Reusable recipe:
+     background: var(--chip-bg); border: 1px solid var(--chip-border);
+     backdrop-filter: var(--chip-blur); box-shadow: var(--chip-shadow); */
+  --chip-bg: color-mix(in srgb, var(--bg-2) 68%, transparent);
+  --chip-border: var(--line-2);
+  --chip-blur: saturate(170%) blur(18px);
+  --chip-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset,
+    0 12px 40px -12px rgba(0, 0, 0, 0.6);
 
   --hero-img: url('/img/hero/horizonte.jpg');
   --glow-1: #7523ed;
@@ -44,8 +58,8 @@
 
   /* Fluid type scale (min → max) */
   --fs-eyebrow: 0.75rem; /* mono labels */
-  --fs-body: clamp(1rem, 0.97rem + 0.16vw, 1.0625rem); /* 16 → 17 */
-  --fs-lead: clamp(1.125rem, 1.03rem + 0.42vw, 1.375rem); /* 18 → 22 */
+  --fs-body: clamp(1rem, 0.95rem + 0.2vw, 1.0625rem); /* 16 → 17 */
+  --fs-lead: 1.0625rem; /* 17 (matches body max; kept flat per request) */
   --fs-h3: clamp(1.25rem, 1.08rem + 0.7vw, 1.55rem);
   --fs-h2: clamp(1.75rem, 1.25rem + 2.1vw, 2.85rem); /* 28 → 46 */
   --fs-h1: clamp(2.6rem, 1.5rem + 4.6vw, 4.5rem); /* 42 → 72 */
@@ -63,16 +77,17 @@
   --fw-bold: 700;
   --fw-extrabold: 800;
 
-  /* Display weights per level */
-  --fw-h1: 800;
-  --fw-h2: 720;
-  --fw-h3: 680;
+  /* Display weights per level (Mona Sans reads best lighter at display sizes) */
+  --fw-h1: 600;
+  --fw-h2: 560;
+  --fw-h3: 560;
 
   /* Letter-spacing (display tightens as it scales up) */
   --ls-h1: -0.04em;
   --ls-h2: -0.03em;
   --ls-h3: -0.02em;
   --ls-mono: 0.16em;
+  --ls-eyebrow: 0.12em; /* Mona Sans uppercase labels */
 
   /* --- Spacing ---------------------------------------------------------- */
   --space-1: 0.25rem;

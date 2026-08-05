@@ -1,0 +1,124 @@
+---
+/**
+ * PageGradient — scroll-reactive brand gradient painted on a fixed WebGL canvas
+ * behind the page. Sits under the transparent sections just after the hero and
+ * shifts colour (blue → violet → pink) as you scroll, then fades to the near-black
+ * page background further down. Palette + darkness tuned in /demo/scroll-grad.
+ * Re-themes with the brand tokens (colours read from CSS custom properties).
+ */
+---
+
+<canvas class="page-grad" aria-hidden="true"></canvas>
+
+<style>
+  .page-grad {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+    display: block;
+    pointer-events: none;
+  }
+</style>
+
+<script is:inline>
+  (() => {
+    const canvas = document.querySelector('.page-grad');
+    if (!(canvas instanceof HTMLCanvasElement)) return;
+    const gl = canvas.getContext('webgl', { antialias: false, alpha: true });
+    if (!gl) return;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const rgb = (hex) => {
+      const m = hex.replace('#', '');
+      return [
+        parseInt(m.slice(0, 2), 16) / 255,
+        parseInt(m.slice(2, 4), 16) / 255,
+        parseInt(m.slice(4, 6), 16) / 255,
+      ];
+    };
+    // Palette "Equilibrada": [mid-violet, start-blue (hero side), end-pink, near-black bg]
+    const A = rgb('#7b3ff0');
+    const B = rgb('#2f6fe0');
+    const C = rgb('#d45ac0');
+    const BG = rgb('#030308');
+
+    const vert = 'attribute vec2 p; void main(){ gl_Position = vec4(p,0.0,1.0); }';
+    // uStart = page position (in viewport units) where the glow begins — the
+    // middle of the brand cards. Everything above rests on the near-black page.
+    const frag = `
+      precision highp float;
+      uniform vec2 uRes; uniform float uTime; uniform float uScroll; uniform float uStart;
+      uniform vec3 uA, uB, uC, uBg;
+      vec3 ramp(float t){
+        t = clamp(t, 0.0, 1.0);
+        vec3 c = mix(uBg, uB, smoothstep(0.0, 0.45, t));
+        c = mix(c, uA, smoothstep(0.35, 0.72, t));
+        c = mix(c, uC, smoothstep(0.66, 1.0, t));
+        return c;
+      }
+      void main(){
+        vec2 uv = gl_FragCoord.xy / uRes.xy;
+        float t = uTime * 0.22;
+        // where this pixel sits in the whole document, in viewport units
+        float docY = uScroll + (1.0 - uv.y);
+        float warp = 0.06*sin(uv.x*6.0 + t) + 0.05*sin(uv.y*5.0 - t*1.1);
+        // colour deepens with page depth: starts blue, drifts to violet -> pink
+        float g = clamp((docY - uStart) * 0.42, 0.0, 1.0);
+        vec3 col = ramp(0.30 + g*0.62 + warp) * 0.26;
+        // envelope: transparent until the glow start, bloom, then fade back to black
+        float a = smoothstep(uStart - 0.2, uStart + 0.55, docY) * (1.0 - smoothstep(3.9, 5.4, docY));
+        // glow lives toward the SIDES; the centre stays much darker
+        float edge = smoothstep(0.28, 1.0, abs(uv.x - 0.5) * 2.0);
+        a *= 0.08 + 0.62 * edge;
+        // premultiplied alpha (canvas is premultiplied by default)
+        gl_FragColor = vec4(col * a, a);
+      }
+    `;
+    const sh = (ty, src) => { const s = gl.createShader(ty); gl.shaderSource(s, src); gl.compileShader(s); return s; };
+    const prog = gl.createProgram();
+    gl.attachShader(prog, sh(gl.VERTEX_SHADER, vert));
+    gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, frag));
+    gl.linkProgram(prog); gl.useProgram(prog);
+
+    const buf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 3,-1, -1,3]), gl.STATIC_DRAW);
+    const loc = gl.getAttribLocation(prog, 'p');
+    gl.enableVertexAttribArray(loc);
+    gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+    const U = (n) => gl.getUniformLocation(prog, n);
+    gl.uniform3fv(U('uA'), A);
+    gl.uniform3fv(U('uB'), B);
+    gl.uniform3fv(U('uC'), C);
+    gl.uniform3fv(U('uBg'), BG);
+    // Glow begins a touch before the brand cards
+    gl.uniform1f(U('uStart'), 1.75);
+
+    const resize = () => {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = canvas.clientWidth * dpr;
+      canvas.height = canvas.clientHeight * dpr;
+      gl.viewport(0, 0, canvas.width, canvas.height);
+      gl.uniform2f(U('uRes'), canvas.width, canvas.height);
+    };
+    window.addEventListener('resize', resize); resize();
+
+    let scroll = 0;
+    const onScroll = () => {
+      scroll = window.scrollY / window.innerHeight;
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+
+    const start = performance.now();
+    const render = (now) => {
+      gl.uniform1f(U('uScroll'), scroll);
+      gl.uniform1f(U('uTime'), reduce ? 0 : (now - start) / 1000);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+      if (!reduce) requestAnimationFrame(render);
+    };
+    render(start);
+  })();
+</script>

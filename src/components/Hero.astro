@@ -25,7 +25,10 @@ const leadWords = words.join(' ');
   <div class="hero__glow" aria-hidden="true"></div>
 
   <div class="container hero__inner">
-    <p class="eyebrow hero__eyebrow" data-reveal>{t.hero.eyebrow}</p>
+    <p class="hero__badge" data-reveal>
+      <span class="hero__badge-dot" aria-hidden="true"></span>
+      {t.hero.eyebrow}
+    </p>
 
     <h1 id="hero-title" class="hero__title" data-reveal>
       {leadWords}{' '}<span class="grad-text">{lastWord}</span>
@@ -58,6 +61,11 @@ const leadWords = words.join(' ');
       </a>
     </div>
   </div>
+
+  <button type="button" class="hero__scroll" data-scroll-cue data-reveal>
+    <span class="hero__scroll-label">{t.hero.scrollCue}</span>
+    <span class="hero__scroll-line" aria-hidden="true"></span>
+  </button>
 </section>
 
 <style>
@@ -68,19 +76,25 @@ const leadWords = words.join(' ');
     min-height: min(92vh, 900px);
     display: flex;
     align-items: center;
+    text-align: center;
     padding-block: clamp(6rem, 4rem + 10vw, 11rem);
     /* pull up under the transparent header for an immersive full-bleed hero */
     margin-top: -72px;
   }
 
-  /* Per-theme background image (set via --hero-img in tokens) */
+  /* Per-theme background image (set via --hero-img in tokens).
+     Over-scanned vertically so the scroll-driven rise never reveals a gap. */
   .hero__bg {
     position: absolute;
-    inset: 0;
+    left: 0;
+    right: 0;
+    top: -20%;
+    height: 165%;
     z-index: -3;
     background-image: var(--hero-img);
     background-size: cover;
     background-position: center 30%;
+    will-change: transform;
   }
 
   /* Scrim: keep text legible and blend the image bottom into the page. */
@@ -89,16 +103,18 @@ const leadWords = words.join(' ');
     inset: 0;
     z-index: -2;
     background:
-      linear-gradient(
-        90deg,
-        color-mix(in srgb, var(--bg) 82%, transparent) 0%,
-        color-mix(in srgb, var(--bg) 40%, transparent) 55%,
+      /* soft central pool so centered text stays legible over the image */
+      radial-gradient(
+        68% 62% at 50% 46%,
+        color-mix(in srgb, var(--bg) 62%, transparent) 0%,
+        color-mix(in srgb, var(--bg) 20%, transparent) 62%,
         transparent 100%
       ),
+      /* vertical fade: gentle top, blend the bottom into the page */
       linear-gradient(
         180deg,
-        color-mix(in srgb, var(--bg) 55%, transparent) 0%,
-        transparent 30%,
+        color-mix(in srgb, var(--bg) 50%, transparent) 0%,
+        transparent 28%,
         color-mix(in srgb, var(--bg) 45%, transparent) 72%,
         var(--bg) 100%
       );
@@ -124,26 +140,59 @@ const leadWords = words.join(' ');
   }
 
   .hero__inner {
-    max-width: 900px;
+    max-width: 1120px;
+    margin-inline: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
-  .hero__eyebrow {
-    color: color-mix(in srgb, var(--text) 62%, transparent);
+  /* Pill badge (replaces the underlined eyebrow for a centered hero) */
+  .hero__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55em;
+    padding: 0.32rem 0.75rem;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--chip-border);
+    background: var(--chip-bg);
+    backdrop-filter: var(--chip-blur);
+    -webkit-backdrop-filter: var(--chip-blur);
+    box-shadow: var(--chip-shadow);
+    font-family: var(--font-display);
+    font-size: 0.7rem;
+    font-weight: var(--fw-regular);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text);
+  }
+  .hero__badge-dot {
+    width: 0.5em;
+    height: 0.5em;
+    border-radius: 50%;
+    background: #a9b6ff;
+    box-shadow: 0 0 8px 1px color-mix(in srgb, #8b9bff 75%, transparent),
+      0 0 0 3px color-mix(in srgb, #a9b6ff 24%, transparent);
+    animation: badge-pulse 2.6s ease-in-out infinite;
+  }
+  @keyframes badge-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
   }
 
   .hero__title {
     margin-top: var(--space-5);
     font-size: var(--fs-h1);
-    font-weight: var(--fw-extrabold);
-    letter-spacing: -0.035em;
-    line-height: 0.98;
+    font-weight: var(--fw-h1);
+    letter-spacing: var(--ls-h1);
+    line-height: 1.05;
     color: var(--text);
-    max-width: 18ch;
+    max-width: 26ch;
   }
 
   .hero__support {
     margin-top: var(--space-5);
-    max-width: 60ch;
+    max-width: 68ch;
     font-size: var(--fs-lead);
     line-height: var(--lh-snug);
     color: var(--dim);
@@ -153,12 +202,136 @@ const leadWords = words.join(' ');
     margin-top: var(--space-7);
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
     gap: var(--space-4);
   }
 
+  /* Scroll cue — invites the eye downward. A light "comet" travels down the
+     hairline on a loop (matches the badge-dot's ambient life). */
+  .hero__scroll {
+    position: absolute;
+    left: 50%;
+    bottom: clamp(1.25rem, 3vh, 2.5rem);
+    transform: translateX(-50%);
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.85rem;
+    /* button reset */
+    appearance: none;
+    background: transparent;
+    border: 0;
+    padding: 0.5rem 0.75rem;
+    cursor: pointer;
+    border-radius: var(--radius-md);
+  }
+  .hero__scroll-label {
+    font-family: var(--font-display);
+    font-size: 0.7rem;
+    font-weight: var(--fw-regular);
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    /* nudge right to optically re-center against the trailing letter-spacing */
+    padding-left: 0.32em;
+    color: color-mix(in srgb, var(--text) 58%, transparent);
+    transition: color var(--dur-base) var(--ease-out);
+  }
+  .hero__scroll:hover .hero__scroll-label {
+    color: var(--text);
+  }
+  /* nudge the whole cue down a touch on hover for a subtle "pull" */
+  .hero__scroll:hover .hero__scroll-line {
+    transform: translateY(3px);
+  }
+  .hero__scroll-line {
+    transition: transform var(--dur-base) var(--ease-out);
+  }
+  .hero__scroll-line {
+    position: relative;
+    width: 1px;
+    height: 46px;
+    overflow: hidden;
+    background: color-mix(in srgb, var(--text) 15%, transparent);
+  }
+  .hero__scroll-line::after {
+    content: '';
+    position: absolute;
+    inset: 0 auto auto 0;
+    width: 100%;
+    height: 45%;
+    background: linear-gradient(to bottom, transparent, #cdd6ff);
+    animation: scroll-cue 2.4s var(--ease-out) infinite;
+  }
+  @keyframes scroll-cue {
+    0% { transform: translateY(-110%); opacity: 0; }
+    25% { opacity: 1; }
+    75% { opacity: 1; }
+    100% { transform: translateY(240%); opacity: 0; }
+  }
+
+  /* Short viewports: the cue would crowd the CTAs — hide it. */
+  @media (max-height: 640px) {
+    .hero__scroll {
+      display: none;
+    }
+  }
+
   @media (max-width: 560px) {
+    .hero__actions {
+      width: 100%;
+    }
     .hero__actions .btn {
       flex: 1 1 100%;
     }
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero__badge-dot {
+      animation: none;
+    }
+    .hero__scroll-line::after {
+      animation: none;
+      transform: translateY(60%);
+    }
+  }
 </style>
+
+<script>
+  // Scroll-driven parallax: the planet background rises as you scroll.
+  const bg = document.querySelector<HTMLElement>('.hero__bg');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Scroll cue: smooth-scroll to the first section after the hero. Sibling
+  // combinator skips dev-injected <script> nodes between sections. We compute
+  // the target with window.scrollTo (rather than scrollIntoView) so it behaves
+  // predictably regardless of which element is the scroll container.
+  const cue = document.querySelector<HTMLButtonElement>('[data-scroll-cue]');
+  const next = document.querySelector('.hero ~ section');
+  if (cue && next) {
+    cue.addEventListener('click', () => {
+      const top = next.getBoundingClientRect().top + window.scrollY;
+      window.scrollTo({ top, behavior: reduce ? 'auto' : 'smooth' });
+    });
+  }
+  if (bg && !reduce) {
+    const RISE = 30; // vh the planet climbs over one viewport of scroll
+    let ticking = false;
+    const update = () => {
+      const p = Math.min(window.scrollY / window.innerHeight, 1);
+      bg.style.transform = `translate3d(0, ${p * -RISE}vh, 0)`;
+      ticking = false;
+    };
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (!ticking) {
+          requestAnimationFrame(update);
+          ticking = true;
+        }
+      },
+      { passive: true }
+    );
+    update();
+  }
+</script>

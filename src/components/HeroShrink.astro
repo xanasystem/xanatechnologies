@@ -1,0 +1,288 @@
+---
+import {
+  content,
+  type Locale,
+  XANA_SYSTEM_URL,
+  WOMAN_ON_MARS_URL,
+} from '../i18n/content';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = content[locale];
+
+// Split the H1 so the last word can (optionally) carry an accent.
+const words = t.hero.h1.trim().split(' ');
+const lastWord = words.pop() ?? '';
+const leadWords = words.join(' ');
+
+// Second message that fades in as the hero shrinks. v2-specific copy —
+// move into content.ts if this becomes permanent.
+const textB = {
+  en: {
+    h: 'One ecosystem, two brands',
+    p: 'Xana System and Woman on Mars — product technology and digital strategy, working as one.',
+  },
+  es: {
+    h: 'Un ecosistema, dos marcas',
+    p: 'Xana System y Woman on Mars — tecnología de producto y estrategia digital, trabajando como una.',
+  },
+}[locale];
+---
+
+<section class="shrinkhero" aria-labelledby="hero-title">
+  <div class="shrinkhero__sticky">
+    <div class="shrinkhero__pad">
+      <div class="shrinkhero__card">
+        <div class="shrinkhero__gradient" aria-hidden="true"></div>
+        <video
+          class="shrinkhero__video"
+          autoplay
+          muted
+          loop
+          playsinline
+          preload="metadata"
+          aria-hidden="true"
+        >
+          <source src="/video/hero-shrink.mp4" type="video/mp4" />
+        </video>
+        <div class="shrinkhero__scrim" aria-hidden="true"></div>
+
+        <!-- Text A: full-bleed, fades out as the card shrinks -->
+        <div class="shrinkhero__content shrinkhero__content--a">
+          <p class="shrinkhero__badge">
+            <span class="shrinkhero__badge-dot" aria-hidden="true"></span>
+            {t.hero.eyebrow}
+          </p>
+          <h1 id="hero-title" class="shrinkhero__title">
+            {leadWords}{' '}<span>{lastWord}</span>
+          </h1>
+          <p class="shrinkhero__support">{t.hero.support}</p>
+          <div class="shrinkhero__actions">
+            <a
+              class="btn btn--primary"
+              href={XANA_SYSTEM_URL}
+              rel="noopener"
+              aria-label={`${t.hero.ctaPrimary} — ${t.xanaSystem.externalLabel}`}
+            >
+              {t.hero.ctaPrimary}
+            </a>
+            <a
+              class="btn btn--secondary"
+              href={WOMAN_ON_MARS_URL}
+              rel="noopener"
+              aria-label={`${t.hero.ctaSecondary} — ${t.womanOnMars.externalLabel}`}
+            >
+              {t.hero.ctaSecondary}
+            </a>
+          </div>
+        </div>
+
+        <!-- Text B: fades in as the card shrinks (no CTA) -->
+        <div class="shrinkhero__content shrinkhero__content--b" aria-hidden="true">
+          <h2 class="shrinkhero__title">{textB.h}</h2>
+          <p class="shrinkhero__support">{textB.p}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .shrinkhero {
+    height: 220vh; /* scroll track that drives the shrink */
+    margin-top: -92px; /* pull up under the floating header (JS refines to exact height) */
+  }
+  .shrinkhero__sticky {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    background: var(--bg); /* clean dark margins around the shrunk card */
+  }
+  /* padding is animated by JS → the card shrinks, revealing the page behind */
+  .shrinkhero__pad {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+  }
+  .shrinkhero__card {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg);
+    box-shadow: 0 40px 120px -40px rgba(0, 0, 0, 0.85);
+    will-change: border-radius, padding;
+  }
+
+  /* Dark on-brand fallback shown while the video loads / if it's missing */
+  .shrinkhero__gradient {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(60% 60% at 50% 0%, color-mix(in srgb, var(--c1) 32%, var(--bg)) 0%, transparent 62%),
+      radial-gradient(55% 55% at 88% 100%, color-mix(in srgb, var(--c2) 28%, var(--bg)) 0%, transparent 60%),
+      var(--bg);
+  }
+  .shrinkhero__video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 28%;
+    display: block;
+  }
+  .shrinkhero__scrim {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(52% 46% at 50% 48%, rgba(4, 4, 14, 0.42), transparent 74%);
+  }
+
+  /* Both text blocks stack centered; JS cross-fades them on scroll */
+  .shrinkhero__content {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    padding: 0 var(--gutter);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    will-change: opacity, transform;
+  }
+  .shrinkhero__content--b {
+    opacity: 0;
+  }
+
+  .shrinkhero__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55em;
+    padding: 0.32rem 0.75rem;
+    border-radius: var(--radius-pill);
+    border: 1px solid color-mix(in srgb, #fff 22%, transparent);
+    background: color-mix(in srgb, #fff 8%, transparent);
+    backdrop-filter: blur(6px);
+    font-family: var(--font-display);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #fff;
+  }
+  .shrinkhero__badge-dot {
+    width: 0.5em;
+    height: 0.5em;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 8px 1px color-mix(in srgb, #fff 70%, transparent);
+    animation: shrinkhero-pulse 2.6s ease-in-out infinite;
+  }
+  @keyframes shrinkhero-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  .shrinkhero__title {
+    margin-top: var(--space-5);
+    font-size: var(--fs-h1);
+    font-weight: var(--fw-h1);
+    letter-spacing: var(--ls-h1);
+    line-height: 1.05;
+    color: #fff;
+    max-width: 30ch;
+  }
+  .shrinkhero__content--b .shrinkhero__title {
+    margin-top: 0;
+  }
+  .shrinkhero__support {
+    margin-top: var(--space-5);
+    max-width: 72ch;
+    font-size: var(--fs-lead);
+    line-height: var(--lh-snug);
+    color: rgba(255, 255, 255, 0.9);
+  }
+  .shrinkhero__actions {
+    margin-top: var(--space-7);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-4);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .shrinkhero__badge-dot {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  const section = document.querySelector<HTMLElement>('.shrinkhero');
+  const pad = document.querySelector<HTMLElement>('.shrinkhero__pad');
+  const card = document.querySelector<HTMLElement>('.shrinkhero__card');
+  const contentA = document.querySelector<HTMLElement>('.shrinkhero__content--a');
+  const contentB = document.querySelector<HTMLElement>('.shrinkhero__content--b');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Pull the hero up under the floating header, matching its exact height on any screen.
+  const header = document.querySelector<HTMLElement>('[data-header]');
+  const applyOffset = () => {
+    if (section && header) section.style.marginTop = `-${header.offsetHeight}px`;
+  };
+  applyOffset();
+  window.addEventListener('resize', applyOffset);
+
+  if (section && pad && card && !reduce) {
+    const PAD_X = 9; // vw inset on each side at full scroll
+    const PAD_TOP = 96; // px (clears the floating header)
+    const PAD_BOTTOM = 28; // px
+    const RADIUS = 34; // px corner radius
+    const clamp = (v: number) => Math.max(0, Math.min(1, v));
+    let ticking = false;
+
+    const update = () => {
+      const total = Math.max(section.offsetHeight - window.innerHeight, 1);
+      const p = clamp(window.scrollY / total);
+      pad.style.paddingTop = p * PAD_TOP + 'px';
+      pad.style.paddingBottom = p * PAD_BOTTOM + 'px';
+      pad.style.paddingLeft = p * PAD_X + 'vw';
+      pad.style.paddingRight = p * PAD_X + 'vw';
+      card.style.borderRadius = p * RADIUS + 'px';
+
+      const aOut = clamp(p / 0.42);
+      const bIn = clamp((p - 0.5) / 0.42);
+      if (contentA) {
+        contentA.style.opacity = String(1 - aOut);
+        contentA.style.transform = 'translateY(' + aOut * -30 + 'px)';
+        contentA.style.pointerEvents = aOut > 0.6 ? 'none' : '';
+      }
+      if (contentB) {
+        contentB.style.opacity = String(bIn);
+        contentB.style.transform = 'translateY(' + (1 - bIn) * 30 + 'px)';
+        contentB.style.pointerEvents = bIn > 0.6 ? '' : 'none';
+        contentB.setAttribute('aria-hidden', bIn > 0.5 ? 'false' : 'true');
+      }
+      ticking = false;
+    };
+
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (!ticking) {
+          requestAnimationFrame(update);
+          ticking = true;
+        }
+      },
+      { passive: true }
+    );
+    window.addEventListener('resize', update);
+    update();
+  }
+</script>

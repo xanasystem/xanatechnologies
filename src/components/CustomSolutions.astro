@@ -9,63 +9,94 @@ const { locale } = Astro.props;
 const t = content[locale];
 ---
 
-<section id="custom-solutions" class="section section--alt" aria-labelledby="custom-title">
-  <div class="container">
-    <div class="custom" data-reveal>
-      <div class="custom__body">
-        <p class="eyebrow">{t.customSolutions.label}</p>
-        <h2 id="custom-title" class="custom__title">{t.customSolutions.h2}</h2>
-        <p class="custom__text lead">{t.customSolutions.text}</p>
-      </div>
-      <div class="custom__action">
-        <!-- CTA routes to the corporate form, never directly to a brand. -->
-        <a class="btn btn--primary custom__cta" href="#contact">
-          {t.customSolutions.cta}
-        </a>
-      </div>
+<section id="custom-solutions" class="section custom" aria-labelledby="custom-title">
+  <div class="custom__glow" aria-hidden="true"></div>
+
+  <div class="container custom__inner">
+    <p class="eyebrow eyebrow--pill" data-reveal>{t.customSolutions.label}</p>
+    <h2 id="custom-title" class="custom__title" data-reveal>{t.customSolutions.h2}</h2>
+    <p class="custom__text lead" data-reveal>{t.customSolutions.text}</p>
+
+    <div class="custom__action" data-reveal>
+      <!-- CTA routes to the corporate form, never directly to a brand. -->
+      <a class="btn btn--primary" href="#contact">
+        {t.customSolutions.cta}
+        <svg class="btn__arrow" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M7 17L17 7M17 7H9M17 7v8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </a>
     </div>
   </div>
 </section>
 
 <style>
+  /* custom solutions — open, centered statement (no box) — v2 */
   .custom {
-    display: grid;
-    grid-template-columns: 1.6fr 1fr;
-    align-items: center;
-    gap: var(--space-7);
-    padding: clamp(2rem, 1rem + 3vw, 3.5rem);
-    background: var(--color-ink);
-    color: var(--color-on-dark);
-    border-radius: var(--radius-lg);
+    position: relative;
+    overflow: hidden;
+    text-align: center;
   }
 
-  .custom .eyebrow {
-    color: var(--color-accent);
+  /* ambient brand glow behind the content — multi-colour, gently breathing */
+  .custom__glow {
+    position: absolute;
+    inset: 0;
+    background:
+      /* blue (left) → violet (centre) → pink (right) */
+      radial-gradient(
+        40% 56% at 40% 46%,
+        color-mix(in srgb, var(--c2) 28%, transparent),
+        transparent 66%
+      ),
+      radial-gradient(
+        42% 58% at 50% 42%,
+        color-mix(in srgb, var(--c1) 32%, transparent),
+        transparent 66%
+      ),
+      radial-gradient(
+        38% 52% at 61% 48%,
+        color-mix(in srgb, var(--c4) 28%, transparent),
+        transparent 66%
+      );
+    pointer-events: none;
+    will-change: opacity, transform, filter;
+    animation: custom-glow 8s ease-in-out infinite alternate,
+      custom-hue 16s ease-in-out infinite alternate;
+  }
+  @keyframes custom-glow {
+    from { opacity: 0.72; transform: scale(0.94); }
+    to { opacity: 1; transform: scale(1.06); }
+  }
+  @keyframes custom-hue {
+    from { filter: hue-rotate(-22deg); }
+    to { filter: hue-rotate(24deg); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .custom__glow { animation: none; }
+  }
+
+  .custom__inner {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   .custom__title {
-    margin-top: var(--space-3);
+    margin-top: var(--space-4);
     font-size: var(--fs-h2);
-    color: var(--color-on-dark);
+    color: var(--text);
+    max-width: 18ch;
+    line-height: 1.08;
   }
 
   .custom__text {
-    margin-top: var(--space-4);
-    color: var(--color-on-dark-muted);
+    margin-top: var(--space-5);
+    color: var(--dim);
+    max-width: 56ch;
   }
 
   .custom__action {
-    display: flex;
-    justify-content: flex-end;
-  }
-
-  @media (max-width: 800px) {
-    .custom {
-      grid-template-columns: 1fr;
-      gap: var(--space-5);
-    }
-    .custom__action {
-      justify-content: flex-start;
-    }
+    margin-top: var(--space-7);
   }
 </style>

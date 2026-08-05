@@ -9,30 +9,69 @@ const { locale } = Astro.props;
 const t = content[locale];
 
 const homeHref = locale === 'es' ? '/es/' : '/';
-const altHref = locale === 'es' ? '/' : '/es/';
-const altLabel = locale === 'es' ? 'EN' : 'ES';
-const curLabel = locale === 'es' ? 'ES' : 'EN';
 ---
 
 <header class="site-header" data-header>
-  <div class="container site-header__inner">
-    <a class="brand" href={homeHref} aria-label="Xana Technologies — home">
-      <img
-        class="brand__logo"
-        src="/logo/xana-wordmark-white.png"
-        alt="Xana Technologies"
-        width="658"
-        height="151"
-        fetchpriority="high"
-      />
-    </a>
+  <div class="site-header__wrap">
+    <div class="navbar" data-navbar>
+      <a class="brand" href={homeHref} aria-label="Xana Technologies — home">
+        <img
+          class="brand__logo"
+          src="/logo/xana-wordmark-white.png"
+          alt="Xana Technologies"
+          width="658"
+          height="151"
+          fetchpriority="high"
+        />
+      </a>
 
-    <nav class="site-nav" aria-label={locale === 'es' ? 'Navegación principal' : 'Main navigation'}>
-      <ul class="site-nav__list">
+      <nav class="site-nav" aria-label={locale === 'es' ? 'Navegación principal' : 'Main navigation'}>
+        <ul class="site-nav__list">
+          {
+            t.nav.sections
+              .filter((section) => section.id !== 'contact')
+              .map((section) => (
+                <li>
+                  <a class="site-nav__link" href={`#${section.id}`}>
+                    {section.label}
+                  </a>
+                </li>
+              ))
+          }
+        </ul>
+      </nav>
+
+      <div class="site-header__actions">
+        <a class="btn btn--primary header-cta" href="#contact">
+          {locale === 'es' ? 'Contacto' : 'Contact'}
+        </a>
+
+        <button
+          class="nav-toggle"
+          type="button"
+          aria-expanded="false"
+          aria-controls="mobile-nav"
+          data-nav-toggle
+        >
+          <span class="visually-hidden">{locale === 'es' ? 'Abrir menú' : 'Open menu'}</span>
+          <span class="nav-toggle__bar" aria-hidden="true"></span>
+          <span class="nav-toggle__bar" aria-hidden="true"></span>
+        </button>
+      </div>
+    </div>
+
+    <nav
+      id="mobile-nav"
+      class="mobile-nav"
+      aria-label={locale === 'es' ? 'Navegación móvil' : 'Mobile navigation'}
+      data-mobile-nav
+      hidden
+    >
+      <ul class="mobile-nav__list">
         {
           t.nav.sections.map((section) => (
             <li>
-              <a class="site-nav__link" href={`#${section.id}`}>
+              <a class="mobile-nav__link" href={`#${section.id}`} data-mobile-link>
                 {section.label}
               </a>
             </li>
@@ -40,61 +79,7 @@ const curLabel = locale === 'es' ? 'ES' : 'EN';
         }
       </ul>
     </nav>
-
-    <div class="site-header__actions">
-      <a
-        class="lang-switch"
-        href={altHref}
-        hreflang={locale === 'es' ? 'en' : 'es'}
-        aria-label={locale === 'es' ? 'Switch to English' : 'Cambiar a español'}
-      >
-        <strong>{curLabel}</strong>
-        <span class="lang-switch__sep" aria-hidden="true">/</span>
-        <span aria-hidden="true">{altLabel}</span>
-      </a>
-
-      <a class="btn btn--primary header-cta" href="#contact">
-        {locale === 'es' ? 'Contacto' : 'Contact'}
-      </a>
-
-      <button
-        class="nav-toggle"
-        type="button"
-        aria-expanded="false"
-        aria-controls="mobile-nav"
-        data-nav-toggle
-      >
-        <span class="visually-hidden">{locale === 'es' ? 'Abrir menú' : 'Open menu'}</span>
-        <span class="nav-toggle__bar" aria-hidden="true"></span>
-        <span class="nav-toggle__bar" aria-hidden="true"></span>
-      </button>
-    </div>
   </div>
-
-  <nav
-    id="mobile-nav"
-    class="mobile-nav"
-    aria-label={locale === 'es' ? 'Navegación móvil' : 'Mobile navigation'}
-    data-mobile-nav
-    hidden
-  >
-    <ul class="mobile-nav__list">
-      {
-        t.nav.sections.map((section) => (
-          <li>
-            <a class="mobile-nav__link" href={`#${section.id}`} data-mobile-link>
-              {section.label}
-            </a>
-          </li>
-        ))
-      }
-      <li>
-        <a class="mobile-nav__link" href="#contact" data-mobile-link>
-          {locale === 'es' ? 'Contacto' : 'Contact'}
-        </a>
-      </li>
-    </ul>
-  </nav>
 </header>
 
 <style>
@@ -102,23 +87,42 @@ const curLabel = locale === 'es' ? 'ES' : 'EN';
     position: sticky;
     top: 0;
     z-index: 50;
-    transition: background-color var(--dur-base) var(--ease-out),
-      border-color var(--dur-base) var(--ease-out);
-    background: transparent;
-    border-bottom: 1px solid transparent;
-  }
-  .site-header[data-scrolled] {
-    background: color-mix(in srgb, var(--bg) 72%, transparent);
-    backdrop-filter: saturate(160%) blur(14px);
-    border-bottom-color: var(--line);
+    pointer-events: none;
   }
 
-  .site-header__inner {
+  .site-header__wrap {
+    position: relative;
+    max-width: var(--container-max);
+    margin-inline: auto;
+    padding: clamp(0.6rem, 0.3rem + 0.9vw, 1rem) var(--gutter);
+    pointer-events: none;
+  }
+
+  /* The floating pill */
+  .navbar {
+    pointer-events: auto;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: var(--space-5);
-    min-height: 72px;
+    min-height: 60px;
+    padding: 0.4rem 0.75rem 0.4rem 1.4rem;
+    border-radius: var(--radius-pill);
+    background: color-mix(in srgb, var(--bg-2) 62%, transparent);
+    backdrop-filter: saturate(170%) blur(18px);
+    -webkit-backdrop-filter: saturate(170%) blur(18px);
+    border: 1px solid var(--line);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset,
+      0 12px 40px -12px rgba(0, 0, 0, 0.6);
+    transition: background-color var(--dur-base) var(--ease-out),
+      border-color var(--dur-base) var(--ease-out),
+      box-shadow var(--dur-base) var(--ease-out);
+  }
+  .site-header[data-scrolled] .navbar {
+    background: color-mix(in srgb, var(--bg-2) 82%, transparent);
+    border-color: var(--line-2);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05) inset,
+      0 16px 48px -14px rgba(0, 0, 0, 0.7);
   }
 
   .brand {
@@ -127,7 +131,7 @@ const curLabel = locale === 'es' ? 'ES' : 'EN';
     flex-shrink: 0;
   }
   .brand__logo {
-    height: 26px;
+    height: 24px;
     width: auto;
   }
 
@@ -153,33 +157,8 @@ const curLabel = locale === 'es' ? 'ES' : 'EN';
   .site-header__actions {
     display: flex;
     align-items: center;
-    gap: var(--space-4);
+    gap: var(--space-3);
     flex-shrink: 0;
-  }
-
-  .lang-switch {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4em;
-    font-family: var(--font-mono);
-    font-size: 0.82rem;
-    letter-spacing: 0.06em;
-    color: var(--dim);
-    padding: var(--space-2) var(--space-3);
-    border-radius: var(--radius-pill);
-    border: 1px solid var(--line);
-    transition: border-color var(--dur-fast), color var(--dur-fast);
-  }
-  .lang-switch:hover {
-    color: var(--text);
-    border-color: var(--line-2);
-  }
-  .lang-switch strong {
-    color: var(--text);
-    font-weight: var(--fw-semibold);
-  }
-  .lang-switch__sep {
-    opacity: 0.5;
   }
 
   .header-cta {
@@ -216,14 +195,21 @@ const curLabel = locale === 'es' ? 'ES' : 'EN';
   }
 
   .mobile-nav {
-    background: color-mix(in srgb, var(--bg) 92%, transparent);
-    backdrop-filter: blur(14px);
-    border-top: 1px solid var(--line);
-    border-bottom: 1px solid var(--line);
+    pointer-events: auto;
+    position: absolute;
+    top: calc(100% - var(--space-3));
+    left: var(--gutter);
+    right: var(--gutter);
+    background: color-mix(in srgb, var(--bg-2) 90%, transparent);
+    backdrop-filter: saturate(170%) blur(18px);
+    -webkit-backdrop-filter: saturate(170%) blur(18px);
+    border: 1px solid var(--line-2);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 20px 48px -16px rgba(0, 0, 0, 0.7);
   }
   .mobile-nav__list {
     list-style: none;
-    padding: var(--space-4) var(--gutter);
+    padding: var(--space-3);
     display: grid;
     gap: var(--space-1);
   }

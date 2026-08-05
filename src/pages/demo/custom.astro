@@ -1,0 +1,258 @@
+---
+import '../../styles/global.css';
+
+const label = 'Custom Solutions';
+const title = 'One challenge. The right combination of expertise.';
+const text =
+  'Xana Technologies evaluates each project and defines the best route: Xana System, Woman on Mars, a combination of both, or an independent custom development.';
+const cta = 'Discuss a Custom Solution';
+const routes = ['Xana System', 'Woman on Mars', 'Both, combined', 'Custom build'];
+
+const arrow = `<svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 17L17 7M17 7H9M17 7v8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Custom Solutions — opciones</title>
+    <link rel="preload" href="/fonts/mona-sans-var.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin />
+  </head>
+  <body>
+    <main class="container wrap">
+      <!-- ============ A · Panel restyle ============ -->
+      <p class="opt">Opción A · Panel restyle</p>
+      <section class="a">
+        <div class="a__glow" aria-hidden="true"></div>
+        <div class="a__body">
+          <p class="pill">{label}</p>
+          <h2 class="a__title">{title}</h2>
+          <p class="a__text">{text}</p>
+        </div>
+        <a class="btn-ghost" href="#"><span>{cta}</span><Fragment set:html={arrow} /></a>
+      </section>
+
+      <!-- ============ B · Combination / routing visual ============ -->
+      <p class="opt">Opción B · Visual de combinación</p>
+      <section class="b">
+        <div class="b__body">
+          <p class="pill">{label}</p>
+          <h2 class="b__title">{title}</h2>
+          <p class="b__text">{text}</p>
+          <a class="btn-ghost" href="#"><span>{cta}</span><Fragment set:html={arrow} /></a>
+        </div>
+        <div class="b__viz" aria-hidden="true">
+          <svg viewBox="0 0 300 230" preserveAspectRatio="xMidYMid meet">
+            <path d="M150 44 C150 90, 54 96, 54 132" fill="none" stroke="url(#g)" stroke-width="1.5" />
+            <path d="M150 44 C150 90, 118 96, 118 132" fill="none" stroke="url(#g)" stroke-width="1.5" />
+            <path d="M150 44 C150 90, 182 96, 182 132" fill="none" stroke="url(#g)" stroke-width="1.5" />
+            <path d="M150 44 C150 90, 246 96, 246 132" fill="none" stroke="url(#g)" stroke-width="1.5" />
+            <defs>
+              <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="var(--atmo)" stop-opacity="0.7" />
+                <stop offset="1" stop-color="var(--atmo)" stop-opacity="0.12" />
+              </linearGradient>
+            </defs>
+          </svg>
+          <span class="node node--challenge">Your challenge</span>
+          {routes.map((r) => <span class="node node--route">{r}</span>)}
+        </div>
+      </section>
+
+      <!-- ============ C · Statement full-width ============ -->
+      <p class="opt">Opción C · Statement centrado</p>
+      <section class="c">
+        <div class="c__glow" aria-hidden="true"></div>
+        <p class="pill">{label}</p>
+        <h2 class="c__title">{title}</h2>
+        <p class="c__text">{text}</p>
+        <a class="btn-grad" href="#"><span>{cta}</span><Fragment set:html={arrow} /></a>
+      </section>
+
+      <!-- ============ D · Two columns (Ecosystem-like) ============ -->
+      <p class="opt">Opción D · Dos columnas</p>
+      <section class="d">
+        <h2 class="d__title">{title}</h2>
+        <div class="d__col">
+          <p class="pill">{label}</p>
+          <p class="d__text">{text}</p>
+          <a class="btn-ghost" href="#"><span>{cta}</span><Fragment set:html={arrow} /></a>
+        </div>
+      </section>
+    </main>
+
+    <style>
+      body { background: var(--bg); }
+      .wrap { padding-block: clamp(2.5rem, 2rem + 4vw, 5rem); }
+      .opt {
+        margin-top: var(--space-9);
+        margin-bottom: var(--space-4);
+        font-family: var(--font-mono);
+        font-size: var(--fs-eyebrow);
+        letter-spacing: var(--ls-mono);
+        text-transform: uppercase;
+        color: var(--atmo);
+      }
+      .opt:first-child { margin-top: 0; }
+
+      /* shared bits */
+      .pill {
+        display: inline-flex;
+        padding: 0.32rem 0.8rem;
+        border-radius: var(--radius-pill);
+        border: 1px solid var(--line-2);
+        background: color-mix(in srgb, var(--bg-2) 60%, transparent);
+        font-family: var(--font-display);
+        font-size: var(--fs-eyebrow);
+        font-weight: var(--fw-regular);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--text);
+      }
+      .btn-ghost {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-3);
+        padding: 0.85rem 1.2rem;
+        border-radius: var(--radius-md);
+        background: color-mix(in srgb, var(--text) 6%, transparent);
+        border: 1px solid var(--line-2);
+        color: var(--text);
+        font-family: var(--font-display);
+        font-weight: var(--fw-medium);
+        white-space: nowrap;
+      }
+      .btn-ghost:hover { background: color-mix(in srgb, var(--text) 12%, transparent); }
+      .btn-grad {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-3);
+        padding: 0.9rem 1.4rem;
+        border-radius: var(--radius-pill);
+        background: linear-gradient(135deg, var(--c1), var(--c2));
+        color: #fff;
+        font-family: var(--font-display);
+        font-weight: var(--fw-medium);
+        box-shadow: 0 12px 30px -10px color-mix(in srgb, var(--c1) 70%, transparent);
+      }
+
+      /* ---- A ---- */
+      .a {
+        position: relative;
+        overflow: hidden;
+        display: grid;
+        grid-template-columns: 1.6fr auto;
+        align-items: center;
+        gap: var(--space-7);
+        padding: clamp(1.75rem, 1rem + 3vw, 3rem);
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--line-2);
+        background: color-mix(in srgb, var(--bg-2) 70%, transparent);
+      }
+      .a__glow {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(50% 120% at 100% 0%, color-mix(in srgb, var(--c1) 24%, transparent), transparent 60%);
+        pointer-events: none;
+      }
+      .a__body { position: relative; }
+      .a__title { margin-top: var(--space-3); font-size: var(--fs-h2); color: var(--text); max-width: 22ch; }
+      .a__text { margin-top: var(--space-4); color: var(--dim); max-width: 60ch; }
+
+      /* ---- B ---- */
+      .b {
+        display: grid;
+        grid-template-columns: 1fr 0.9fr;
+        gap: var(--space-8);
+        align-items: center;
+        padding: clamp(1.75rem, 1rem + 3vw, 3rem);
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--line);
+        background: color-mix(in srgb, var(--bg-2) 55%, transparent);
+      }
+      .b__title { margin-top: var(--space-3); font-size: var(--fs-h2); color: var(--text); max-width: 18ch; }
+      .b__text { margin-top: var(--space-4); color: var(--dim); max-width: 46ch; }
+      .b .btn-ghost { margin-top: var(--space-6); }
+      .b__viz { position: relative; height: 250px; }
+      .b__viz svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+      .node {
+        position: absolute;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.42rem 0.75rem;
+        border-radius: var(--radius-pill);
+        font-size: 0.76rem;
+        white-space: nowrap;
+        transform: translate(-50%, -50%);
+      }
+      .node--challenge {
+        left: 50%; top: 19%;
+        color: #fff; font-weight: var(--fw-medium);
+        background: color-mix(in srgb, var(--bg-2) 82%, transparent);
+        border: 1px solid var(--line-2);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 14px 30px -12px rgba(0,0,0,0.7);
+      }
+      .node--route {
+        top: 57%;
+        color: var(--dim);
+        border: 1px solid var(--line);
+        background: color-mix(in srgb, var(--bg-2) 45%, transparent);
+      }
+      .node--route:nth-of-type(2) { left: 18%; }
+      .node--route:nth-of-type(3) { left: 39%; }
+      .node--route:nth-of-type(4) { left: 61%; }
+      .node--route:nth-of-type(5) { left: 82%; }
+
+      /* ---- C ---- */
+      .c {
+        position: relative;
+        overflow: hidden;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--space-4);
+        padding: clamp(3rem, 2rem + 5vw, 6rem) clamp(1.5rem, 1rem + 3vw, 3rem);
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--line);
+        background: var(--bg-2);
+      }
+      .c__glow {
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(60% 80% at 50% 0%, color-mix(in srgb, var(--c1) 26%, transparent), transparent 60%),
+          radial-gradient(50% 60% at 50% 120%, color-mix(in srgb, var(--c2) 22%, transparent), transparent 60%);
+        pointer-events: none;
+      }
+      .c > * { position: relative; }
+      .c__title { font-size: var(--fs-h1); color: var(--text); max-width: 18ch; line-height: 1.06; }
+      .c__text { color: var(--dim); max-width: 54ch; }
+      .c .btn-grad { margin-top: var(--space-4); }
+
+      /* ---- D ---- */
+      .d {
+        display: grid;
+        grid-template-columns: 1.05fr 0.95fr;
+        gap: clamp(2rem, 1rem + 5vw, 6rem);
+        align-items: start;
+        padding-bottom: var(--space-7);
+        border-bottom: 1px solid var(--line);
+      }
+      .d__title { font-size: var(--fs-h2); color: var(--text); max-width: 16ch; }
+      .d__col { max-width: 46ch; }
+      .d__text { margin-top: var(--space-4); color: var(--dim); }
+      .d .btn-ghost { margin-top: var(--space-6); }
+
+      @media (max-width: 820px) {
+        .a, .b, .d { grid-template-columns: 1fr; }
+        .a { gap: var(--space-5); }
+      }
+    </style>
+  </body>
+</html>

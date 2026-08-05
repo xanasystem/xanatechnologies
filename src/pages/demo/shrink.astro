@@ -1,0 +1,375 @@
+---
+import '../../styles/global.css';
+import { content } from '../../i18n/content';
+
+const t = content.en;
+const words = t.hero.h1.trim().split(' ');
+const lastWord = words.pop() ?? '';
+const leadWords = words.join(' ');
+
+// same switcher as DemoBase, replicated so this standalone page stays in sync
+const tabs = [
+  { id: 'planet', label: 'Planeta ✦' },
+  { id: 'shrink', label: 'Encoge ⤋' },
+  { id: 'shader', label: 'Shader WebGL' },
+  { id: 'video', label: 'Vídeo' },
+  { id: 'css', label: 'CSS scroll' },
+  { id: 'spline', label: 'Spline 3D' },
+];
+const active = 'shrink';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Hero demo — Encoge al scroll</title>
+    <link rel="preload" href="/fonts/mona-sans-var.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin />
+  </head>
+  <body>
+    <nav class="switcher" aria-label="Hero demos">
+      <span class="switcher__brand">Hero&nbsp;demos</span>
+      <div class="switcher__tabs">
+        {tabs.map((tab) => (
+          <a
+            href={`/demo/${tab.id}`}
+            class:list={['switcher__tab', { 'is-active': tab.id === active }]}
+            aria-current={tab.id === active ? 'page' : undefined}
+          >
+            {tab.label}
+          </a>
+        ))}
+      </div>
+    </nav>
+
+    <main>
+      <!-- Tall scroll track; the sticky child shrinks as you move through it -->
+      <section class="shrink" aria-labelledby="hero-title">
+        <div class="shrink__sticky">
+          <div class="shrink__pad">
+            <div class="shrink__card">
+              <div class="shrink__gradient" aria-hidden="true"></div>
+              <video
+                class="shrink__video"
+                autoplay
+                muted
+                loop
+                playsinline
+                preload="metadata"
+                aria-hidden="true"
+              >
+                <source src="/video/hero-shrink.mp4" type="video/mp4" />
+              </video>
+              <div class="shrink__scrim" aria-hidden="true"></div>
+
+              <!-- Text A: shown full-bleed, fades out as the card shrinks -->
+              <div class="shrink__content shrink__content--a">
+                <p class="hero__badge">
+                  <span class="hero__badge-dot" aria-hidden="true"></span>
+                  {t.hero.eyebrow}
+                </p>
+                <h1 id="hero-title" class="shrink__title">
+                  {leadWords}{' '}<span class="grad-text">{lastWord}</span>
+                </h1>
+                <p class="shrink__support">{t.hero.support}</p>
+                <div class="shrink__actions">
+                  <a class="btn btn--primary" href="#">{t.hero.ctaPrimary}</a>
+                  <a class="btn btn--secondary" href="#">{t.hero.ctaSecondary}</a>
+                </div>
+              </div>
+
+              <!-- Text B: hidden at first, fades in as the card shrinks (no CTA) -->
+              <div class="shrink__content shrink__content--b" aria-hidden="true">
+                <h2 class="shrink__title shrink__title--b">
+                  One ecosystem, two brands
+                </h2>
+                <p class="shrink__support">
+                  Xana System and Woman on Mars — product technology and digital
+                  strategy, working as one.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="after">
+        <div class="container">
+          <h2>The page continues</h2>
+          <p class="lead">
+            Once the hero has tucked itself into its rounded card, normal content
+            flows underneath. Scroll back up to expand it full-bleed again.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <style>
+      body {
+        background: #000;
+        overflow-x: hidden;
+      }
+
+      /* --- Switcher (matches DemoBase) ------------------------------------ */
+      .switcher {
+        position: fixed;
+        inset: 0 0 auto 0;
+        z-index: 50;
+        display: flex;
+        align-items: center;
+        gap: var(--space-5);
+        padding: 0.65rem var(--gutter);
+        background: color-mix(in srgb, var(--bg) 72%, transparent);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--line);
+      }
+      .switcher__brand {
+        font-family: var(--font-mono);
+        font-size: var(--fs-eyebrow);
+        letter-spacing: var(--ls-mono);
+        text-transform: uppercase;
+        color: var(--faint);
+      }
+      .switcher__tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.35rem;
+      }
+      .switcher__tab {
+        padding: 0.4rem 0.9rem;
+        border-radius: var(--radius-pill);
+        border: 1px solid var(--line-2);
+        font-size: 0.85rem;
+        font-weight: var(--fw-medium);
+        color: var(--dim);
+        transition: all var(--dur-base) var(--ease-out);
+      }
+      .switcher__tab:hover {
+        color: var(--text);
+        border-color: color-mix(in srgb, var(--text) 40%, transparent);
+      }
+      .switcher__tab.is-active {
+        color: #fff;
+        background: var(--grad);
+        border-color: transparent;
+      }
+
+      /* --- Shrink effect -------------------------------------------------- */
+      .shrink {
+        height: 220vh; /* scroll track: taller than viewport drives the effect */
+      }
+      .shrink__sticky {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+      }
+      /* padding is animated by JS → the card shrinks, revealing the black page */
+      .shrink__pad {
+        width: 100%;
+        height: 100%;
+        box-sizing: border-box;
+      }
+      .shrink__card {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--bg);
+        box-shadow: 0 40px 120px -40px rgba(0, 0, 0, 0.85);
+        will-change: border-radius, padding;
+      }
+      /* Brand mesh gradient (blue → violet → magenta), light & airy */
+      .shrink__gradient {
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(55% 65% at 50% 4%, #33267f 0%, transparent 55%),
+          radial-gradient(48% 56% at 50% 46%, color-mix(in srgb, var(--c1) 90%, #000) 0%, transparent 62%),
+          radial-gradient(42% 44% at 4% 98%, #ff40ef 0%, var(--c4) 30%, transparent 70%),
+          radial-gradient(70% 90% at 104% 60%, #eef3ff 0%, transparent 60%),
+          linear-gradient(180deg, #c7d4f3 0%, #e9edfb 100%);
+      }
+      /* Background video (falls back to the gradient underneath if missing) */
+      .shrink__video {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center 28%; /* bias the crop upward (show less of the bottom) */
+        display: block;
+      }
+      /* soft darkening only where the centered text sits, for legibility */
+      .shrink__scrim {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(46% 42% at 50% 50%, rgba(8, 6, 24, 0.34), transparent 72%);
+      }
+      /* Both text blocks stack centered; JS cross-fades them on scroll */
+      .shrink__content {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        padding: 0 var(--gutter);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        will-change: opacity, transform;
+      }
+      .shrink__content--b {
+        opacity: 0;
+      }
+      .shrink__title--b {
+        margin-top: 0;
+      }
+
+      .hero__badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.55em;
+        padding: 0.32rem 0.75rem;
+        border-radius: var(--radius-pill);
+        border: 1px solid var(--line-2);
+        background: color-mix(in srgb, var(--text) 5%, transparent);
+        backdrop-filter: blur(6px);
+        font-family: var(--font-display);
+        font-size: 0.7rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: #fff;
+      }
+      .hero__badge-dot {
+        width: 0.5em;
+        height: 0.5em;
+        border-radius: 50%;
+        background: #a9b6ff;
+        box-shadow: 0 0 8px 1px color-mix(in srgb, #8b9bff 75%, transparent);
+        animation: badge-pulse 2.6s ease-in-out infinite;
+      }
+      @keyframes badge-pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.4; }
+      }
+
+      .shrink__title {
+        margin-top: var(--space-5);
+        font-size: var(--fs-h1);
+        font-weight: var(--fw-h1);
+        letter-spacing: var(--ls-h1);
+        line-height: 1.05;
+        color: #fff;
+        max-width: 22ch;
+      }
+      .shrink__support {
+        margin-top: var(--space-5);
+        max-width: 60ch;
+        font-size: var(--fs-lead);
+        line-height: var(--lh-snug);
+        color: rgba(255, 255, 255, 0.9);
+      }
+      /* keep every headline word solid white (override the gradient accent) */
+      .shrink__content .grad-text {
+        background: none;
+        -webkit-text-fill-color: #fff;
+        color: #fff;
+      }
+      .shrink__actions {
+        margin-top: var(--space-7);
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: var(--space-4);
+      }
+
+      .after {
+        min-height: 90vh;
+        display: flex;
+        align-items: center;
+        padding-block: var(--section-y);
+      }
+      .after h2 {
+        font-size: var(--fs-h2);
+        color: var(--text);
+      }
+      .after .lead {
+        margin-top: var(--space-4);
+        max-width: 60ch;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .hero__badge-dot {
+          animation: none;
+        }
+      }
+    </style>
+
+    <script is:inline>
+      (() => {
+        const section = document.querySelector('.shrink');
+        const pad = document.querySelector('.shrink__pad');
+        const card = document.querySelector('.shrink__card');
+        if (!section || !pad || !card) return;
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+        // How far the card insets at full scroll:
+        const PAD_X = 9; // vw on each side
+        const PAD_TOP = 88; // px (clears the fixed nav)
+        const PAD_BOTTOM = 28; // px
+        const RADIUS = 34; // px corner radius
+
+        const contentA = document.querySelector('.shrink__content--a');
+        const contentB = document.querySelector('.shrink__content--b');
+
+        const clamp = (v) => Math.max(0, Math.min(1, v));
+        let ticking = false;
+
+        const update = () => {
+          const total = Math.max(section.offsetHeight - window.innerHeight, 1);
+          const p = clamp(window.scrollY / total);
+          pad.style.paddingTop = p * PAD_TOP + 'px';
+          pad.style.paddingBottom = p * PAD_BOTTOM + 'px';
+          pad.style.paddingLeft = p * PAD_X + 'vw';
+          pad.style.paddingRight = p * PAD_X + 'vw';
+          card.style.borderRadius = p * RADIUS + 'px';
+
+          // Cross-fade the two texts: A leaves early, B arrives late.
+          const aOut = clamp(p / 0.42); // A gone by ~42% scroll
+          const bIn = clamp((p - 0.5) / 0.42); // B appears from ~50% on
+          if (contentA) {
+            contentA.style.opacity = String(1 - aOut);
+            contentA.style.transform = 'translateY(' + aOut * -30 + 'px)';
+            contentA.style.pointerEvents = aOut > 0.6 ? 'none' : '';
+          }
+          if (contentB) {
+            contentB.style.opacity = String(bIn);
+            contentB.style.transform = 'translateY(' + (1 - bIn) * 30 + 'px)';
+            contentB.style.pointerEvents = bIn > 0.6 ? '' : 'none';
+            contentB.setAttribute('aria-hidden', bIn > 0.5 ? 'false' : 'true');
+          }
+          ticking = false;
+        };
+
+        window.addEventListener(
+          'scroll',
+          () => {
+            if (!ticking) {
+              requestAnimationFrame(update);
+              ticking = true;
+            }
+          },
+          { passive: true }
+        );
+        window.addEventListener('resize', update);
+        update();
+      })();
+    </script>
+  </body>
+</html>

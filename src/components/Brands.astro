@@ -13,8 +13,8 @@ interface Props {
 const { locale } = Astro.props;
 const t = content[locale];
 
-// Both brands are rendered with identical structure and weight so neither
-// dominates — a briefing requirement ("visibilidad equivalente").
+// Both brands render with identical structure and weight so neither dominates
+// — a briefing requirement ("visibilidad equivalente").
 const brands = [
   {
     id: 'xana-system',
@@ -23,8 +23,9 @@ const brands = [
     text: t.xanaSystem.text,
     cta: t.xanaSystem.cta,
     href: XANA_SYSTEM_URL,
+    // public domain shown as the tag (href may point at a preview URL for now)
+    domain: 'xanasystem.com',
     external: t.xanaSystem.externalLabel,
-    variant: 'system',
   },
   {
     id: 'woman-on-mars',
@@ -33,33 +34,35 @@ const brands = [
     text: t.womanOnMars.text,
     cta: t.womanOnMars.cta,
     href: WOMAN_ON_MARS_URL,
+    domain: 'womanonmars.com',
     external: t.womanOnMars.externalLabel,
-    variant: 'mars',
   },
 ];
 ---
 
-<section class="section section--alt" aria-label={locale === 'es' ? 'Las dos marcas' : 'The two brands'}>
+<section id="brands" class="section section--alt" aria-label={locale === 'es' ? 'Las dos marcas' : 'The two brands'}>
   <div class="container">
     <div class="brands">
       {
         brands.map((brand) => (
-          <article
-            id={brand.id}
-            class:list={['brand-card', `brand-card--${brand.variant}`]}
-            data-reveal
-          >
-            <p class="eyebrow brand-card__label">{brand.label}</p>
+          <article id={brand.id} class="brand-card" data-reveal>
+            <div class="brand-card__top">
+              <p class="brand-card__label">{brand.label}</p>
+              <span class="brand-card__tag">{brand.domain}</span>
+            </div>
+
             <h2 class="brand-card__name">{brand.name}</h2>
             <p class="brand-card__text">{brand.text}</p>
+
+            <div class="brand-card__divider" aria-hidden="true" />
+
             <a
-              class="btn btn--primary brand-card__cta"
+              class="brand-card__cta"
               href={brand.href}
               rel="noopener"
               aria-label={`${brand.cta} — ${brand.external}`}
             >
-              {brand.cta}
-              <span class="visually-hidden">{brand.external}</span>
+              <span>{brand.cta}</span>
               <svg
                 class="brand-card__arrow"
                 width="18"
@@ -85,6 +88,11 @@ const brands = [
 </section>
 
 <style>
+  /* pull the brands block up — less gap after the ecosystem section */
+  .section--alt {
+    padding-top: clamp(1.5rem, 0.75rem + 2.5vw, 3.5rem);
+  }
+
   .brands {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -94,58 +102,117 @@ const brands = [
   .brand-card {
     display: flex;
     flex-direction: column;
-    padding: clamp(1.75rem, 1rem + 2.5vw, 3rem);
-    background: var(--color-surface);
-    border: var(--border-width) solid var(--color-line);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-sm);
-    transition: box-shadow var(--dur-base) var(--ease-out),
-      transform var(--dur-base) var(--ease-out);
+    padding: clamp(1.75rem, 1.1rem + 2.4vw, 2.75rem);
+    /* near-black but translucent so the page gradient fuses through the cards */
+    background: color-mix(in srgb, var(--bg-2) 82%, transparent);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid var(--line);
+    border-radius: 22px;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.03) inset,
+      0 24px 60px -30px rgba(0, 0, 0, 0.7);
+    transition: transform var(--dur-base) var(--ease-out),
+      border-color var(--dur-base) var(--ease-out),
+      box-shadow var(--dur-base) var(--ease-out);
   }
 
   .brand-card:hover {
-    box-shadow: var(--shadow-md);
     transform: translateY(-3px);
+    /* border lights up with the brand accent + a soft glow around it */
+    border-color: color-mix(in srgb, var(--atmo) 55%, transparent);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05) inset,
+      0 0 0 1px color-mix(in srgb, var(--atmo) 28%, transparent),
+      0 0 26px -2px color-mix(in srgb, var(--atmo) 40%, transparent),
+      0 30px 70px -30px rgba(0, 0, 0, 0.8);
   }
 
-  /* A restrained accent stripe distinguishes the two brands without changing
-     their relative weight. Colors come from tokens. */
-  .brand-card {
-    border-top: 3px solid var(--color-brand);
+  /* Top row: category label (left) + destination tag (right) */
+  .brand-card__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    margin-bottom: var(--space-6);
   }
 
-  .brand-card--mars {
-    border-top-color: var(--color-accent);
+  .brand-card__label {
+    font-family: var(--font-display);
+    font-size: var(--fs-eyebrow);
+    font-weight: var(--fw-semibold);
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    color: var(--dim);
+  }
+
+  .brand-card__tag {
+    flex: none;
+    padding: 0.22rem 0.6rem;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--line-2);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.02em;
+    color: var(--faint);
   }
 
   .brand-card__name {
-    font-size: var(--fs-h2);
-    margin-top: var(--space-3);
+    font-size: clamp(1.55rem, 1.2rem + 1.3vw, 2.05rem);
+    line-height: 1.1;
+    color: var(--text);
   }
 
   .brand-card__text {
     margin-top: var(--space-4);
-    color: var(--color-text-muted);
-    font-size: var(--fs-lead);
-    line-height: var(--lh-snug);
+    color: var(--dim);
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+    /* grow so the divider + CTA sit at the bottom, aligned across both cards */
     flex: 1;
   }
 
-  .brand-card__cta {
-    margin-top: var(--space-6);
-    align-self: flex-start;
+  .brand-card__divider {
+    height: 1px;
+    margin-block: var(--space-6);
+    /* same treatment as the Ecosystem base line: fades both ends, marked middle */
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      color-mix(in srgb, var(--text) 22%, transparent) 24%,
+      color-mix(in srgb, var(--text) 22%, transparent) 76%,
+      transparent 100%
+    );
   }
 
-  .brand-card--mars .brand-card__cta {
-    background: var(--color-ink);
+  /* Subtle, full-width CTA with the action left and arrow right (per reference) */
+  .brand-card__cta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding: 0.85rem 1.05rem;
+    border-radius: var(--radius-md);
+    background: color-mix(in srgb, var(--text) 5%, transparent);
+    border: 1px solid var(--line-2);
+    color: var(--text);
+    font-family: var(--font-display);
+    font-weight: var(--fw-medium);
+    transition: background-color var(--dur-base) var(--ease-out),
+      border-color var(--dur-base) var(--ease-out);
+  }
+  .brand-card__cta:hover {
+    background: color-mix(in srgb, var(--text) 10%, transparent);
+    border-color: color-mix(in srgb, var(--text) 34%, transparent);
   }
 
   .brand-card__arrow {
-    transition: transform var(--dur-fast) var(--ease-out);
+    flex: none;
+    color: var(--dim);
+    transition: transform var(--dur-fast) var(--ease-out),
+      color var(--dur-base) var(--ease-out);
   }
-
   .brand-card__cta:hover .brand-card__arrow {
     transform: translate(2px, -2px);
+    color: var(--text);
   }
 
   @media (max-width: 800px) {

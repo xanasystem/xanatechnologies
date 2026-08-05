@@ -1,0 +1,84 @@
+---
+import DemoBase from '../../layouts/DemoBase.astro';
+---
+
+<DemoBase active="video" title="Vídeo de fondo" weight="~2–8 MB per clip (the video file)">
+  <!--
+    In production this layer would be a <video> element:
+
+      <video autoplay muted loop playsinline poster="/img/hero/horizonte.jpg">
+        <source src="/video/hero.webm" type="video/webm" />
+        <source src="/video/hero.mp4"  type="video/mp4" />
+      </video>
+
+    No hero .mp4 exists yet, so this demo stands in with a slow Ken Burns
+    pan/zoom over the existing hero still — the same "living background" feel
+    a looping clip gives, minus the megabytes.
+  -->
+  <div slot="bg" class="video-stand-in"></div>
+
+  <Fragment slot="note">
+    <ul>
+      <li class="pro">Fastest to ship: drop in an <code>.mp4/.webm</code> and it just works, no code.</li>
+      <li class="pro">Full art direction — a real motion designer can craft exactly the shot you want.</li>
+      <li class="con">Heavy: 2–8 MB per clip hurts LCP/mobile; needs a poster + compression pass.</li>
+      <li class="con">"Closed" asset: doesn't react to scroll and won't re-theme when the brand manual changes — you'd re-render the clip.</li>
+      <li class="con">You have to <em>produce</em> the video first (this demo fakes it with a Ken Burns still).</li>
+    </ul>
+  </Fragment>
+</DemoBase>
+
+<style>
+  .video-stand-in {
+    position: absolute;
+    inset: -8% -8% -8% -8%; /* overscan so pan/zoom never shows an edge */
+    background-image: var(--hero-img);
+    background-size: cover;
+    background-position: center 30%;
+    will-change: transform;
+    animation: kenburns 24s ease-in-out infinite alternate;
+    transform-origin: 55% 40%;
+  }
+
+  @keyframes kenburns {
+    from {
+      transform: scale(1.05) translate3d(0, 0, 0);
+    }
+    to {
+      transform: scale(1.16) translate3d(-2%, -2%, 0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .video-stand-in {
+      animation: none;
+      transform: scale(1.05);
+    }
+  }
+</style>
+
+<script is:inline>
+  // Cheap scroll parallax + fade so the "video" reacts like the other demos.
+  (() => {
+    const el = document.querySelector('.video-stand-in');
+    if (!el) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    let ticking = false;
+    const update = () => {
+      const s = Math.min(window.scrollY / window.innerHeight, 1);
+      el.style.opacity = String(1 - s * 0.9);
+      el.style.filter = `saturate(${1 - s * 0.4})`;
+      ticking = false;
+    };
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (!ticking) {
+          requestAnimationFrame(update);
+          ticking = true;
+        }
+      },
+      { passive: true }
+    );
+  })();
+</script>

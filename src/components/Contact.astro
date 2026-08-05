@@ -15,13 +15,23 @@ const privacyHref = locale === 'es' ? '/es/privacidad' : '/privacy';
 // Privacy consent rendered with the policy name as an inline link.
 const privacyPolicyName = locale === 'es' ? 'Política de Privacidad' : 'Privacy Policy';
 const privacyPrefix = locale === 'es' ? 'He leído y acepto la ' : 'I have read and accept the ';
+
+// Split the headline so the closing word(s) carry the gradient accent.
+const titleWords = c.h2.trim().split(' ');
+const accentCount = locale === 'es' ? 1 : 2;
+const titleAccent = titleWords.slice(-accentCount).join(' ');
+const titleLead = titleWords.slice(0, -accentCount).join(' ');
 ---
 
 <section id="contact" class="section section--dark" aria-labelledby="contact-title">
+  <span class="contact-sep" aria-hidden="true"></span>
+
   <div class="container contact">
     <div class="contact__intro" data-reveal>
-      <p class="eyebrow">{c.label}</p>
-      <h2 id="contact-title" class="contact__title">{c.h2}</h2>
+      <p class="eyebrow eyebrow--pill">{c.label}</p>
+      <h2 id="contact-title" class="contact__title">
+        {titleLead}{' '}<span class="grad-text">{titleAccent}</span>
+      </h2>
       <p class="contact__text lead">{c.text}</p>
     </div>
 
@@ -271,6 +281,61 @@ const privacyPrefix = locale === 'es' ? 'He leído y acepto la ' : 'I have read 
 </script>
 
 <style>
+  /* Section gradient — a brand bloom contained in the form section that fades
+     to the page black at its bottom edge, giving a clean cut into the (solid
+     black) footer. Painted on a ::before so it sits over the fixed page-gradient
+     canvas within this section only. */
+  #contact {
+    position: relative;
+    isolation: isolate;
+  }
+  #contact::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      /* bright twin blooms concentrated at the very bottom of the section */
+      radial-gradient(
+        80% 56% at 26% 102%,
+        color-mix(in srgb, var(--c1) 74%, transparent),
+        transparent 62%
+      ),
+      radial-gradient(
+        84% 58% at 84% 106%,
+        color-mix(in srgb, var(--c4) 66%, transparent),
+        transparent 64%
+      ),
+      /* dark wash: transparent at the very top (no seam), sinks the upper-mid
+         body into a deeper black, then clears so the bottom blooms shine */
+      linear-gradient(
+        180deg,
+        transparent 0%,
+        color-mix(in srgb, var(--bg) 50%, transparent) 20%,
+        color-mix(in srgb, var(--bg) 55%, transparent) 48%,
+        transparent 80%
+      );
+  }
+
+  /* Very subtle separator at the top of the section (fades at both ends). */
+  .contact-sep {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 98vw;
+    height: 1px;
+    z-index: 0;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      color-mix(in srgb, var(--text) 8%, transparent) 28%,
+      color-mix(in srgb, var(--text) 8%, transparent) 72%,
+      transparent 100%
+    );
+  }
+
   .contact {
     display: grid;
     grid-template-columns: 0.9fr 1.1fr;
@@ -279,8 +344,10 @@ const privacyPrefix = locale === 'es' ? 'He leído y acepto la ' : 'I have read 
   }
 
   .contact__title {
-    margin-top: var(--space-3);
-    font-size: var(--fs-h2);
+    margin-top: var(--space-4);
+    font-size: clamp(2.8rem, 1.9rem + 4.2vw, 4.6rem);
+    line-height: 1.03;
+    letter-spacing: var(--ls-h1);
     color: var(--color-on-dark);
   }
 
@@ -294,10 +361,13 @@ const privacyPrefix = locale === 'es' ? 'He leído y acepto la ' : 'I have read 
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: var(--space-4) var(--space-5);
-    background: var(--color-surface);
+    background: color-mix(in srgb, var(--bg-2) 70%, transparent);
     color: var(--color-text);
     padding: clamp(1.5rem, 1rem + 2vw, 2.5rem);
+    border: 1px solid var(--line-2);
     border-radius: var(--radius-lg);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     box-shadow: var(--shadow-lg);
   }
 

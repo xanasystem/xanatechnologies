@@ -42,8 +42,25 @@ const t = content[locale];
   }
 
   .metric {
+    position: relative;
     padding-top: var(--space-5);
-    border-top: 2px solid color-mix(in srgb, var(--color-on-dark) 22%, transparent);
+  }
+
+  /* same hairline treatment as the other sections: 1px, faded at both ends */
+  .metric::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      color-mix(in srgb, var(--text) 22%, transparent) 24%,
+      color-mix(in srgb, var(--text) 22%, transparent) 76%,
+      transparent 100%
+    );
   }
 
   .metric__value {

@@ -1,0 +1,43 @@
+/* =============================================================================
+   THEME · v2 — black base, logo-gradient accents (blue → purple → pink)
+   -----------------------------------------------------------------------------
+   Scoped to routes that set data-theme="v2" (Base `theme` prop). The v1 palette
+   in tokens.css is untouched. Only overrides; everything else inherits.
+   ========================================================================== */
+:root[data-theme='v2'] {
+  /* Neutral near-black base (drops the navy tint of v1) */
+  --bg: #050506;
+  --bg-2: #101014;
+  --bg-3: #17171d33;
+
+  /* Logo palette */
+  --c1: #7b3ff0; /* purple  */
+  --c2: #2f6fe0; /* blue    */
+  --c3: #c77bf0; /* lilac   */
+  --c4: #e24bd0; /* pink    */
+
+  /* Accent gradients (buttons, headline accents, borders) */
+  --grad: linear-gradient(120deg, #2f6fe0 0%, #7b3ff0 52%, #e24bd0 100%);
+  --grad-text: linear-gradient(120deg, #79b0ff 0%, #b98cff 46%, #ff8fe0 100%);
+
+  --brand: #8a5cf0;
+  --glow-1: #7b3ff0;
+  --glow-2: #2f6fe0;
+
+  /* Neutral greys on the black base */
+  --dim: #a6a6ad;
+  --faint: #6b6b74;
+  --line: rgba(255, 255, 255, 0.09);
+  --line-2: rgba(255, 255, 255, 0.15);
+
+  /* Wider layout so sections line up with the near-full-bleed hero card */
+  --container-max: 1560px;
+}
+
+/* Metric numbers: full logo gradient (blue → purple → pink) instead of white→accent */
+:root[data-theme='v2'] .metric__value {
+  background: var(--grad-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}

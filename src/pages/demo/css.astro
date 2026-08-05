@@ -1,0 +1,120 @@
+---
+import DemoBase from '../../layouts/DemoBase.astro';
+---
+
+<DemoBase active="css" title="CSS scroll-driven" weight="0 KB JS (pure CSS)">
+  <div slot="bg" class="css-fx">
+    <span class="blob blob--1"></span>
+    <span class="blob blob--2"></span>
+    <span class="blob blob--3"></span>
+    <span class="grid"></span>
+  </div>
+
+  <Fragment slot="note">
+    <ul>
+      <li class="pro">Zero JavaScript — driven by the native <code>animation-timeline: scroll()</code>. Buttery on the main thread.</li>
+      <li class="pro">Uses your gradient tokens, so it re-themes for free with the brand manual.</li>
+      <li class="pro">Most accessible + best LCP of the four; degrades to a static gradient gracefully.</li>
+      <li class="con">Subtler than WebGL/video — layered blobs & parallax, not a photoreal scene.</li>
+      <li class="con">Scroll-driven timelines are recent: Chrome/Edge yes, Safari/Firefox still catching up (static fallback below).</li>
+    </ul>
+  </Fragment>
+</DemoBase>
+
+<style>
+  .css-fx {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    background: radial-gradient(120% 120% at 50% 0%, var(--bg-2), var(--bg) 70%);
+  }
+
+  .blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.55;
+    will-change: transform, opacity;
+  }
+  .blob--1 {
+    width: 46vw;
+    height: 46vw;
+    left: 4%;
+    top: 8%;
+    background: radial-gradient(circle, var(--c1), transparent 65%);
+  }
+  .blob--2 {
+    width: 40vw;
+    height: 40vw;
+    right: 2%;
+    top: 30%;
+    background: radial-gradient(circle, var(--c2), transparent 65%);
+  }
+  .blob--3 {
+    width: 34vw;
+    height: 34vw;
+    left: 30%;
+    bottom: -6%;
+    background: radial-gradient(circle, var(--atmo), transparent 65%);
+  }
+
+  /* faint moving grid for depth */
+  .grid {
+    position: absolute;
+    inset: -50%;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 64px 64px;
+    mask-image: radial-gradient(60% 60% at 50% 40%, #000, transparent 75%);
+    opacity: 0.4;
+  }
+
+  /* --- Fallback (no scroll-timeline support): gentle ambient float ------- */
+  .blob--1 { animation: float1 14s var(--ease-out) infinite alternate; }
+  .blob--2 { animation: float2 18s var(--ease-out) infinite alternate; }
+  .blob--3 { animation: float3 16s var(--ease-out) infinite alternate; }
+  @keyframes float1 { to { transform: translate(6%, 4%) scale(1.1); } }
+  @keyframes float2 { to { transform: translate(-5%, 6%) scale(1.08); } }
+  @keyframes float3 { to { transform: translate(3%, -5%) scale(1.12); } }
+
+  /* --- Progressive enhancement: drive it with scroll -------------------- */
+  @supports (animation-timeline: scroll()) {
+    .blob,
+    .grid {
+      animation-timeline: scroll(root);
+      animation-range: 0 100vh;
+      animation-iteration-count: 1;
+      animation-direction: normal;
+      animation-fill-mode: both;
+    }
+    .blob--1 { animation-name: drift1; animation-duration: 1ms; }
+    .blob--2 { animation-name: drift2; animation-duration: 1ms; }
+    .blob--3 { animation-name: drift3; animation-duration: 1ms; }
+    .grid { animation-name: gridmove; animation-duration: 1ms; }
+
+    @keyframes drift1 {
+      from { transform: translate(0, 0) scale(1); opacity: 0.55; }
+      to   { transform: translate(-8%, -30%) scale(1.3); opacity: 0; }
+    }
+    @keyframes drift2 {
+      from { transform: translate(0, 0) scale(1); opacity: 0.55; }
+      to   { transform: translate(10%, -22%) scale(1.25); opacity: 0; }
+    }
+    @keyframes drift3 {
+      from { transform: translate(0, 0) scale(1); opacity: 0.5; }
+      to   { transform: translate(0, -40%) scale(1.4); opacity: 0; }
+    }
+    @keyframes gridmove {
+      from { transform: translateY(0); opacity: 0.4; }
+      to   { transform: translateY(-12%); opacity: 0; }
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .blob,
+    .grid {
+      animation: none;
+    }
+  }
+</style>

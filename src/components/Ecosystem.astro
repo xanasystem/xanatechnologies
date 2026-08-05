@@ -9,27 +9,93 @@ const { locale } = Astro.props;
 const t = content[locale];
 ---
 
-<section id="ecosystem" class="section" aria-labelledby="ecosystem-title">
-  <div class="container ecosystem">
+<section id="ecosystem" class="section ecosystem" aria-labelledby="ecosystem-title">
+  <div class="container ecosystem__grid">
     <h2 id="ecosystem-title" class="ecosystem__title" data-reveal>
       {t.ecosystem.h2}
     </h2>
-    <p class="ecosystem__text lead" data-reveal>{t.ecosystem.text}</p>
+
+    <div class="ecosystem__body" data-reveal>
+      <p class="ecosystem__text">{t.ecosystem.text}</p>
+    </div>
   </div>
 </section>
 
 <style>
+  /* extra breathing room between the hero and this section */
   .ecosystem {
-    max-width: var(--container-narrow);
+    margin-top: clamp(2rem, 1rem + 5vw, 5rem);
+  }
+
+  /* two-column ecosystem block */
+  .ecosystem__grid {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: clamp(2rem, 1rem + 6vw, 6rem);
+    align-items: start;
+    padding-bottom: clamp(2.5rem, 1.5rem + 4vw, 4.5rem);
   }
 
   .ecosystem__title {
     font-size: var(--fs-h2);
+    line-height: 1.1;
+    letter-spacing: var(--ls-h2);
+    color: var(--text);
+    max-width: 15ch;
+  }
+
+  .ecosystem__body {
+    max-width: 46ch;
+    /* nudge the copy down so it starts a little below the headline cap-line */
+    padding-top: 0.4rem;
   }
 
   .ecosystem__text {
-    margin-top: var(--space-5);
+    color: var(--dim);
     font-size: var(--fs-lead);
-    color: var(--color-text-muted);
+    line-height: var(--lh-body);
+  }
+
+  /* Subtle structural grid, echoing the reference: a hairline base + a short
+     vertical tick rising from it near the left. */
+  .ecosystem__grid::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 0;
+    width: 98vw;
+    height: 1px;
+    /* fades in from both ends, equally marked across the middle */
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      color-mix(in srgb, var(--text) 22%, transparent) 24%,
+      color-mix(in srgb, var(--text) 22%, transparent) 76%,
+      transparent 100%
+    );
+  }
+  .ecosystem__grid::before {
+    content: '';
+    position: absolute;
+    left: clamp(3rem, 18%, 16rem);
+    bottom: 0;
+    width: 1px;
+    height: clamp(2rem, 4vw, 3.5rem);
+    background: var(--line);
+  }
+
+  @media (max-width: 800px) {
+    .ecosystem__grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-5);
+    }
+    .ecosystem__body {
+      padding-top: 0;
+    }
+    .ecosystem__grid::before {
+      display: none;
+    }
   }
 </style>

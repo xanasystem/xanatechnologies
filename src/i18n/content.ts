@@ -9,7 +9,7 @@ export type Locale = 'en' | 'es';
 
 export const locales: Locale[] = ['en', 'es'];
 
-export const XANA_SYSTEM_URL = 'https://xanasystem.com';
+export const XANA_SYSTEM_URL = 'https://xanasystem-web.vercel.app';
 export const WOMAN_ON_MARS_URL = 'https://womanonmars.com';
 
 export interface SiteContent {
@@ -30,6 +30,7 @@ export interface SiteContent {
     support: string;
     ctaPrimary: string;
     ctaSecondary: string;
+    scrollCue: string;
   };
   ecosystem: {
     h2: string;
@@ -56,7 +57,10 @@ export interface SiteContent {
   industry: {
     label: string;
     h2: string;
-    text: string;
+    cards: { title: string; text: string }[];
+    stats: { value: string; label: string }[];
+    channelsPill: string;
+    channels: string[];
   };
   customSolutions: {
     label: string;
@@ -97,6 +101,13 @@ export interface SiteContent {
     intro: string;
   };
   footer: {
+    ctaEyebrow: string;
+    ctaHeadline: string;
+    ctaButton: string;
+    brandsTitle: string;
+    exploreTitle: string;
+    legalTitle: string;
+    customSolutionsLink: string;
     legalLinks: { label: string; href: string }[];
     copyright: string;
     languageSwitch: string;
@@ -117,9 +128,7 @@ export const content: Record<Locale, SiteContent> = {
     },
     nav: {
       sections: [
-        { id: 'ecosystem', label: 'Ecosystem' },
-        { id: 'xana-system', label: 'Xana System' },
-        { id: 'woman-on-mars', label: 'Woman on Mars' },
+        { id: 'brands', label: 'Brands' },
         { id: 'expertise', label: 'Expertise' },
         { id: 'custom-solutions', label: 'Custom Solutions' },
         { id: 'contact', label: 'Contact' },
@@ -134,6 +143,7 @@ export const content: Record<Locale, SiteContent> = {
         'Xana Technologies is the technology startup behind Xana System and Woman on Mars. Two specialized brands connecting product data, digital platforms, strategy, marketing, automation, AI, design, and development.',
       ctaPrimary: 'Explore Xana System',
       ctaSecondary: 'Discover Woman on Mars',
+      scrollCue: 'Explore',
     },
     ecosystem: {
       h2: 'One startup. Two specialized brands.',
@@ -163,8 +173,26 @@ export const content: Record<Locale, SiteContent> = {
     },
     industry: {
       label: 'INDUSTRY EXPERTISE',
-      h2: 'Product launch specialists for the tile, stone, and interior design industries.',
-      text: 'We understand complex catalogs, visual products, technical data, multichannel distribution, and the pressure to bring new collections to market with accuracy.',
+      h2: 'Built for tile, stone & interior design.',
+      cards: [
+        {
+          title: 'Complex catalogs, organized',
+          text: 'Product content structured, enriched, and ready to publish.',
+        },
+        {
+          title: 'One product, every channel',
+          text: 'Published in sync across web catalogs, apps, and B2B systems.',
+        },
+      ],
+      stats: [
+        { value: '10.000+', label: 'products' },
+        { value: '50+', label: 'collections' },
+      ],
+      channelsPill: '6+ channels',
+      channels: [
+        'Web catalog', 'Catalog app', 'B2B portal', 'Marketplace',
+        'PDF datasheet', 'ERP / PIM sync', 'Mobile app', 'Print catalog',
+      ],
     },
     customSolutions: {
       label: 'CUSTOM SOLUTIONS',
@@ -209,6 +237,13 @@ export const content: Record<Locale, SiteContent> = {
         'Xana Technologies has participated in the following programs and initiatives.',
     },
     footer: {
+      ctaEyebrow: "Let's work together",
+      ctaHeadline: 'Have a challenge? Let’s find the right route.',
+      ctaButton: 'Get in touch',
+      brandsTitle: 'Brands',
+      exploreTitle: 'Explore',
+      legalTitle: 'Legal',
+      customSolutionsLink: 'Custom Solutions',
       legalLinks: [
         { label: 'Privacy Policy', href: '/privacy' },
         { label: 'Cookies Policy', href: '/cookies' },
@@ -231,9 +266,7 @@ export const content: Record<Locale, SiteContent> = {
     },
     nav: {
       sections: [
-        { id: 'ecosystem', label: 'Ecosistema' },
-        { id: 'xana-system', label: 'Xana System' },
-        { id: 'woman-on-mars', label: 'Woman on Mars' },
+        { id: 'brands', label: 'Marcas' },
         { id: 'expertise', label: 'Experiencia' },
         { id: 'custom-solutions', label: 'Soluciones a medida' },
         { id: 'contact', label: 'Contacto' },
@@ -248,6 +281,7 @@ export const content: Record<Locale, SiteContent> = {
         'Xana Technologies es la startup tecnológica detrás de Xana System y Woman on Mars. Dos marcas especializadas que conectan datos de producto, plataformas digitales, estrategia, marketing, automatización, IA, diseño y desarrollo.',
       ctaPrimary: 'Descubre Xana System',
       ctaSecondary: 'Descubre Woman on Mars',
+      scrollCue: 'Explora',
     },
     ecosystem: {
       h2: 'Una startup. Dos marcas especializadas.',
@@ -277,8 +311,26 @@ export const content: Record<Locale, SiteContent> = {
     },
     industry: {
       label: 'EXPERIENCIA SECTORIAL',
-      h2: 'Especialistas en lanzamientos de producto para los sectores del tile, la piedra y el diseño de interiores.',
-      text: 'Entendemos los catálogos complejos, el producto visual, los datos técnicos, la distribución multicanal y la precisión necesaria para lanzar nuevas colecciones al mercado.',
+      h2: 'Hecho para tile, piedra y diseño de interiores.',
+      cards: [
+        {
+          title: 'Catálogos complejos, ordenados',
+          text: 'Contenido de producto estructurado, enriquecido y listo para publicar.',
+        },
+        {
+          title: 'Un producto, todos los canales',
+          text: 'Publicado y sincronizado en catálogos web, apps y sistemas B2B.',
+        },
+      ],
+      stats: [
+        { value: '10.000+', label: 'productos' },
+        { value: '50+', label: 'colecciones' },
+      ],
+      channelsPill: '6+ canales',
+      channels: [
+        'Catálogo web', 'App de catálogo', 'Portal B2B', 'Marketplace',
+        'Ficha PDF', 'Sync ERP / PIM', 'App móvil', 'Catálogo impreso',
+      ],
     },
     customSolutions: {
       label: 'SOLUCIONES A MEDIDA',
@@ -323,6 +375,13 @@ export const content: Record<Locale, SiteContent> = {
         'Xana Technologies ha participado en los siguientes programas e iniciativas.',
     },
     footer: {
+      ctaEyebrow: 'Trabajemos juntos',
+      ctaHeadline: '¿Tienes un reto? Encontremos la ruta adecuada.',
+      ctaButton: 'Hablemos',
+      brandsTitle: 'Marcas',
+      exploreTitle: 'Explorar',
+      legalTitle: 'Legal',
+      customSolutionsLink: 'Soluciones a medida',
       legalLinks: [
         { label: 'Política de Privacidad', href: '/es/privacidad' },
         { label: 'Política de Cookies', href: '/es/cookies' },

@@ -1,0 +1,119 @@
+---
+import '../../styles/global.css';
+
+const demos = [
+  {
+    id: 'shader',
+    label: 'Shader WebGL',
+    tag: '★ Recommended',
+    blurb: 'Procedural nebula in your brand colors. Reacts to scroll, weighs ~4 KB, re-themes for free.',
+  },
+  {
+    id: 'video',
+    label: 'Vídeo de fondo',
+    tag: 'Supersonik-style',
+    blurb: 'Looping clip (here faked with a Ken Burns still). Fastest to ship, but 2–8 MB and "closed".',
+  },
+  {
+    id: 'css',
+    label: 'CSS scroll-driven',
+    tag: '0 KB JS',
+    blurb: 'Native animation-timeline parallax. Lightest & most accessible; subtler effect.',
+  },
+  {
+    id: 'spline',
+    label: 'Spline 3D',
+    tag: 'Heaviest',
+    blurb: 'Real interactive 3D object. Spectacular, but ~1 MB+ runtime from an external CDN.',
+  },
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Hero animation demos — Xana</title>
+  </head>
+  <body>
+    <main class="container wrap">
+      <p class="eyebrow">Prototype · <span class="grad-text">Hero motion</span></p>
+      <h1>Four ways to animate the hero</h1>
+      <p class="lead">
+        Same production copy + design tokens, four background engines. Open each,
+        scroll, and compare. Use the tabs at the top of every demo to switch.
+      </p>
+
+      <div class="grid">
+        {demos.map((d) => (
+          <a class="card" href={`/demo/${d.id}`}>
+            <span class="card__tag">{d.tag}</span>
+            <h2 class="card__title">{d.label}</h2>
+            <p class="card__blurb">{d.blurb}</p>
+            <span class="card__go">Open demo →</span>
+          </a>
+        ))}
+      </div>
+    </main>
+
+    <style>
+      .wrap {
+        padding-block: clamp(4rem, 3rem + 6vw, 8rem);
+      }
+      h1 {
+        margin-top: var(--space-4);
+        font-size: var(--fs-h1);
+        color: var(--text);
+      }
+      .lead {
+        margin-top: var(--space-5);
+        max-width: 58ch;
+      }
+      .grid {
+        margin-top: var(--space-8);
+        display: grid;
+        gap: var(--space-5);
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      }
+      .card {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-3);
+        padding: var(--space-6);
+        border: 1px solid var(--line-2);
+        border-radius: var(--radius-lg);
+        background: var(--bg-2);
+        transition: transform var(--dur-base) var(--ease-out),
+          border-color var(--dur-base) var(--ease-out);
+      }
+      .card:hover {
+        transform: translateY(-4px);
+        border-color: color-mix(in srgb, var(--atmo) 60%, transparent);
+      }
+      .card__tag {
+        font-family: var(--font-mono);
+        font-size: 0.7rem;
+        letter-spacing: var(--ls-mono);
+        text-transform: uppercase;
+        color: var(--atmo);
+      }
+      .card__title {
+        font-size: var(--fs-h3);
+        color: var(--text);
+      }
+      .card__blurb {
+        color: var(--dim);
+        font-size: 0.95rem;
+        line-height: var(--lh-snug);
+        flex: 1;
+      }
+      .card__go {
+        margin-top: var(--space-2);
+        font-weight: var(--fw-semibold);
+        color: var(--text);
+      }
+    </style>
+  </body>
+</html>
