@@ -3,18 +3,58 @@ import { content, type Locale } from '../i18n/content';
 
 interface Props {
   locale: Locale;
+  /** 'editorial' renders the rows layout (v2); 'cards' keeps the v1 mockups. */
+  variant?: 'cards' | 'editorial';
 }
 
-const { locale } = Astro.props;
+const { locale, variant = 'cards' } = Astro.props;
 const t = content[locale];
 
 // 3x3 grid of ghost channel tags; centre cell empty for the pill. Side columns
 // are pushed to the edges (CSS) so no tag sits under the central pill.
 const ch = t.industry.channels;
 const cells = [ch[0], ch[1], ch[2], ch[3], null, ch[4], ch[5], ch[6], ch[7]];
+
+// v2 editorial variant: a short anchor word per row, so each capability is
+// grounded without repeating the figures shown in the Numbers section.
+const rowAnchors = {
+  en: ['Catalog', 'Distribution'],
+  es: ['Catálogo', 'Distribución'],
+}[locale];
 ---
 
-<section id="expertise" class="section industry" aria-labelledby="industry-title">
+{variant === 'editorial' ? (
+  <section id="expertise" class="section industry industry--editorial" aria-labelledby="industry-title">
+    <div class="container">
+      <header class="industry__head">
+        <p class="eyebrow eyebrow--pill" data-reveal>{t.industry.label}</p>
+        <h2 id="industry-title" class="industry__title" data-reveal>{t.industry.h2}</h2>
+      </header>
+
+      <div class="ind-rows">
+        {t.industry.cards.map((card, i) => (
+          <div class="ind-row" data-reveal>
+            <div class="ind-row__num">
+              <span class="ind-row__index">{String(i + 1).padStart(2, '0')}</span>
+              <span class="ind-row__anchor">{rowAnchors[i]}</span>
+            </div>
+            <div class="ind-row__body">
+              <h3 class="ind-row__title">{card.title}</h3>
+              <p class="ind-row__text">{card.text}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div class="ind-channels" data-reveal>
+        <ul class="ind-channels__list">
+          {t.industry.channels.map((c) => (<li class="ind-pill">{c}</li>))}
+        </ul>
+      </div>
+    </div>
+  </section>
+) : (
+  <section id="expertise" class="section industry" aria-labelledby="industry-title">
   <div class="container">
     <header class="industry__head">
       <p class="eyebrow eyebrow--pill" data-reveal>{t.industry.label}</p>
@@ -62,7 +102,8 @@ const cells = [ch[0], ch[1], ch[2], ch[3], null, ch[4], ch[5], ch[6], ch[7]];
       </article>
     </div>
   </div>
-</section>
+  </section>
+)}
 
 <style>
   /* industry section — two cards with mockups */
@@ -83,6 +124,130 @@ const cells = [ch[0], ch[1], ch[2], ch[3], null, ch[4], ch[5], ch[6], ch[7]];
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: var(--space-5);
+  }
+
+  /* ============ Editorial variant (v2) — figure + capability rows ============ */
+  .ind-rows {
+    margin-top: var(--space-8);
+    /* keep the rows a contained, centred column so the copy doesn't leave a
+       large void on the right of the wide v2 container */
+    margin-inline: auto;
+    width: 100%;
+    max-width: 1080px;
+    display: flex;
+    flex-direction: column;
+  }
+  .ind-row {
+    display: grid;
+    grid-template-columns: minmax(0, 0.62fr) minmax(0, 1fr);
+    gap: clamp(1.5rem, 1rem + 3vw, 3.5rem);
+    align-items: center;
+    padding: clamp(1.5rem, 1rem + 2vw, 2.75rem) 0;
+    border-top: 1px solid var(--line);
+  }
+  .ind-row:last-child {
+    border-bottom: 1px solid var(--line);
+  }
+  .ind-row__index {
+    display: block;
+    font-family: var(--font-display);
+    font-size: clamp(2.6rem, 1.7rem + 3vw, 4rem);
+    font-weight: var(--fw-semibold);
+    letter-spacing: -0.04em;
+    line-height: 1;
+    color: var(--text);
+  }
+  .ind-row__anchor {
+    display: block;
+    margin-top: var(--space-3);
+    font-family: var(--font-display);
+    font-size: var(--fs-eyebrow);
+    font-weight: var(--fw-regular);
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+  .ind-row__title {
+    font-size: var(--fs-h3);
+    letter-spacing: var(--ls-h3);
+    color: var(--text);
+    max-width: 18ch;
+  }
+  .ind-row__text {
+    margin-top: var(--space-3);
+    color: var(--dim);
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+    max-width: 48ch;
+  }
+
+  .ind-channels {
+    margin-top: var(--space-7);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-4);
+    text-align: center;
+  }
+  .ind-channels__label {
+    font-family: var(--font-mono);
+    font-size: var(--fs-eyebrow);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+  .ind-channels__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-2) var(--space-3);
+    max-width: 62ch;
+  }
+  .ind-pill {
+    font-size: 0.8rem;
+    padding: 0.45rem 0.9rem;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--line-2);
+    color: var(--dim);
+  }
+
+  /* Desktop: let the section fill the viewport and the rows stretch to divide
+     the space evenly, so the content reaches the bottom instead of clustering
+     at the top. */
+  @media (min-width: 641px) {
+    .industry--editorial {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .industry--editorial > .container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .industry--editorial .ind-rows {
+      flex: 1;
+    }
+    .industry--editorial .ind-row {
+      flex: 1;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .ind-row {
+      grid-template-columns: 1fr;
+      gap: var(--space-3);
+      text-align: center;
+    }
+    .ind-row__title {
+      max-width: none;
+    }
+    .ind-row__text {
+      margin-inline: auto;
+    }
   }
 
   /* ---- Card shell (full-bleed image + text bottom) ---- */

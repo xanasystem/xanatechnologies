@@ -83,6 +83,10 @@ const t = content[locale];
   }
 
   @media (max-width: 800px) {
+    /* trim the tall default section padding below the stacked block */
+    .ecosystem {
+      padding-bottom: var(--space-5);
+    }
     .ecosystem__grid {
       grid-template-columns: 1fr;
       gap: var(--space-5);

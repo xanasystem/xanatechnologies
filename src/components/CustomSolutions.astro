@@ -12,6 +12,13 @@ const t = content[locale];
 <section id="custom-solutions" class="section custom" aria-labelledby="custom-title">
   <div class="custom__glow" aria-hidden="true"></div>
 
+  <!-- Decorative particle globe — top-right. Identical treatment to the v2
+       Contact globe: `screen` blend drops the image's black. Positioned absolute
+       WITHOUT z-index so it stays behind the copy yet doesn't isolate the blend. -->
+  <div class="custom__globe" aria-hidden="true">
+    <img src="/img/stock/globe.jpg" alt="" loading="lazy" />
+  </div>
+
   <div class="container custom__inner">
     <p class="eyebrow eyebrow--pill" data-reveal>{t.customSolutions.label}</p>
     <h2 id="custom-title" class="custom__title" data-reveal>{t.customSolutions.h2}</h2>
@@ -99,4 +106,59 @@ const t = content[locale];
   .custom__action {
     margin-top: var(--space-7);
   }
+
+  /* Decorative particle globe — same `screen` treatment as the v2 Contact globe,
+     but pinned to the top-right corner. No z-index → no stacking context, so the
+     blend still drops the black; the copy paints on top via DOM order. */
+  .custom__globe {
+    position: absolute;
+    top: 1.75rem;
+    /* a bit closer to the (centred) copy — nudged left off the right edge */
+    right: 4.5rem;
+    width: clamp(300px, 40vw, 540px);
+  }
+  .custom__globe img {
+    width: 100%;
+    height: auto;
+    opacity: 0.85;
+    mix-blend-mode: screen;
+    transform-origin: center;
+    will-change: transform;
+  }
 </style>
+
+<script>
+  // Parallax the globe — it grows and drifts a little as the section scrolls
+  // through the viewport (mirrors the v2 Contact globe).
+  const globe = document.querySelector<HTMLElement>('.custom__globe img');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (globe && !reduce) {
+    const clamp = (v: number) => Math.max(0, Math.min(1, v));
+    let ticking = false;
+
+    const update = () => {
+      const r = globe.getBoundingClientRect();
+      const vh = window.innerHeight;
+      const p = clamp((vh - r.top) / (vh + r.height));
+      const scale = 1.05 + p * 0.7; // grows more as it scrolls through
+      const ty = (p - 0.5) * 44;
+      const tx = -p * 60; // drifts left as it rises
+      globe.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
+      ticking = false;
+    };
+
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (!ticking) {
+          requestAnimationFrame(update);
+          ticking = true;
+        }
+      },
+      { passive: true }
+    );
+    window.addEventListener('resize', update);
+    update();
+  }
+</script>

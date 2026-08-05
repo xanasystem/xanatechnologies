@@ -26,7 +26,6 @@ const leadWords = words.join(' ');
 
   <div class="container hero__inner">
     <p class="hero__badge" data-reveal>
-      <span class="hero__badge-dot" aria-hidden="true"></span>
       {t.hero.eyebrow}
     </p>
 
@@ -166,20 +165,6 @@ const leadWords = words.join(' ');
     text-transform: uppercase;
     color: var(--text);
   }
-  .hero__badge-dot {
-    width: 0.5em;
-    height: 0.5em;
-    border-radius: 50%;
-    background: #ffffff;
-    box-shadow: 0 0 8px 1px rgba(255, 255, 255, 0.6),
-      0 0 0 3px rgba(255, 255, 255, 0.16);
-    animation: badge-pulse 2.6s ease-in-out infinite;
-  }
-  @keyframes badge-pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.4; }
-  }
-
   .hero__title {
     margin-top: var(--space-5);
     font-size: var(--fs-h1);
@@ -270,11 +255,27 @@ const leadWords = words.join(' ');
     100% { transform: translateY(240%); opacity: 0; }
   }
 
-  /* Hide the scroll cue when it would crowd the CTAs: short viewports, and on
-     phones where the taller stacked hero pushes the buttons down onto it. */
-  @media (max-height: 640px), (max-width: 640px) {
+  /* Short viewports: the cue would crowd the CTAs — hide it. */
+  @media (max-height: 640px) {
     .hero__scroll {
       display: none;
+    }
+  }
+
+  /* Phones: the hero content nearly fills the screen, so the absolutely-pinned
+     cue overlapped the CTAs. Stack it in normal flow just below the buttons. */
+  @media (max-width: 640px) {
+    .hero {
+      flex-direction: column;
+      justify-content: center;
+      /* content already fills the hero here, so the tall default bottom padding
+         is just empty space under the cue — trim it. */
+      padding-bottom: var(--space-7);
+    }
+    .hero__scroll {
+      position: static;
+      transform: none;
+      margin-top: var(--space-6);
     }
   }
 
@@ -288,9 +289,6 @@ const leadWords = words.join(' ');
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .hero__badge-dot {
-      animation: none;
-    }
     .hero__scroll-line::after {
       animation: none;
       transform: translateY(60%);
