@@ -573,9 +573,16 @@ const slices = [
   const next = document.querySelector('.hero ~ section') || document.querySelector('.after');
   if (cue && next) {
     cue.addEventListener('click', () => {
+      const el = next as HTMLElement;
+      let top = el.getBoundingClientRect().top + window.scrollY;
+      // The next section is the pinned statement: land in the middle of its
+      // hold (words revealed, rule drawn) — never on the empty first frame.
+      if (el.hasAttribute('data-arrival')) {
+        const travel = Math.max(0, el.offsetHeight - window.innerHeight);
+        top += travel * 0.44;
+      }
       const lenis = (window as any).__lenis;
-      if (lenis) { lenis.scrollTo(next as HTMLElement); return; }
-      const top = next.getBoundingClientRect().top + window.scrollY;
+      if (lenis) { lenis.scrollTo(top); return; }
       window.scrollTo({ top, behavior: reduce ? 'auto' : 'smooth' });
     });
   }

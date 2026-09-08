@@ -169,6 +169,37 @@ p {
   color: var(--text);
 }
 
+/* Editorial kicker: no pill, no dot — a short brand-gradient rule followed by
+   the label in small tracked caps. Quieter than the glass pill. */
+.eyebrow--kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.9em;
+  font-size: 0.72rem;
+  font-weight: var(--fw-medium);
+  letter-spacing: 0.16em;
+  color: color-mix(in srgb, currentColor 70%, transparent);
+}
+.eyebrow--kicker::before {
+  content: '';
+  width: 28px;
+  height: 1px;
+  flex: none;
+  background: linear-gradient(90deg, var(--grad-statement-a), var(--grad-statement-b));
+}
+
+/* Technical label: the project's mono face, very small, tracked caps — the
+   chapter-index feel without the number. No pill, no rule, no dot. */
+.eyebrow--mono {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: var(--fw-regular);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, currentColor 62%, transparent);
+}
+
 /* Optional point of light inside an eyebrow: <span class="eyebrow__dot">.
    White on dark surfaces, brand cyan on light ones; breathes gently. */
 .eyebrow--pill:has(.eyebrow__dot) {

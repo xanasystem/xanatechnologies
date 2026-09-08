@@ -350,6 +350,11 @@ const brands = [
   window.addEventListener('resize', scheduleLayout);
   window.addEventListener('load', scheduleLayout, { once: true });
   document.fonts?.ready.then(scheduleLayout);
+  // A hidden tab lays out at zero size; re-measure once it is shown again.
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) scheduleLayout(); });
+  window.addEventListener('pageshow', scheduleLayout);
+  // Belt and braces: the moment the reveal animation starts, layout is final.
+  head?.addEventListener('animationstart', scheduleLayout);
 
   if (reduce || !('IntersectionObserver' in window)) {
     head?.classList.add('is-in');

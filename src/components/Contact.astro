@@ -49,12 +49,6 @@ const titleLead = titleWords.slice(0, -accentCount).join(' ');
   <div class="container contact__wrap">
     <div class="contact-card" data-reveal>
       <div class="contact-card__intro">
-        <!-- Same eyebrow pill as the footer ("Let's work together"); the
-             .surface-light tokens flip it to the light palette automatically. -->
-        <p class="eyebrow eyebrow--pill contact-card__badge">
-          <span class="eyebrow__dot" aria-hidden="true"></span>
-          {c.label}
-        </p>
         <h2 id="contact-title" class="contact-card__title">
           {titleLead}<br /><span class="contact-card__accent">{titleAccent}</span>
         </h2>
@@ -345,13 +339,8 @@ const titleLead = titleWords.slice(0, -accentCount).join(' ');
     gap: 1.5rem;
   }
 
-  /* Badge styling comes from the shared .eyebrow / .eyebrow--pill (global.css) */
-  .contact-card__badge {
-    width: fit-content;
-  }
-
   .contact-card__title {
-    margin-top: 1.25rem;
+    margin-top: 0;
     font-family: var(--font-display);
     font-weight: 700;
     font-size: clamp(2rem, 1.4rem + 2vw, 3rem);

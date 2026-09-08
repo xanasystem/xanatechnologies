@@ -232,9 +232,10 @@ const words2 = line2.split(' ');
   const rule = document.querySelector<HTMLElement>('[data-rule]');
   const bodyEl = document.querySelector<HTMLElement>('[data-body]');
   const closingEl = document.querySelector<HTMLElement>('[data-closing]');
-  const words = Array.from(document.querySelectorAll<HTMLElement>('[data-word]'));
-  const gradLine = document.querySelector<HTMLElement>('[data-grad-line]');
-  const gradWords = Array.from(document.querySelectorAll<HTMLElement>('[data-grad-word]'));
+  const words = Array.from(document.querySelectorAll<HTMLElement>('#ecosystem [data-word]'));
+  // Scoped to this section: Brands has its own [data-grad-word] set and layout.
+  const gradLine = document.querySelector<HTMLElement>('#ecosystem [data-grad-line]');
+  const gradWords = Array.from(document.querySelectorAll<HTMLElement>('#ecosystem [data-grad-word]'));
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   // Continuous gradient across line 2: size each word's gradient to the line
