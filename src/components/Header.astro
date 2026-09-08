@@ -9,6 +9,13 @@ const { locale } = Astro.props;
 const t = content[locale];
 
 const homeHref = locale === 'es' ? '/es/' : '/';
+
+// Language switch: the other locale's home. (Both pages are single landings,
+// so the switch always lands on the equivalent home.)
+const langs: { code: Locale; label: string; href: string; name: string }[] = [
+  { code: 'en', label: 'EN', href: '/', name: 'English' },
+  { code: 'es', label: 'ES', href: '/es/', name: 'Español' },
+];
 ---
 
 <header class="site-header" data-header>
@@ -17,33 +24,40 @@ const homeHref = locale === 'es' ? '/es/' : '/';
       <a class="brand" href={homeHref} aria-label="Xana Technologies — home">
         <img
           class="brand__logo"
-          src="/logo/xana-wordmark-white.png"
+          src="/logo/xana-lockup-white.png"
           alt="Xana Technologies"
-          width="658"
-          height="151"
+          width="659"
+          height="225"
           fetchpriority="high"
         />
       </a>
 
-      <nav class="site-nav" aria-label={locale === 'es' ? 'Navegación principal' : 'Main navigation'}>
-        <ul class="site-nav__list">
-          {
-            t.nav.sections
-              .filter((section) => section.id !== 'contact')
-              .map((section) => (
-                <li>
-                  <a class="site-nav__link" href={`#${section.id}`}>
-                    {section.label}
-                  </a>
-                </li>
-              ))
-          }
-        </ul>
-      </nav>
-
       <div class="site-header__actions">
-        <a class="btn btn--primary header-cta" href="#contact">
-          {locale === 'es' ? 'Contacto' : 'Contact'}
+        <!-- Language switch: a two-position toggle, EN | ES -->
+        <nav class="lang" aria-label={t.nav.languageLabel} data-lang={locale}>
+          <span class="lang__thumb" aria-hidden="true"></span>
+          {
+            langs.map((l) => (
+              <a
+                class:list={['lang__link', { 'is-active': l.code === locale }]}
+                href={l.href}
+                hreflang={l.code}
+                lang={l.code}
+                aria-label={l.name}
+                aria-current={l.code === locale ? 'page' : undefined}
+              >
+                {l.label}
+              </a>
+            ))
+          }
+        </nav>
+
+        <a class="cta cta--white cta--sm header-cta" href="#contact">
+          <span>{locale === 'es' ? 'Contacto' : 'Contact'}</span>
+          <svg viewBox="0 0 18 18" fill="none" aria-hidden="true">
+            <path d="M4.5 13.5 13.5 4.5M6 4.5h7.5V12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M4.5 13.5 13.5 4.5M6 4.5h7.5V12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
         </a>
 
         <button
@@ -68,18 +82,31 @@ const homeHref = locale === 'es' ? '/es/' : '/';
       hidden
     >
       <ul class="mobile-nav__list">
-        {
-          t.nav.sections.map((section) => (
-            <li class:list={[{ 'mobile-nav__cta-item': section.id === 'contact' }]}>
+        <li class="mobile-nav__langs">
+          {
+            langs.map((l) => (
               <a
-                class:list={['mobile-nav__link', { 'mobile-nav__link--cta': section.id === 'contact' }]}
-                href={`#${section.id}`}
-                data-mobile-link
+                class:list={['mobile-nav__link', 'mobile-nav__lang', { 'is-active': l.code === locale }]}
+                href={l.href}
+                hreflang={l.code}
+                lang={l.code}
+                aria-current={l.code === locale ? 'page' : undefined}
               >
-                {section.label}
+                {l.name}
               </a>
-            </li>
-          ))
+            ))
+          }
+        </li>
+        {
+          t.nav.sections
+            .filter((section) => section.id === 'contact')
+            .map((section) => (
+              <li class="mobile-nav__cta-item">
+                <a class="mobile-nav__link mobile-nav__link--cta" href={`#${section.id}`} data-mobile-link>
+                  {section.label}
+                </a>
+              </li>
+            ))
         }
       </ul>
     </nav>
@@ -112,21 +139,21 @@ const homeHref = locale === 'es' ? '/es/' : '/';
     min-height: 60px;
     padding: 0.4rem 0.75rem 0.4rem 1.4rem;
     border-radius: var(--radius-pill);
-    background: color-mix(in srgb, var(--bg-2) 62%, transparent);
-    backdrop-filter: saturate(170%) blur(18px);
-    -webkit-backdrop-filter: saturate(170%) blur(18px);
-    border: 1px solid var(--line);
-    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset,
-      0 12px 40px -12px rgba(0, 0, 0, 0.6);
+    /* Almost transparent: the sky shows through, only a whisper of glass */
+    background: color-mix(in srgb, var(--bg-2) 14%, transparent);
+    backdrop-filter: saturate(140%) blur(10px);
+    -webkit-backdrop-filter: saturate(140%) blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.03) inset;
     transition: background-color var(--dur-base) var(--ease-out),
       border-color var(--dur-base) var(--ease-out),
       box-shadow var(--dur-base) var(--ease-out);
   }
   .site-header[data-scrolled] .navbar {
-    background: color-mix(in srgb, var(--bg-2) 82%, transparent);
-    border-color: var(--line-2);
-    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05) inset,
-      0 16px 48px -14px rgba(0, 0, 0, 0.7);
+    background: color-mix(in srgb, var(--bg-2) 26%, transparent);
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset,
+      0 12px 40px -18px rgba(0, 0, 0, 0.5);
   }
 
   .brand {
@@ -135,27 +162,63 @@ const homeHref = locale === 'es' ? '/es/' : '/';
     flex-shrink: 0;
   }
   .brand__logo {
-    height: 24px;
+    /* full lockup (wordmark + TECHNOLOGIES) — taller than the old wordmark */
+    height: 38px;
     width: auto;
   }
 
-  .site-nav {
-    margin-inline: auto;
-  }
-  .site-nav__list {
-    display: flex;
+  /* EN | ES switch: a translucent track with a sliding white thumb under the
+     active language, sized to match the compact Contact CTA beside it. */
+  .lang {
+    --lang-w: 3.1rem; /* width of one position */
+    position: relative;
+    display: grid;
+    grid-template-columns: var(--lang-w) var(--lang-w);
     align-items: center;
-    gap: var(--space-5);
-    list-style: none;
-    padding: 0;
+    height: 37px; /* = .cta--sm height */
+    padding: 3px;
+    border-radius: var(--radius-pill);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    font-family: var(--font-display);
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    isolation: isolate;
   }
-  .site-nav__link {
-    font-size: 0.95rem;
-    color: var(--dim);
+  /* Frosted thumb: translucent white glass with a hairline edge — soft, no
+     solid block, still clearly marks the active language. */
+  .lang__thumb {
+    position: absolute;
+    top: 3px;
+    bottom: 3px;
+    left: 3px;
+    width: var(--lang-w);
+    border-radius: var(--radius-pill);
+    background: rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    transition: transform var(--dur-base) var(--ease-out);
+    z-index: 0;
+  }
+  .lang[data-lang='es'] .lang__thumb {
+    transform: translateX(var(--lang-w));
+  }
+  .lang__link {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    height: 100%;
+    color: color-mix(in srgb, var(--text) 45%, transparent);
+    font-weight: var(--fw-medium);
     transition: color var(--dur-fast) var(--ease-out);
   }
-  .site-nav__link:hover {
+  .lang__link:hover {
     color: var(--text);
+  }
+  .lang__link.is-active {
+    color: var(--text);
+    font-weight: var(--fw-semibold);
   }
 
   .site-header__actions {
@@ -163,12 +226,10 @@ const homeHref = locale === 'es' ? '/es/' : '/';
     align-items: center;
     gap: var(--space-3);
     flex-shrink: 0;
+    margin-left: auto;
   }
 
-  .header-cta {
-    padding: 0.6em 1.15em;
-    font-size: 0.92rem;
-  }
+  /* .header-cta sizing comes from the shared .cta--sm recipe (global.css). */
 
   .nav-toggle {
     display: none;
@@ -230,6 +291,20 @@ const homeHref = locale === 'es' ? '/es/' : '/';
     background: color-mix(in srgb, var(--text) 6%, transparent);
     color: var(--text);
   }
+  .mobile-nav__langs {
+    display: flex;
+    gap: var(--space-2);
+  }
+  .mobile-nav__lang {
+    flex: 1;
+    text-align: center;
+    border: 1px solid var(--line);
+  }
+  .mobile-nav__lang.is-active {
+    color: var(--text);
+    border-color: var(--line-2);
+    background: color-mix(in srgb, var(--text) 8%, transparent);
+  }
 
   /* Contact rendered as a full-width primary CTA at the foot of the menu,
      set off from the plain links above by a hairline + extra spacing. */
@@ -238,25 +313,36 @@ const homeHref = locale === 'es' ? '/es/' : '/';
     padding-top: var(--space-3);
     border-top: 1px solid var(--line);
   }
+  /* Same recipe as every CTA (white variant), stretched to the menu width */
   .mobile-nav__link--cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
+    width: 100%;
     text-align: center;
-    background: var(--btn-primary-bg);
-    color: var(--btn-primary-ink);
-    font-family: var(--font-display);
-    font-weight: var(--fw-medium);
-    padding: 0.55rem 1rem;
+    background: #ffffff;
+    color: #282828;
+    font-family: var(--font-body);
+    font-weight: var(--fw-semibold);
+    font-size: 1rem;
+    line-height: 1.2;
+    padding: 0.9rem 1.6rem;
     border-radius: var(--radius-pill);
   }
   .mobile-nav__link--cta:hover {
-    background: var(--btn-primary-bg);
-    color: var(--btn-primary-ink);
-    filter: brightness(0.94);
+    background: #ffffff;
+    color: #282828;
+    filter: brightness(0.96);
   }
 
   @media (max-width: 900px) {
-    .site-nav,
+    .lang,
     .header-cta {
       display: none;
+    }
+    .brand__logo {
+      height: 32px;
     }
     .nav-toggle {
       display: inline-flex;

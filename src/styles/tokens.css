@@ -20,6 +20,9 @@
 
   --grad: linear-gradient(135deg, #7523ed, #1f63c8);
   --grad-text: linear-gradient(120deg, #ffffff 8%, #c77bf0 55%, #6ea8ff 100%);
+  /* Statement gradient (Figma): cyan → magenta, left to right */
+  --grad-statement-a: #4dd4ec;
+  --grad-statement-b: #e6007e;
 
   --brand: #6e5af0;
 
@@ -46,7 +49,16 @@
   --chip-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset,
     0 12px 40px -12px rgba(0, 0, 0, 0.6);
 
-  --hero-img: url('/img/hero/horizonte.jpg');
+  /* Page backdrop: the space photo in PageBackground.astro (public/img/bg/
+     space.jpg) shows through every section. --hero-img can layer an extra
+     photo inside the hero only (none by default). --nebula-* tint the loader's
+     point of light. */
+  --hero-img: none;
+  --bg-photo-brightness: 1.1; /* lift on the space photo so it reads through */
+  --bg-photo-saturation: 1.05;
+  --bg-photo-veil: 0.38; /* dark wash over the photo (0 = none, 1 = solid) */
+  --nebula-a: #2c86e6; /* cyan-blue  */
+  --nebula-b: #b0348c; /* magenta    */
   --glow-1: #7523ed;
   --glow-2: #1f63c8;
 

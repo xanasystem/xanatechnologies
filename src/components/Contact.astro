@@ -1,176 +1,164 @@
 ---
+/**
+ * Contact — light section from Figma node 88:727: a frosted white card with
+ * the form on the left and the portrait video (public/video/contact.mp4,
+ * 720×1276) filling the right edge. The section is the one light surface on the
+ * page; it flips the shared tokens through `.surface-light` so buttons, text
+ * and the custom cursor adapt.
+ */
 import { content, type Locale } from '../i18n/content';
 
 interface Props {
   locale: Locale;
-  /** 'light' flips this section to a light surface (used by v2). */
+  /** Kept for API compatibility with the v2 composition; the design is light. */
   surface?: 'dark' | 'light';
 }
 
-const { locale, surface = 'dark' } = Astro.props;
+const { locale } = Astro.props;
 const t = content[locale];
 const c = t.contact;
 
 // Privacy policy link differs per locale.
 const privacyHref = locale === 'es' ? '/es/privacidad' : '/privacy';
-
-// Privacy consent rendered with the policy name as an inline link.
 const privacyPolicyName = locale === 'es' ? 'Política de Privacidad' : 'Privacy Policy';
 const privacyPrefix = locale === 'es' ? 'He leído y acepto la ' : 'I have read and accept the ';
 
-// Split the headline so the closing word(s) carry the gradient accent.
+// Headline: the closing word(s) carry the cyan→magenta gradient
+// (EN "working on." · ES "trabajando.").
 const titleWords = c.h2.trim().split(' ');
 const accentCount = locale === 'es' ? 1 : 2;
 const titleAccent = titleWords.slice(-accentCount).join(' ');
 const titleLead = titleWords.slice(0, -accentCount).join(' ');
 ---
 
-<section
-  id="contact"
-  class:list={['section', 'section--dark', surface === 'light' && 'surface-light']}
-  aria-labelledby="contact-title"
->
-  <span class="contact-sep" aria-hidden="true"></span>
+<section id="contact" class="contact surface-light" aria-labelledby="contact-title">
+  <!-- Portrait video anchored to the right edge (desktop) -->
+  <div class="contact__media" aria-hidden="true">
+    <video
+      class="contact__video"
+      src="/video/contact.mp4"
+      autoplay
+      muted
+      loop
+      playsinline
+      preload="metadata"
+      data-contact-video
+    ></video>
+  </div>
 
-  <div class="container contact">
-    <div class="contact__intro" data-reveal>
-      <p class="eyebrow eyebrow--pill">{c.label}</p>
-      <h2 id="contact-title" class="contact__title">
-        {titleLead}{' '}<span class="grad-text">{titleAccent}</span>
-      </h2>
-      <p class="contact__text lead">{c.text}</p>
-
-      <!-- v2 only: decorative particle globe under the intro copy (hidden in v1). -->
-      <div class="contact__globe" aria-hidden="true">
-        <img src="/img/stock/globe.jpg" alt="" loading="lazy" />
-      </div>
-    </div>
-
-    <form
-      class="contact-form"
-      data-contact-form
-      novalidate
-      method="post"
-      action=""
-      data-reveal
-    >
-      <!-- Field: Name (required) -->
-      <div class="field">
-        <label class="field__label" for="cf-name">{c.fields.name}</label>
-        <input
-          class="field__input"
-          id="cf-name"
-          name="name"
-          type="text"
-          autocomplete="name"
-          required
-          aria-required="true"
-          aria-describedby="cf-name-error"
-        />
-        <p class="field__error" id="cf-name-error" data-error hidden></p>
+  <div class="container contact__wrap">
+    <div class="contact-card" data-reveal>
+      <div class="contact-card__intro">
+        <!-- Same eyebrow pill as the footer ("Let's work together"); the
+             .surface-light tokens flip it to the light palette automatically. -->
+        <p class="eyebrow eyebrow--pill contact-card__badge">
+          <span class="eyebrow__dot" aria-hidden="true"></span>
+          {c.label}
+        </p>
+        <h2 id="contact-title" class="contact-card__title">
+          {titleLead}<br /><span class="contact-card__accent">{titleAccent}</span>
+        </h2>
+        <p class="contact-card__text">{c.text}</p>
+        <p class="contact-card__tagline">{c.tagline}</p>
       </div>
 
-      <!-- Field: Company (optional) -->
-      <div class="field">
-        <label class="field__label" for="cf-company">
-          {c.fields.company}
-          <span class="field__optional">{c.optionalHelper}</span>
-        </label>
-        <input
-          class="field__input"
-          id="cf-company"
-          name="company"
-          type="text"
-          autocomplete="organization"
-        />
-      </div>
+      <form class="contact-form" data-contact-form novalidate method="post" action="">
+        <!-- Row 1: Full name (optional) · Email (required) -->
+        <div class="contact-form__row contact-form__row--2">
+          <div class="field">
+            <label class="field__label" for="cf-name">
+              {c.fields.name}
+              <span class="field__optional">{c.optionalHelper}</span>
+            </label>
+            <input class="field__input" id="cf-name" name="name" type="text" autocomplete="name" />
+          </div>
+          <div class="field">
+            <label class="field__label" for="cf-email">{c.fields.email}</label>
+            <input
+              class="field__input"
+              id="cf-email"
+              name="email"
+              type="email"
+              autocomplete="email"
+              required
+              aria-required="true"
+              aria-describedby="cf-email-error"
+            />
+            <p class="field__error" id="cf-email-error" data-error hidden></p>
+          </div>
+        </div>
 
-      <!-- Field: Email (required) -->
-      <div class="field">
-        <label class="field__label" for="cf-email">{c.fields.email}</label>
-        <input
-          class="field__input"
-          id="cf-email"
-          name="email"
-          type="email"
-          autocomplete="email"
-          required
-          aria-required="true"
-          aria-describedby="cf-email-error"
-        />
-        <p class="field__error" id="cf-email-error" data-error hidden></p>
-      </div>
+        <!-- Row 2: Phone · Region · Country (all optional) -->
+        <div class="contact-form__row contact-form__row--3">
+          <div class="field">
+            <label class="field__label" for="cf-phone">
+              {c.fields.phone}
+              <span class="field__optional">{c.optionalHelper}</span>
+            </label>
+            <input class="field__input" id="cf-phone" name="phone" type="tel" autocomplete="tel" />
+          </div>
+          <div class="field">
+            <label class="field__label" for="cf-region">
+              {c.fields.region}
+              <span class="field__optional">{c.optionalHelper}</span>
+            </label>
+            <input class="field__input" id="cf-region" name="region" type="text" autocomplete="address-level1" />
+          </div>
+          <div class="field">
+            <label class="field__label" for="cf-country">
+              {c.fields.country}
+              <span class="field__optional">{c.optionalHelper}</span>
+            </label>
+            <input class="field__input" id="cf-country" name="country" type="text" autocomplete="country-name" />
+          </div>
+        </div>
 
-      <!-- Field: Phone (optional) -->
-      <div class="field">
-        <label class="field__label" for="cf-phone">
-          {c.fields.phone}
-          <span class="field__optional">{c.optionalHelper}</span>
-        </label>
-        <input
-          class="field__input"
-          id="cf-phone"
-          name="phone"
-          type="tel"
-          autocomplete="tel"
-        />
-      </div>
-
-      <!-- Field: Message (required) -->
-      <div class="field field--full">
-        <label class="field__label" for="cf-message">{c.fields.message}</label>
-        <textarea
-          class="field__input field__textarea"
-          id="cf-message"
-          name="message"
-          rows="5"
-          required
-          aria-required="true"
-          aria-describedby="cf-message-error"></textarea>
-        <p class="field__error" id="cf-message-error" data-error hidden></p>
-      </div>
-
-      <!-- Privacy consent (required) -->
-      <div class="field field--full consent">
-        <label class="consent__label">
-          <input
-            class="consent__box"
-            type="checkbox"
-            name="privacy"
+        <!-- Message (required) -->
+        <div class="field">
+          <label class="field__label" for="cf-message">{c.fields.message}</label>
+          <textarea
+            class="field__input field__textarea"
+            id="cf-message"
+            name="message"
+            rows="4"
             required
             aria-required="true"
-            aria-describedby="cf-privacy-error"
-          />
-          <span>
-            {privacyPrefix}
-            <a href={privacyHref} class="consent__link">{privacyPolicyName}</a>.
-          </span>
-        </label>
-        <p class="field__error" id="cf-privacy-error" data-error hidden></p>
-      </div>
+            aria-describedby="cf-message-error"></textarea>
+          <p class="field__error" id="cf-message-error" data-error hidden></p>
+        </div>
 
-      <!-- Marketing consent (optional, unchecked by default) -->
-      <div class="field field--full consent">
-        <label class="consent__label">
-          <input class="consent__box" type="checkbox" name="marketing" />
-          <span>{c.marketingConsent}</span>
-        </label>
-      </div>
+        <!-- Privacy consent (required) -->
+        <div class="field consent">
+          <label class="consent__label">
+            <input
+              class="consent__box"
+              type="checkbox"
+              name="privacy"
+              required
+              aria-required="true"
+              aria-describedby="cf-privacy-error"
+            />
+            <span>
+              {privacyPrefix}
+              <a href={privacyHref} class="consent__link">{privacyPolicyName}</a>.
+            </span>
+          </label>
+          <p class="field__error" id="cf-privacy-error" data-error hidden></p>
+        </div>
 
-      <div class="field--full contact-form__submit">
-        <button class="btn btn--primary" type="submit" data-submit>
-          {c.submit}
-        </button>
-        <!-- Live region announces async states to assistive tech. -->
-        <p
-          class="form-status"
-          data-status
-          role="status"
-          aria-live="polite"
-          hidden
-        ></p>
-      </div>
-    </form>
+        <div class="contact-form__submit">
+          <button class="cta cta--grad" type="submit" data-submit>
+            <span>{c.submit}</span>
+            <svg viewBox="0 0 18 18" fill="none" aria-hidden="true">
+              <path d="M4.5 13.5 13.5 4.5M6 4.5h7.5V12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M4.5 13.5 13.5 4.5M6 4.5h7.5V12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </button>
+          <!-- Live region announces async states to assistive tech. -->
+          <p class="form-status" data-status role="status" aria-live="polite" hidden></p>
+        </div>
+      </form>
+    </div>
   </div>
 </section>
 
@@ -196,30 +184,20 @@ const titleLead = titleWords.slice(0, -accentCount).join(' ');
       const wrap = input.closest('.field');
       return wrap ? wrap.querySelector('[data-error]') : null;
     }
-
     function showError(input, message) {
       const el = fieldError(input);
       input.setAttribute('aria-invalid', 'true');
-      if (el) {
-        el.textContent = message;
-        el.hidden = false;
-      }
+      if (el) { el.textContent = message; el.hidden = false; }
     }
-
     function clearError(input) {
       const el = fieldError(input);
       input.removeAttribute('aria-invalid');
-      if (el) {
-        el.textContent = '';
-        el.hidden = true;
-      }
+      if (el) { el.textContent = ''; el.hidden = true; }
     }
-
     function validateField(input) {
       if (input.name === 'email') {
         if (!input.value.trim()) return showError(input, strings.required), false;
-        if (!emailRe.test(input.value.trim()))
-          return showError(input, strings.email), false;
+        if (!emailRe.test(input.value.trim())) return showError(input, strings.email), false;
       } else if (input.type === 'checkbox' && input.name === 'privacy') {
         if (!input.checked) return showError(input, strings.privacy), false;
       } else if (input.required) {
@@ -250,7 +228,6 @@ const titleLead = titleWords.slice(0, -accentCount).join(' ');
           if (!firstInvalid) firstInvalid = input;
         }
       });
-
       if (!valid) {
         status.hidden = true;
         if (firstInvalid) firstInvalid.focus();
@@ -264,7 +241,6 @@ const titleLead = titleWords.slice(0, -accentCount).join(' ');
       status.dataset.state = 'sending';
       status.textContent = strings.sending;
       submitBtn.disabled = true;
-
       try {
         const endpoint = form.getAttribute('action');
         if (endpoint) {
@@ -275,7 +251,6 @@ const titleLead = titleWords.slice(0, -accentCount).join(' ');
           });
           if (!res.ok) throw new Error('Bad response');
         } else {
-          // No endpoint configured yet — treat as success for the demo flow.
           await new Promise((r) => setTimeout(r, 700));
         }
         status.dataset.state = 'success';
@@ -291,323 +266,239 @@ const titleLead = titleWords.slice(0, -accentCount).join(' ');
   }
 </script>
 
+<script>
+  // Only run the video while the section is on screen (saves battery/CPU on
+  // a 5s loop nobody is looking at). Respect reduced motion: show a still.
+  const video = document.querySelector<HTMLVideoElement>('[data-contact-video]');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (video) {
+    if (reduce) {
+      video.removeAttribute('autoplay');
+      video.pause();
+    } else if ('IntersectionObserver' in window) {
+      new IntersectionObserver((entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) video.play().catch(() => {});
+          else video.pause();
+        });
+      }, { threshold: 0.1 }).observe(video);
+    }
+  }
+</script>
+
 <style>
-  /* Section gradient — a brand bloom contained in the form section that fades
-     to the page black at its bottom edge, giving a clean cut into the (solid
-     black) footer. Painted on a ::before so it sits over the fixed page-gradient
-     canvas within this section only. */
-  #contact {
+  /* ---- Section: white with soft brand tints (pink low-left, blue top-right) */
+  .contact {
     position: relative;
     isolation: isolate;
-  }
-  #contact::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
+    overflow: hidden;
+    padding-block: clamp(4rem, 3rem + 5vw, 8rem);
+    /* Brand tints reaching well into the section: magenta from the lower-left,
+       cyan from the upper-right, meeting softly around the middle. */
     background:
-      /* bright twin blooms concentrated at the very bottom of the section */
-      radial-gradient(
-        80% 56% at 26% 102%,
-        color-mix(in srgb, var(--c1) 74%, transparent),
-        transparent 62%
-      ),
-      radial-gradient(
-        84% 58% at 84% 106%,
-        color-mix(in srgb, var(--c4) 66%, transparent),
-        transparent 64%
-      ),
-      /* dark wash: transparent at the very top (no seam), sinks the upper-mid
-         body into a deeper black, then clears so the bottom blooms shine */
-      linear-gradient(
-        180deg,
-        transparent 0%,
-        color-mix(in srgb, var(--bg) 50%, transparent) 20%,
-        color-mix(in srgb, var(--bg) 55%, transparent) 48%,
-        transparent 80%
-      );
+      radial-gradient(95% 85% at 0% 100%, color-mix(in srgb, var(--grad-statement-b) 34%, transparent), transparent 72%),
+      radial-gradient(90% 95% at 100% 0%, color-mix(in srgb, var(--grad-statement-a) 42%, transparent), transparent 72%),
+      linear-gradient(160deg, #f7fbfe 0%, #ffffff 45%, #fdf3f9 100%);
+    color: #3f3f3f;
   }
 
-  /* Very subtle separator at the top of the section (fades at both ends). */
-  .contact-sep {
+  /* Portrait video on the right edge — Figma: 644px wide on a 1920 frame */
+  .contact__media {
     position: absolute;
     top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 98vw;
-    height: 1px;
+    right: 0;
+    bottom: 0;
+    width: clamp(320px, 34vw, 644px);
     z-index: 0;
-    background: linear-gradient(
-      90deg,
-      transparent 0%,
-      color-mix(in srgb, var(--text) 12%, transparent) 28%,
-      color-mix(in srgb, var(--text) 12%, transparent) 72%,
-      transparent 100%
-    );
+    pointer-events: none;
+    /* soften the video's left edge into the section */
+    mask-image: linear-gradient(to right, transparent, #000 18%);
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 18%);
+  }
+  .contact__video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
   }
 
-  .contact {
-    display: grid;
-    grid-template-columns: 0.9fr 1.1fr;
-    gap: var(--space-8);
-    align-items: start;
+  .contact__wrap {
+    position: relative;
+    z-index: 1;
   }
 
-  .contact__title {
-    margin-top: var(--space-4);
-    font-size: clamp(2.8rem, 1.9rem + 4.2vw, 4.6rem);
-    line-height: 1.03;
-    letter-spacing: var(--ls-h1);
-    color: var(--color-on-dark);
+  /* ---- Frosted card (Figma: white 40%, radius 25, padding 60, 990 wide) ---- */
+  .contact-card {
+    width: min(100%, 760px);
+    /* sit left: the card starts at the page gutter, not the container centre */
+    margin-left: calc(-1 * clamp(0px, (100vw - var(--container-max)) / 2 - var(--gutter), 120px));
+    padding: clamp(1.5rem, 1rem + 2vw, 2.75rem);
+    border-radius: 22px;
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1), 0 30px 80px -40px rgba(12, 16, 32, 0.25);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
   }
 
-  .contact__text {
-    margin-top: var(--space-4);
-    color: var(--color-on-dark-muted);
-    max-width: 40ch;
+  /* Badge styling comes from the shared .eyebrow / .eyebrow--pill (global.css) */
+  .contact-card__badge {
+    width: fit-content;
   }
 
+  .contact-card__title {
+    margin-top: 1.25rem;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(2rem, 1.4rem + 2vw, 3rem);
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    color: #3f3f3f;
+  }
+  .contact-card__accent {
+    background: linear-gradient(90deg, var(--grad-statement-a), var(--grad-statement-b) 54%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+  .contact-card__text {
+    margin-top: 1.1rem;
+    max-width: 58ch;
+    font-weight: 300;
+    font-size: 1.25rem; /* Figma: 20px */
+    line-height: 1.45;
+    color: #3f3f3f;
+  }
+  .contact-card__tagline {
+    margin-top: 0.8rem;
+    font-weight: 600;
+    font-size: 1.25rem; /* Figma: 20px */
+    color: #3f3f3f;
+  }
+
+  /* ---- Form -------------------------------------------------------------- */
   .contact-form {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-4) var(--space-5);
-    background: color-mix(in srgb, var(--bg-2) 70%, transparent);
-    color: var(--color-text);
-    padding: clamp(1.5rem, 1rem + 2vw, 2.5rem);
-    border: 1px solid var(--line-2);
-    border-radius: var(--radius-lg);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    box-shadow: var(--shadow-lg);
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
   }
+  .contact-form__row {
+    display: grid;
+    gap: 0.75rem;
+  }
+  .contact-form__row--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .contact-form__row--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 
   .field {
     display: flex;
     flex-direction: column;
-    gap: var(--space-2);
+    gap: 0.4rem;
+    min-width: 0;
   }
-
-  .field--full {
-    grid-column: 1 / -1;
-  }
-
   .field__label {
-    font-size: 0.9rem;
-    font-weight: var(--fw-semibold);
     display: flex;
     align-items: baseline;
-    gap: var(--space-2);
+    gap: 0.45rem;
+    font-weight: 400;
+    font-size: 0.9rem;
+    color: #3f3f3f;
   }
-
   .field__optional {
-    font-weight: var(--fw-regular);
-    font-size: 0.8rem;
-    color: var(--color-text-muted);
+    font-size: 0.72rem;
+    color: #929292;
   }
-
   .field__input {
     width: 100%;
-    padding: 0.7em 0.85em;
-    border: var(--border-width) solid var(--color-line);
-    border-radius: var(--radius-sm);
-    background: var(--color-surface);
-    transition: border-color var(--dur-fast) var(--ease-out),
-      box-shadow var(--dur-fast) var(--ease-out);
+    min-height: 40px;
+    padding: 0.5em 0.75em;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.5);
+    color: #1c1c1c;
+    font-size: 0.95rem;
+    transition: border-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out),
+      background-color var(--dur-fast) var(--ease-out);
   }
-
   .field__input:focus-visible {
-    border-color: var(--color-brand);
-    box-shadow: var(--focus-ring);
+    border-color: var(--grad-statement-a);
+    background: #ffffff;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--grad-statement-a) 30%, transparent);
+    border-radius: 4px;
   }
-
-  .field__input[aria-invalid='true'] {
-    border-color: var(--color-error);
-  }
-
-  .field__textarea {
-    resize: vertical;
-    min-height: 120px;
-  }
-
+  .field__input[aria-invalid='true'] { border-color: var(--color-error); }
+  .field__textarea { min-height: 104px; resize: vertical; }
   .field__error {
     font-size: 0.85rem;
     color: var(--color-error);
     font-weight: var(--fw-medium);
   }
 
-  .consent {
-    gap: var(--space-2);
-  }
-
+  .consent { gap: 0.5rem; }
   .consent__label {
     display: grid;
     grid-template-columns: auto 1fr;
-    gap: var(--space-3);
-    align-items: start;
+    gap: 0.75rem;
+    align-items: center;
+    font-weight: 400;
     font-size: 0.9rem;
-    line-height: 1.5;
-    color: var(--color-text-muted);
+    color: #3f3f3f;
     cursor: pointer;
   }
-
   .consent__box {
-    margin-top: 0.2em;
-    width: 1.15em;
-    height: 1.15em;
-    accent-color: var(--color-brand);
-    flex-shrink: 0;
+    width: 17px;
+    height: 17px;
+    margin: 0;
+    accent-color: var(--grad-statement-b);
+    border: 1px solid #3f3f3f;
+    background: rgba(255, 255, 255, 0.5);
+  }
+  .consent__link {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 3px;
   }
 
-  .consent__link {
-    color: var(--color-brand);
-    text-decoration: underline;
-    text-underline-offset: 2px;
-  }
+  /* Submit button uses the shared .cta / .cta--grad recipe (global.css). */
 
   .contact-form__submit {
     display: flex;
     align-items: center;
-    gap: var(--space-4);
+    gap: 1rem;
     flex-wrap: wrap;
-    margin-top: var(--space-2);
+    margin-top: 0.25rem;
   }
+  .form-status { font-size: 0.95rem; font-weight: var(--fw-medium); }
+  .form-status[data-state='sending'] { color: #6b6b6b; }
+  .form-status[data-state='success'] { color: #1d8a5f; }
+  .form-status[data-state='error'] { color: var(--color-error); }
 
-  .form-status {
-    font-size: 0.92rem;
-    font-weight: var(--fw-medium);
+  /* ---- Responsive -------------------------------------------------------- */
+  @media (max-width: 1100px) {
+    .contact__media { width: 30vw; }
+    .contact-card { width: min(100%, 66%); margin-left: 0; }
   }
-
-  .form-status[data-state='sending'] {
-    color: var(--color-text-muted);
-  }
-  .form-status[data-state='success'] {
-    color: var(--color-success);
-  }
-  .form-status[data-state='error'] {
-    color: var(--color-error);
-  }
-
-  /* --- Light surface (v2) --------------------------------------------------
-     Drop the coloured bottom bloom (reads wrong on a light band) and give the
-     form real contrast: white card on the light grey section, crisp inputs. */
-  #contact.surface-light::before {
-    background: none;
-  }
-  #contact.surface-light .contact-form {
-    background: #ffffff;
-    box-shadow: 0 24px 60px -30px rgba(12, 16, 32, 0.35);
-  }
-  #contact.surface-light .field__input {
-    background: #f7f8fc;
-  }
-
-  /* Decorative particle globe (v2) — hidden by default so v1 is untouched.
-     `screen` blend drops the image's black so only the glowing particles show,
-     floating over the section. */
-  .contact__globe {
-    display: none;
-  }
-  :global(:root[data-theme='v2']) .contact__globe {
-    display: block;
-    width: 100%;
-    /* much larger — fills the intro column and bleeds off to the right */
-    max-width: 680px;
-    margin-top: var(--space-5);
-    margin-left: 12%;
-    margin-right: -16%;
-  }
-  .contact__globe img {
-    width: 100%;
-    height: auto;
-    opacity: 0.85;
-    mix-blend-mode: screen;
-    transform-origin: center;
-    will-change: transform;
-  }
-
-  /* v2: lighter bottom bloom using the headline-gradient tints (light blue →
-     lilac → pink), no dark wash — airier than the deep logo colours. */
-  :global(:root[data-theme='v2']) #contact::before {
-    background:
-      radial-gradient(
-        55% 48% at 50% 116%,
-        color-mix(in srgb, var(--c1) 72%, transparent),
-        transparent 60%
-      ),
-      radial-gradient(
-        88% 60% at 50% 130%,
-        color-mix(in srgb, var(--c2) 44%, transparent),
-        transparent 68%
-      ),
-      radial-gradient(
-        130% 82% at 50% 146%,
-        color-mix(in srgb, var(--c1) 26%, transparent),
-        transparent 74%
-      );
-  }
-
   @media (max-width: 900px) {
-    .contact {
-      grid-template-columns: 1fr;
-      gap: var(--space-6);
+    /* the video becomes a short banner above the card */
+    .contact__media {
+      position: relative;
+      width: 100%;
+      height: clamp(220px, 40vw, 360px);
+      margin-bottom: -3rem;
+      mask-image: linear-gradient(to bottom, #000 60%, transparent);
+      -webkit-mask-image: linear-gradient(to bottom, #000 60%, transparent);
     }
+    .contact__video { object-position: center 20%; }
+    .contact-card { width: 100%; }
+    .contact-form__row--3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
-
-  @media (max-width: 520px) {
-    .contact-form {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  /* Phones only: bring the title down to the hero H1 scale so it stops
-     out-scaling the hero. Desktop keeps its larger statement size. */
-  @media (max-width: 600px) {
-    .contact__title {
-      font-size: var(--fs-h1);
-    }
-    .contact__intro {
-      text-align: center;
-    }
-    .contact__text {
-      margin-inline: auto;
-    }
+  @media (max-width: 560px) {
+    .contact-form__row--2,
+    .contact-form__row--3 { grid-template-columns: 1fr; }
+    .contact-card { border-radius: 18px; }
   }
 </style>
-
-<script>
-  // v2 only: parallax the intro globe — it expands and drifts a little as the
-  // section scrolls through the viewport.
-  const isV2 = document.documentElement.getAttribute('data-theme') === 'v2';
-  const globe = document.querySelector<HTMLElement>('.contact__globe img');
-  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  if (isV2 && globe && !reduce) {
-    const clamp = (v: number) => Math.max(0, Math.min(1, v));
-    let ticking = false;
-
-    const update = () => {
-      const r = globe.getBoundingClientRect();
-      const vh = window.innerHeight;
-      // 0 as it enters from the bottom, 1 as it leaves past the top.
-      const p = clamp((vh - r.top) / (vh + r.height));
-      const scale = 1.1 + p * 0.65; // starts big (1.1) → grows strongly to ~1.75
-      const ty = (p - 0.5) * 56; // −28px → +28px drift
-      globe.style.transform = `translateY(${ty}px) scale(${scale})`;
-      ticking = false;
-    };
-
-    window.addEventListener(
-      'scroll',
-      () => {
-        if (!ticking) {
-          requestAnimationFrame(update);
-          ticking = true;
-        }
-      },
-      { passive: true }
-    );
-    window.addEventListener('resize', update);
-    update();
-  }
-</script>

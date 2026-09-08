@@ -1,12 +1,9 @@
 ---
 import { type Locale } from '../i18n/content';
-import PageGradient from './PageGradient.astro';
+import PageBackground from './PageBackground.astro';
 import Hero from './Hero.astro';
 import Ecosystem from './Ecosystem.astro';
 import Brands from './Brands.astro';
-import Numbers from './Numbers.astro';
-import Industry from './Industry.astro';
-import CustomSolutions from './CustomSolutions.astro';
 import Contact from './Contact.astro';
 
 interface Props {
@@ -16,11 +13,10 @@ interface Props {
 const { locale } = Astro.props;
 ---
 
-<PageGradient />
+{/* The space photo replaces the old scroll-reactive WebGL gradient
+    (PageGradient.astro, kept in the repo) — one fewer per-frame shader. */}
+<PageBackground />
 <Hero locale={locale} />
 <Ecosystem locale={locale} />
 <Brands locale={locale} />
-<Numbers locale={locale} />
-<Industry locale={locale} />
-<CustomSolutions locale={locale} />
 <Contact locale={locale} />

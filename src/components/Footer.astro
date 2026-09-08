@@ -56,9 +56,10 @@ const columns = [
         <p class="eyebrow eyebrow--pill">{f.ctaEyebrow}</p>
         <h2 class="footer-cta__headline"><span>{ctaLine1}</span><span>{ctaLine2}</span></h2>
       </div>
-      <a class="footer-cta__btn" href="#contact">
+      <a class="cta cta--grad footer-cta__btn" href="#contact">
         <span>{f.ctaButton}</span>
         <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+          <path d="M4.5 13.5 13.5 4.5M6 4.5h7.5V12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
           <path d="M4.5 13.5 13.5 4.5M6 4.5h7.5V12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
         </svg>
       </a>
@@ -132,12 +133,12 @@ const columns = [
 
 <style>
   .site-footer {
-    /* Solid page-black so the footer is cleanly separated from the gradient
-       above and the fixed page-gradient canvas never bleeds through it. */
+    /* Translucent wash so the page-wide space photo still shows through, while
+       the footer stays a touch darker than the sections above. */
     position: relative;
     z-index: 1;
     overflow: hidden;
-    background: var(--bg);
+    background: color-mix(in srgb, var(--bg) 55%, transparent);
     padding-top: var(--space-9);
   }
 
@@ -166,39 +167,7 @@ const columns = [
     display: block;
   }
 
-  .footer-cta__btn {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-3);
-    flex-shrink: 0;
-    padding: 0.9rem 1.6rem;
-    border-radius: var(--radius-pill);
-    /* Bolder, higher-contrast brand gradient (stops pushed past the edges so
-       the blue and pink read more saturated). */
-    background: linear-gradient(
-      115deg,
-      var(--c2) -15%,
-      var(--c1) 50%,
-      var(--c4) 115%
-    );
-    color: #fff;
-    font-weight: var(--fw-semibold);
-    font-size: 1rem;
-    box-shadow: 0 12px 40px -14px color-mix(in srgb, var(--glow-1) 75%, transparent);
-    transition: box-shadow var(--dur-base) var(--ease-out);
-  }
-
-  .footer-cta__btn svg {
-    transition: transform var(--dur-base) var(--ease-out);
-  }
-
-  .footer-cta__btn:hover {
-    box-shadow: 0 16px 48px -12px color-mix(in srgb, var(--glow-1) 95%, transparent);
-  }
-
-  .footer-cta__btn:hover svg {
-    transform: translate(2px, -2px);
-  }
+  /* Button styling lives in the shared .cta / .cta--grad recipe (global.css). */
 
   /* --- Link columns ---------------------------------------------------- */
   .footer-grid {

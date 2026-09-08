@@ -119,6 +119,12 @@ p {
   --btn-primary-bg: #0c1020;
   --btn-primary-ink: #ffffff;
 
+  /* Glass chip on a light surface: the root values bake in the dark --bg-2, so
+     they must be restated here (custom properties resolve where defined). */
+  --chip-bg: rgba(255, 255, 255, 0.7);
+  --chip-border: rgba(12, 16, 32, 0.14);
+  --chip-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 8px 24px -12px rgba(12, 16, 32, 0.25);
+
   /* Remap the compatibility aliases too — several older components (Numbers,
      Contact) colour their text through these. They're resolved from --text at
      :root under the dark theme and would otherwise stay light on this light
@@ -163,6 +169,35 @@ p {
   color: var(--text);
 }
 
+/* Optional point of light inside an eyebrow: <span class="eyebrow__dot">.
+   White on dark surfaces, brand cyan on light ones; breathes gently. */
+.eyebrow--pill:has(.eyebrow__dot) {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75em;
+}
+.eyebrow__dot {
+  --dot: #ffffff;
+  flex: none;
+  width: 0.55em;
+  height: 0.55em;
+  border-radius: 50%;
+  background: var(--dot);
+  box-shadow: 0 0 8px 1px color-mix(in srgb, var(--dot) 65%, transparent),
+    0 0 0 3px color-mix(in srgb, var(--dot) 16%, transparent);
+  animation: eyebrow-pulse 2.8s ease-in-out infinite;
+}
+.surface-light .eyebrow__dot {
+  --dot: var(--grad-statement-a);
+}
+@keyframes eyebrow-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.55; transform: scale(0.85); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .eyebrow__dot { animation: none; }
+}
+
 .lead {
   font-size: var(--fs-lead);
   line-height: var(--lh-snug);
@@ -179,6 +214,109 @@ p {
   background-clip: text;
   -webkit-text-fill-color: transparent;
   color: transparent;
+}
+
+/* --- CTA (site-wide button) ---------------------------------------------------
+   One recipe for every call to action, modelled on the footer button: Inter
+   semibold 16px, 0.9rem × 1.6rem padding, pill shape, 18px arrow that nudges
+   up-right on hover. Two colourways: brand gradient (cyan → magenta) and white.
+   ------------------------------------------------------------------------ */
+.cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  flex-shrink: 0;
+  padding: 0.9rem 1.6rem;
+  border: 0;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-body);
+  font-weight: var(--fw-semibold);
+  font-size: 1rem;
+  line-height: 1.2;
+  letter-spacing: 0;
+  text-decoration: none;
+  cursor: pointer;
+  transition: box-shadow var(--dur-base) var(--ease-out), filter var(--dur-base) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+/* Hover: the arrow flies out to the top-right and an identical copy re-enters
+   from the bottom-left. The SVG holds two identical paths and its viewBox
+   clips them; the transition reverses on hover-out. Pure CSS. */
+.cta svg {
+  width: 18px;
+  height: 18px;
+  flex: none;
+  overflow: hidden;
+}
+.cta svg path {
+  transform-box: view-box;
+  transition: transform 0.55s var(--ease-expo, cubic-bezier(0.16, 1, 0.3, 1));
+  will-change: transform;
+}
+.cta svg path + path {
+  transform: translate(-110%, 110%);
+}
+.cta:hover svg path:first-child,
+.cta:focus-visible svg path:first-child {
+  transform: translate(110%, -110%);
+}
+.cta:hover svg path + path,
+.cta:focus-visible svg path + path {
+  transform: translate(0, 0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .cta svg path {
+    transition: none;
+  }
+  .cta:hover svg path:first-child,
+  .cta:focus-visible svg path:first-child {
+    transform: translate(2px, -2px);
+  }
+  .cta:hover svg path + path,
+  .cta:focus-visible svg path + path {
+    transform: translate(-110%, 110%);
+  }
+}
+.cta:disabled {
+  opacity: 0.7;
+  cursor: progress;
+}
+
+/* Brand gradient — stops pushed past the edges so both hues read saturated */
+.cta--grad {
+  background: linear-gradient(115deg, var(--grad-statement-a) -10%, var(--grad-statement-b) 110%);
+  color: #ffffff;
+  box-shadow: 0 0 0 0 transparent; /* flat at rest */
+}
+/* The coloured glow appears only on hover */
+.cta--grad:hover {
+  box-shadow: 0 12px 40px -14px color-mix(in srgb, var(--grad-statement-b) 85%, transparent);
+}
+
+/* White — for dark cards and the header */
+.cta--white {
+  background: #ffffff;
+  color: #282828;
+  box-shadow: 0 8px 24px -12px rgba(0, 0, 0, 0.55);
+}
+.cta--white:hover {
+  filter: brightness(0.96);
+  /* white halo, same on the brand cards and the header pill */
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.35),
+    0 10px 34px -10px rgba(255, 255, 255, 0.45),
+    0 0 22px -4px rgba(255, 255, 255, 0.3);
+}
+
+/* Compact size for the header pill */
+.cta--sm {
+  padding: 0.6rem 1.15rem;
+  font-size: 0.92rem;
+}
+.cta--sm svg {
+  width: 16px;
+  height: 16px;
 }
 
 /* --- Buttons -------------------------------------------------------------- */

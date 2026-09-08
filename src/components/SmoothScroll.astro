@@ -1,0 +1,52 @@
+---
+/**
+ * SmoothScroll — Lenis-driven weighted scrolling (the same library the
+ * reference uses). It animates the *native* scroll position with a long
+ * exponential ease, so everything already bound to scrollY (pinned statement,
+ * page background, hero scrub) keeps working — only smoother.
+ *
+ * Off on touch / coarse pointers and with reduced motion (native scroll is
+ * already fluid there, and inertia on touch feels wrong). Paused while the
+ * intro loader is up (body.is-loading). Anchor links and the hero scroll cue
+ * route through Lenis so they glide as well.
+ */
+---
+
+<script>
+  import Lenis from 'lenis';
+  import 'lenis/dist/lenis.css';
+
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const coarse = window.matchMedia('(pointer: coarse)').matches;
+
+  if (!reduce && !coarse) {
+    const lenis = new Lenis({
+      duration: 1.7,                                   // higher = heavier, more "drifting"
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // expo-out glide
+      smoothWheel: true,
+      wheelMultiplier: 0.9,
+      autoRaf: true,
+    });
+    (window as any).__lenis = lenis;
+
+    // Hold still while the intro loader is on screen.
+    const syncLoading = () => {
+      if (document.body.classList.contains('is-loading')) lenis.stop();
+      else lenis.start();
+    };
+    new MutationObserver(syncLoading).observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    syncLoading();
+
+    // In-page anchors glide instead of jumping.
+    document.addEventListener('click', (e) => {
+      const a = (e.target as Element | null)?.closest<HTMLAnchorElement>('a[href^="#"]');
+      if (!a) return;
+      const id = a.getAttribute('href')!.slice(1);
+      const target = id ? document.getElementById(id) : document.body;
+      if (!target) return;
+      e.preventDefault();
+      lenis.scrollTo(target, { offset: id ? -24 : 0 });
+      history.pushState(null, '', a.getAttribute('href'));
+    });
+  }
+</script>

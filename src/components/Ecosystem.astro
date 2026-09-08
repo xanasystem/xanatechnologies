@@ -1,4 +1,22 @@
 ---
+/**
+ * Ecosystem — the pinned statement (Figma node 83:585 + its follow-up beat).
+ * The section pins for 4 viewports of scroll and everything is scrubbed to
+ * the scroll position (progress p, 0→1). Exact fractions live in the script.
+ *   0.04–0.30  statement reveals word by word — a slow, soft rise out of blur
+ *   0.20–0.32  the vertical rule grows down from the statement (a glow keeps
+ *              travelling down it, like the hero's scroll cue)
+ *   0.30–0.56  hold — the statement stays on screen
+ *   0.56–0.62  statement lifts away and dissolves; the rule stays
+ *   0.66–0.77  supporting paragraph, then the bold closing line, fade in
+ *   0.77–0.93  hold
+ *   0.93–0.98  second beat lifts away and dissolves
+ *   0.96–1.00  the rule fades last; the section unpins and scrolls on
+ * The two text beats never share the screen.
+ * Line 2 of the statement carries one continuous cyan→magenta gradient across
+ * all its words (each word gets the gradient sized to the whole line and
+ * offset to its own position). Reduced motion: no pin, everything visible.
+ */
 import { content, type Locale } from '../i18n/content';
 
 interface Props {
@@ -9,98 +27,307 @@ interface Props {
 
 const { locale, surface = 'dark' } = Astro.props;
 const t = content[locale];
+const { line1, line2, body, closing } = t.ecosystem.statement;
+const words1 = line1.split(' ');
+const words2 = line2.split(' ');
 ---
 
 <section
   id="ecosystem"
-  class:list={['section', 'ecosystem', surface === 'light' && 'surface-light']}
+  class:list={['arrival', surface === 'light' && 'surface-light']}
   aria-labelledby="ecosystem-title"
+  data-arrival
 >
-  <div class="container ecosystem__grid">
-    <h2 id="ecosystem-title" class="ecosystem__title" data-reveal>
-      {t.ecosystem.h2}
-    </h2>
+  <div class="arrival__pin">
+    <div class="arrival__content">
+      <h2 id="ecosystem-title" class="arrival__title" aria-label={`${line1} ${line2}`} data-title>
+        <span class="arrival__line" aria-hidden="true">
+          {words1.map((w) => <span class="arrival__word" data-word>{w}</span>)}
+        </span>
+        <span class="arrival__line arrival__line--grad" aria-hidden="true" data-grad-line>
+          {words2.map((w) => <span class="arrival__word arrival__word--grad" data-word data-grad-word>{w}</span>)}
+        </span>
+      </h2>
 
-    <div class="ecosystem__body" data-reveal>
-      <p class="ecosystem__text">{t.ecosystem.text}</p>
+      <span class="arrival__rule" aria-hidden="true" data-rule></span>
+
+      <div class="arrival__after">
+        <p class="arrival__body" data-body>{body}</p>
+        <p class="arrival__closing" data-closing>{closing}</p>
+      </div>
     </div>
   </div>
 </section>
 
 <style>
-  /* extra breathing room between the hero and this section */
-  .ecosystem {
-    margin-top: clamp(2rem, 1rem + 5vw, 5rem);
-  }
-
-  /* two-column ecosystem block */
-  .ecosystem__grid {
+  .arrival {
     position: relative;
+    /* 100vh of pin + 400vh of scrubbed travel — long holds on both beats */
+    height: 500vh;
+    margin-top: clamp(1rem, 4vw, 3rem);
+  }
+  .arrival__pin {
+    --gap: clamp(2rem, 6vh, 5rem);                /* Figma: 80px */
+    --rule-h: clamp(100px, 18vh, 220px);          /* Figma: 248px, trimmed a touch */
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    height: 100svh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding-inline: var(--gutter);
+  }
+
+  /* Three rows anchored on the rule, which sits at the vertical centre: the
+     statement hangs above it, the second beat grows below it. Both beats share
+     the rule, so the eye never has to travel. */
+  .arrival__content {
+    position: relative;
+    width: 100%;
+    max-width: 64rem; /* room for the Spanish statement on two lines */
+    height: 100%;
     display: grid;
-    grid-template-columns: 1.05fr 0.95fr;
-    gap: clamp(2rem, 1rem + 6vw, 6rem);
-    align-items: start;
-    padding-bottom: clamp(2.5rem, 1.5rem + 4vw, 4.5rem);
+    grid-template-rows: 1fr auto 1fr;
+    justify-items: center;
+    text-align: center;
+    /* Sit the whole composition a little below true centre so the statement
+       clears the header comfortably. */
+    translate: 0 6vh;
+  }
+  .arrival__after {
+    align-self: start;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    margin-top: calc(var(--gap) * 0.5); /* closer to the rule → a little higher on screen */
   }
 
-  .ecosystem__title {
-    font-size: var(--fs-h2);
-    line-height: 1.1;
-    letter-spacing: var(--ls-h2);
+  /* ---- Statement -------------------------------------------------------- */
+  .arrival__title {
+    align-self: end;
+    margin: 0 0 calc(var(--gap) * 0.75); /* a touch closer to the rule → lower on screen */
+    font-family: var(--font-display);
+    /* Figma: 50px on a 1920 frame */
+    font-size: clamp(1.75rem, 1.1rem + 2.3vw, 3.125rem);
+    line-height: 1.22;
+    letter-spacing: -0.015em;
     color: var(--text);
-    max-width: 15ch;
+    text-wrap: balance;
+    /* Wide enough for the Spanish first line ("La tecnología debería hacer las
+       cosas", 37ch) to stay on one line: the statement is always two lines. */
+    max-width: 44ch;
+    will-change: transform, opacity, filter;
+  }
+  .arrival__line {
+    display: block;
+    font-weight: 600;
+  }
+  .arrival__line--grad {
+    font-weight: 700;
+  }
+  .arrival__word {
+    display: inline-block;
+    margin-inline: 0.12em;
+    opacity: 0;
+    transform: translateY(44px);
+    filter: blur(12px);
+    will-change: opacity, transform, filter;
+  }
+  .arrival__word--grad {
+    /* One gradient for the whole line: JS sets --line-w and --word-x so each
+       word shows just its slice of the shared cyan→magenta ramp. */
+    background-image: linear-gradient(90deg, var(--grad-statement-a), var(--grad-statement-b));
+    background-size: var(--line-w, 100%) 100%;
+    background-position: calc(-1 * var(--word-x, 0px)) 0;
+    background-repeat: no-repeat;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
   }
 
-  .ecosystem__body {
-    max-width: 46ch;
-    /* nudge the copy down so it starts a little below the headline cap-line */
-    padding-top: 0.4rem;
+  /* Figma: 248px vertical rule — grows down from the statement and then stays
+     as the anchor for the second beat. */
+  .arrival__rule {
+    position: relative;
+    display: block;
+    width: 1px;
+    height: var(--rule-h);
+    overflow: hidden;
+    background: color-mix(in srgb, var(--text) 18%, transparent);
+    transform-origin: top;
+    transform: scaleY(0);
+    opacity: 0;
+    will-change: transform, opacity;
   }
-
-  .ecosystem__text {
-    color: var(--dim);
-    font-size: var(--fs-lead);
-    line-height: var(--lh-body);
-  }
-
-  /* Subtle structural separator: a hairline that fades in from both ends. */
-  .ecosystem__grid::after {
+  /* Same travelling glow as the hero's scroll cue: a bright segment slides
+     down the rule on a loop while it is on screen. */
+  .arrival__rule::after {
     content: '';
     position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    bottom: 0;
-    width: 98vw;
-    height: 1px;
-    /* fades in from both ends, equally marked across the middle */
-    background: linear-gradient(
-      90deg,
-      transparent 0%,
-      color-mix(in srgb, var(--text) 22%, transparent) 24%,
-      color-mix(in srgb, var(--text) 22%, transparent) 76%,
-      transparent 100%
-    );
+    inset: 0 auto auto 0;
+    width: 100%;
+    height: 40%;
+    background: linear-gradient(to bottom, transparent, #cdd6ff);
+    animation: rule-glow 2.6s var(--ease-out) infinite;
+  }
+  @keyframes rule-glow {
+    0% { transform: translateY(-110%); opacity: 0; }
+    25% { opacity: 1; }
+    75% { opacity: 1; }
+    100% { transform: translateY(260%); opacity: 0; }
   }
 
-  @media (max-width: 800px) {
-    /* trim the tall default section padding below the stacked block */
-    .ecosystem {
-      padding-bottom: var(--space-5);
-    }
-    .ecosystem__grid {
-      grid-template-columns: 1fr;
-      gap: var(--space-5);
-      /* centre the stacked block and trim the excess space before the divider */
-      text-align: center;
-      padding-bottom: var(--space-5);
-    }
-    .ecosystem__title {
-      max-width: none;
-      margin-inline: auto;
-    }
-    .ecosystem__body {
-      padding-top: 0;
-      margin-inline: auto;
-    }
+  /* ---- Second beat ------------------------------------------------------- */
+  .arrival__body,
+  .arrival__closing {
+    margin: 0;
+    opacity: 0;
+    transform: translateY(30px);
+    filter: blur(8px);
+    will-change: opacity, transform, filter;
+  }
+  .arrival__body {
+    font-family: var(--font-display);
+    font-weight: 300;
+    font-size: clamp(1rem, 0.9rem + 0.45vw, 1.25rem);
+    line-height: 1.55;
+    color: color-mix(in srgb, var(--text) 88%, transparent);
+    max-width: 68ch;
+    text-wrap: pretty;
+  }
+  .arrival__closing {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(1.15rem, 1rem + 0.6vw, 1.5rem);
+    line-height: 1.3;
+    color: var(--text);
+    text-wrap: balance;
+  }
+
+  @media (max-width: 640px) {
+    .arrival { height: 420vh; }
+    .arrival__title { max-width: 18ch; }
+    .arrival__pin { --rule-h: clamp(72px, 14vh, 140px); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .arrival { height: auto; padding-block: var(--section-y); }
+    .arrival__pin { position: static; height: auto; min-height: 60vh; }
+    .arrival__content { height: auto; grid-template-rows: auto auto auto; }
+    .arrival__word,
+    .arrival__body,
+    .arrival__closing { opacity: 1; transform: none; filter: none; }
+    .arrival__rule { transform: none; opacity: 1; }
+    .arrival__rule::after { animation: none; transform: translateY(60%); }
   }
 </style>
+
+<script>
+  const section = document.querySelector<HTMLElement>('[data-arrival]');
+  const title = document.querySelector<HTMLElement>('[data-title]');
+  const rule = document.querySelector<HTMLElement>('[data-rule]');
+  const bodyEl = document.querySelector<HTMLElement>('[data-body]');
+  const closingEl = document.querySelector<HTMLElement>('[data-closing]');
+  const words = Array.from(document.querySelectorAll<HTMLElement>('[data-word]'));
+  const gradLine = document.querySelector<HTMLElement>('[data-grad-line]');
+  const gradWords = Array.from(document.querySelectorAll<HTMLElement>('[data-grad-word]'));
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Continuous gradient across line 2: size each word's gradient to the line
+  // and offset it by the word's own x within the line.
+  const layoutGradient = () => {
+    if (!gradLine) return;
+    const lr = gradLine.getBoundingClientRect();
+    gradWords.forEach((w) => {
+      const r = w.getBoundingClientRect();
+      w.style.setProperty('--line-w', `${lr.width.toFixed(2)}px`);
+      w.style.setProperty('--word-x', `${(r.left - lr.left).toFixed(2)}px`);
+    });
+  };
+  layoutGradient();
+  if ('ResizeObserver' in window && gradLine) new ResizeObserver(layoutGradient).observe(gradLine);
+  document.fonts?.ready.then(layoutGradient);
+
+  if (section && title && !reduce) {
+    const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
+    // Gentle S-curve: slow in, slow out — reads "soft" rather than snappy.
+    const smooth = (x: number) => x * x * (3 - 2 * x);
+    const easeOut = (x: number) => 1 - Math.pow(1 - x, 3);
+    const seg = (p: number, a: number, b: number) => clamp01((p - a) / (b - a));
+
+    // Timeline (fractions of the pinned travel). The two text beats never
+    // overlap: the statement is fully gone before the paragraph starts.
+    const WORDS_START = 0.04, WORDS_END = 0.3, WIN = 0.16;
+    const RULE = [0.2, 0.32];
+    const TITLE_OUT = [0.56, 0.62];   // statement holds 0.30 → 0.56
+    const BODY_IN = [0.66, 0.73];
+    const CLOSING_IN = [0.7, 0.77];
+    const SECOND_OUT = [0.93, 0.98];  // second beat holds 0.77 → 0.93
+    const RULE_OUT = [0.96, 1.0];
+    const stagger = words.length > 1 ? (WORDS_END - WORDS_START - WIN) / (words.length - 1) : 0;
+
+    const fadeRise = (el: HTMLElement | null, e: number, rise: number, blur: number) => {
+      if (!el) return;
+      el.style.opacity = e.toFixed(3);
+      el.style.transform = `translateY(${(rise * (1 - e)).toFixed(2)}px)`;
+      el.style.filter = e >= 1 ? 'none' : `blur(${(blur * (1 - e)).toFixed(2)}px)`;
+    };
+
+    let lastP = -1;
+    const update = () => {
+      const rect = section.getBoundingClientRect();
+      const travel = section.offsetHeight - window.innerHeight;
+      const p = clamp01(-rect.top / Math.max(1, travel));
+      if (p === lastP) return;
+      lastP = p;
+
+      // 1. words condense in, one after another
+      words.forEach((w, i) => {
+        const s = WORDS_START + i * stagger;
+        fadeRise(w, smooth(seg(p, s, s + WIN)), 44, 12);
+      });
+
+      // 2. rule grows down from the statement, stays through both beats and
+      //    is the last thing to leave
+      if (rule) {
+        const e = easeOut(seg(p, RULE[0], RULE[1]));
+        const gone = smooth(seg(p, RULE_OUT[0], RULE_OUT[1]));
+        rule.style.transform = `scaleY(${e.toFixed(3)})`;
+        rule.style.opacity = (e * (1 - gone)).toFixed(3);
+      }
+
+      // 3. statement lifts away and dissolves (the words keep their own state)
+      const out = smooth(seg(p, TITLE_OUT[0], TITLE_OUT[1]));
+      title.style.opacity = (1 - out).toFixed(3);
+      title.style.transform = `translateY(${(-36 * out).toFixed(2)}px)`;
+      title.style.filter = out <= 0 ? 'none' : `blur(${(10 * out).toFixed(2)}px)`;
+
+      // 4. second beat under the rule: in, hold, then lifts away and
+      //    dissolves like the statement did
+      const out2 = smooth(seg(p, SECOND_OUT[0], SECOND_OUT[1]));
+      const leave = (el: HTMLElement | null, eIn: number) => {
+        if (!el) return;
+        if (out2 <= 0) { fadeRise(el, eIn, 30, 8); return; }
+        el.style.opacity = (eIn * (1 - out2)).toFixed(3);
+        el.style.transform = `translateY(${(-36 * out2).toFixed(2)}px)`;
+        el.style.filter = `blur(${(10 * out2).toFixed(2)}px)`;
+      };
+      leave(bodyEl, smooth(seg(p, BODY_IN[0], BODY_IN[1])));
+      leave(closingEl, smooth(seg(p, CLOSING_IN[0], CLOSING_IN[1])));
+    };
+
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => { ticking = false; update(); });
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    update();
+  }
+</script>
