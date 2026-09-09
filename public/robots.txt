@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /v2/
+Disallow: /es/v2/
+
+Sitemap: https://xanatechnologies.com/sitemap-index.xml

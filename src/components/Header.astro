@@ -9,6 +9,8 @@ const { locale } = Astro.props;
 const t = content[locale];
 
 const homeHref = locale === 'es' ? '/es/' : '/';
+// Absolute anchor so the CTA also works from the legal pages.
+const contactHref = `${homeHref}#contact`;
 
 // Language switch: the other locale's home. (Both pages are single landings,
 // so the switch always lands on the equivalent home.)
@@ -52,7 +54,7 @@ const langs: { code: Locale; label: string; href: string; name: string }[] = [
           }
         </nav>
 
-        <a class="cta cta--white cta--sm header-cta" href="#contact">
+        <a class="cta cta--white cta--sm header-cta" href={contactHref}>
           <span>{locale === 'es' ? 'Contacto' : 'Contact'}</span>
           <svg viewBox="0 0 18 18" fill="none" aria-hidden="true">
             <path d="M4.5 13.5 13.5 4.5M6 4.5h7.5V12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
@@ -102,7 +104,7 @@ const langs: { code: Locale; label: string; href: string; name: string }[] = [
           }
         </div>
       </div>
-      <a class="cta cta--white mobile-nav__cta" href="#contact" data-mobile-link>
+      <a class="cta cta--white mobile-nav__cta" href={contactHref} data-mobile-link>
         <span>{locale === 'es' ? 'Contacto' : 'Contact'}</span>
         <svg viewBox="0 0 18 18" fill="none" aria-hidden="true">
           <path d="M4.5 13.5 13.5 4.5M6 4.5h7.5V12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />

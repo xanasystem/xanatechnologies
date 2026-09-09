@@ -6,7 +6,7 @@
  * page; it flips the shared tokens through `.surface-light` so buttons, text
  * and the custom cursor adapt.
  */
-import { content, type Locale } from '../i18n/content';
+import { content, LEGAL_ROUTES, type Locale } from '../i18n/content';
 
 interface Props {
   locale: Locale;
@@ -22,7 +22,7 @@ const c = t.contact;
 const TURNSTILE_SITE_KEY = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
 
 // Privacy policy link differs per locale.
-const privacyHref = locale === 'es' ? '/es/privacidad' : '/privacy';
+const privacyHref = LEGAL_ROUTES[locale].privacy;
 const privacyPolicyName = locale === 'es' ? 'Política de Privacidad' : 'Privacy Policy';
 const privacyPrefix = locale === 'es' ? 'He leído y acepto la ' : 'I have read and accept the ';
 

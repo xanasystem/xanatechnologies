@@ -15,7 +15,7 @@ const { locale } = Astro.props;
 const t = content[locale];
 const f = t.footer;
 
-const year = 2026; // Update or make dynamic at build time as needed.
+const year = new Date().getFullYear(); // resolved at build time
 
 // `**span**` in the headline carries the cyan→magenta gradient (Figma 88:802).
 const headlineParts = f.statement.headline
@@ -23,6 +23,9 @@ const headlineParts = f.statement.headline
   .map((text, i) => ({ text, grad: i % 2 === 1 }));
 const homeHref = locale === 'es' ? '/es/' : '/';
 const altHref = locale === 'es' ? '/' : '/es/';
+// Absolute anchor so the CTA also works from the legal pages.
+const contactHref = `${homeHref}#contact`;
+const programs = t.funding.programs;
 
 // Link columns built from the single source of truth so they never drift.
 const linkColumn = {
@@ -36,9 +39,15 @@ const contactColumn = {
   title: f.contactTitle,
   links: [{ label: 'LinkedIn', href: LINKEDIN_URL, external: true }],
 };
+// The last legal link opens the cookie-consent preferences modal
+// (CookieConsent.astro listens for [data-cc="show-preferencesModal"]); its
+// href is the fallback for visitors without JavaScript.
 const legalColumn = {
   title: f.legalTitle,
-  links: f.legalLinks.map((l) => ({ ...l, external: false })),
+  links: [
+    ...f.legalLinks.map((l) => ({ ...l, external: false, cc: false })),
+    { label: f.privacyPreferences, href: `${f.legalLinks[2].href}#preferences`, external: false, cc: true },
+  ],
 };
 ---
 
@@ -53,7 +62,7 @@ const legalColumn = {
         </p>
         <p class="footer-statement__sub">{f.statement.sub}</p>
       </div>
-      <a class="cta cta--grad footer-statement__btn" href="#contact">
+      <a class="cta cta--grad footer-statement__btn" href={contactHref}>
         <span>{f.contactButton}</span>
         <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
           <path d="M4.5 13.5 13.5 4.5M6 4.5h7.5V12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
@@ -88,6 +97,7 @@ const legalColumn = {
                     {...(link.external
                       ? { target: '_blank', rel: 'noopener noreferrer' }
                       : {})}
+                    {...('cc' in link && link.cc ? { 'data-cc': 'show-preferencesModal' } : {})}
                   >
                     {link.label}
                     {link.external && (
@@ -103,6 +113,20 @@ const legalColumn = {
         ))
       }
     </div>
+  </div>
+
+  <!-- Funding & grants: official logo strips + mandatory wording -->
+  <div class="container footer-funding" aria-label={t.funding.h2}>
+    {
+      programs.map((p) => (
+        <div class="footer-funding__item">
+          <div class="footer-funding__logo">
+            <img src={p.logo} alt={p.alt} loading="lazy" decoding="async" />
+          </div>
+          <p class="footer-funding__text">{p.text}</p>
+        </div>
+      ))
+    }
   </div>
 
   <div class="container footer-bottom">
@@ -237,6 +261,43 @@ const legalColumn = {
     opacity: 0.55;
   }
 
+  /* --- Funding & grants ------------------------------------------------ */
+  .footer-funding {
+    display: grid;
+    gap: var(--space-5);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--line);
+  }
+  .footer-funding__item {
+    display: grid;
+    gap: var(--space-3);
+  }
+  /* The official strips are designed for white paper: keep them on a white
+     card so the institutional colours stay untouched on the dark footer. */
+  .footer-funding__logo {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    max-width: 100%;
+    padding: 0.6rem 0.9rem;
+    border-radius: var(--radius-sm);
+    background: #ffffff;
+  }
+  .footer-funding__logo img {
+    display: block;
+    height: 44px;
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
+  }
+  .footer-funding__text {
+    margin: 0;
+    max-width: 110ch;
+    font-size: 0.8rem;
+    line-height: 1.55;
+    color: var(--faint);
+  }
+
   /* --- Baseline row ---------------------------------------------------- */
   .footer-bottom {
     display: flex;
@@ -310,6 +371,11 @@ const legalColumn = {
     }
     .footer-grid {
       grid-template-columns: 1fr;
+    }
+    .footer-funding__logo img {
+      height: auto;
+      width: 100%;
+      max-height: 44px;
     }
   }
 </style>

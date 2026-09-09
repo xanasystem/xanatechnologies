@@ -1,0 +1,153 @@
+---
+// Privacy Policy (EN). Written for the new site following the Xana standard
+// publication protocol (GDPR/LOPDGDD structure): the previous WordPress page
+// only carried the CMS boilerplate. The "Data Deletion Policy" for the App
+// Catalog Platform is carried over verbatim (required by the Play Store).
+import Legal from '../layouts/Legal.astro';
+import { COMPANY, LEGAL_ROUTES } from '../i18n/content';
+const alternates = { en: LEGAL_ROUTES.en.privacy, es: LEGAL_ROUTES.es.privacy };
+---
+
+<Legal
+  locale="en"
+  title="Privacy Policy"
+  description="How Xana Technologies SL processes the personal data collected through xanatechnologies.com: purposes, legal basis, recipients, retention and your rights."
+  alternates={alternates}
+  updated="9 September 2026"
+>
+  <h2>1. Data controller</h2>
+  <ul>
+    <li><strong>Controller:</strong> {COMPANY.legalName} (Tax ID {COMPANY.taxId})</li>
+    <li><strong>Registered office:</strong> {COMPANY.addressEn}</li>
+    <li><strong>Privacy contact:</strong> <a href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a></li>
+    <li><strong>Website:</strong> <a href={COMPANY.website}>xanatechnologies.com</a></li>
+  </ul>
+  <p>
+    {COMPANY.legalName} processes personal data in accordance with Regulation (EU) 2016/679 (GDPR)
+    and Spanish Organic Law 3/2018 on the Protection of Personal Data and guarantee of digital rights
+    (LOPDGDD). We only process personal data when there is a valid legal basis to do so.
+  </p>
+
+  <h2>2. What data we process, why and on what basis</h2>
+  <div class="legal-table-wrap">
+    <table>
+      <thead>
+        <tr><th>Processing</th><th>Data</th><th>Purpose</th><th>Legal basis</th><th>Retention</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Contact form</td>
+          <td>Email address and message (required); name, phone, region and country (optional); language; IP address for anti-bot verification.</td>
+          <td>To answer your enquiry and, where relevant, route it to the appropriate brand (Xana System or Woman on Mars) or prepare a proposal.</td>
+          <td>Your consent (GDPR art. 6.1.a) and pre-contractual measures taken at your request (art. 6.1.b).</td>
+          <td>For as long as needed to handle the enquiry and, afterwards, for the period required to meet legal obligations or defend possible claims.</td>
+        </tr>
+        <tr>
+          <td>Commercial relationship</td>
+          <td>Identification and contact details of clients, partners and their representatives.</td>
+          <td>To manage the commercial and contractual relationship.</td>
+          <td>Performance of a contract (art. 6.1.b) and legitimate interest (art. 6.1.f).</td>
+          <td>For the duration of the relationship and the legal limitation periods thereafter.</td>
+        </tr>
+        <tr>
+          <td>Website analytics</td>
+          <td>Pseudonymous usage data collected through cookies (see the Cookies Policy).</td>
+          <td>To measure how the site is used and improve it.</td>
+          <td>Your consent, given through the cookie banner (art. 6.1.a).</td>
+          <td>See the cookie durations in the Cookies Policy.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p>
+    Providing the data marked as required in the contact form is necessary to handle your enquiry;
+    without it we cannot reply. We do not use your data for automated decision-making or profiling.
+  </p>
+
+  <h2>3. Recipients</h2>
+  <p>
+    We do not sell your personal data. It may be processed by service providers acting on our behalf
+    as data processors, under data processing agreements, in the following categories:
+  </p>
+  <ul>
+    <li><strong>Hosting and delivery of the website and contact form:</strong> Vercel Inc.</li>
+    <li><strong>Transactional email of the contact form:</strong> Brevo (Sendinblue SAS).</li>
+    <li><strong>Anti-bot verification of the contact form:</strong> Cloudflare, Inc. (Turnstile).</li>
+    <li><strong>Website analytics (only with your consent):</strong> Google Ireland Ltd. (Google Tag Manager, Google Analytics).</li>
+  </ul>
+  <p>
+    Data may also be disclosed to public authorities or other third parties when there is a legal
+    obligation or another valid legal basis to do so.
+  </p>
+
+  <h2>4. International transfers</h2>
+  <p>
+    Some of the providers listed above may process data outside the European Economic Area (in
+    particular in the United States). Where that happens, transfers are covered by the safeguards
+    required by the GDPR: an adequacy decision of the European Commission (including the EU-U.S.
+    Data Privacy Framework, where the provider is certified) and/or the Standard Contractual Clauses
+    approved by the Commission.
+  </p>
+
+  <h2>5. Retention</h2>
+  <p>
+    Data is kept only for as long as necessary for the purposes stated above and, afterwards, for
+    the periods required to comply with legal obligations or to address possible liabilities, after
+    which it is securely deleted.
+  </p>
+
+  <h2>6. Your rights</h2>
+  <p>You may request, at any time:</p>
+  <ul>
+    <li>access to your personal data;</li>
+    <li>rectification of inaccurate data;</li>
+    <li>erasure;</li>
+    <li>restriction of processing;</li>
+    <li>data portability;</li>
+    <li>objection to processing;</li>
+    <li>withdrawal of consent, without affecting the lawfulness of processing carried out before withdrawal.</li>
+  </ul>
+  <p>
+    To exercise these rights, write to <a href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a> or to
+    our registered office, indicating the right you wish to exercise and enclosing a copy of a valid
+    identity document. You may also lodge a complaint with the competent supervisory authority, the
+    Spanish Data Protection Agency (AEPD, <a href="https://www.aepd.es" rel="noopener" target="_blank">www.aepd.es</a>).
+  </p>
+
+  <h2>7. Security</h2>
+  <p>
+    We apply appropriate technical and organisational measures to protect your personal data against
+    unauthorised access, alteration, disclosure or loss, taking into account the state of the art
+    and the risks of the processing.
+  </p>
+
+  <h2>8. Cookies</h2>
+  <p>
+    Information about the cookies and similar technologies used on this website is available in our
+    <a href={LEGAL_ROUTES.en.cookies}>Cookies Policy</a>.
+  </p>
+
+  <h2>9. Data Deletion Policy (App Catalog Platform)</h2>
+  <p>
+    This account deletion policy applies to the App Catalog Platform application, developed by Xana
+    Technologies and available on the Play Store.
+  </p>
+  <p>Users may request deletion of their accounts by following these steps:</p>
+  <ol type="a">
+    <li>Send an email to <a href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a> with the subject line “Account Deletion.” You must include the email address used to register.</li>
+    <li>Within 7–10 days, the company will contact you to confirm the deletion of your data from the system.</li>
+  </ol>
+  <p>All account data will be deleted. No records will be retained.</p>
+  <p>
+    Please note that this policy is subject to periodic changes and updates. Users are encouraged to
+    review this policy regularly to stay informed of any modifications. For any questions or requests
+    related to this policy, please do not hesitate to contact us.
+  </p>
+
+  <h2>10. Changes and contact</h2>
+  <p>
+    We may update this Privacy Policy when necessary. Any changes will be published on this page with
+    an updated revision date. Privacy contact:
+    <a href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a>.
+  </p>
+</Legal>

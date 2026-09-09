@@ -1,0 +1,158 @@
+---
+// Política de Privacidad (ES). Redactada para la nueva web siguiendo el
+// protocolo estándar de publicación de Xana (estructura RGPD/LOPDGDD): la
+// página anterior de WordPress solo contenía la plantilla por defecto del CMS.
+// La "Política de Eliminación de Datos" de App Catalog Platform se traslada
+// literalmente (requisito de Play Store).
+import Legal from '../../layouts/Legal.astro';
+import { COMPANY, LEGAL_ROUTES } from '../../i18n/content';
+const alternates = { en: LEGAL_ROUTES.en.privacy, es: LEGAL_ROUTES.es.privacy };
+---
+
+<Legal
+  locale="es"
+  title="Política de Privacidad"
+  description="Cómo trata Xana Technologies SL los datos personales recogidos a través de xanatechnologies.com: finalidades, base jurídica, destinatarios, conservación y derechos."
+  alternates={alternates}
+  updated="9 de septiembre de 2026"
+>
+  <h2>1. Responsable del tratamiento</h2>
+  <ul>
+    <li><strong>Responsable:</strong> {COMPANY.legalName} (CIF {COMPANY.taxId})</li>
+    <li><strong>Domicilio social:</strong> {COMPANY.address}</li>
+    <li><strong>Email de privacidad:</strong> <a href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a></li>
+    <li><strong>Sitio web:</strong> <a href={COMPANY.website}>xanatechnologies.com</a></li>
+  </ul>
+  <p>
+    {COMPANY.legalName} trata los datos personales conforme al Reglamento (UE) 2016/679 (RGPD) y a la
+    Ley Orgánica 3/2018, de Protección de Datos Personales y garantía de los derechos digitales
+    (LOPDGDD). Tratamos datos personales únicamente cuando existe una base jurídica válida.
+  </p>
+
+  <h2>2. Qué datos tratamos, para qué y con qué base</h2>
+  <div class="legal-table-wrap">
+    <table>
+      <thead>
+        <tr><th>Tratamiento</th><th>Datos</th><th>Finalidad</th><th>Base jurídica</th><th>Conservación</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Formulario de contacto</td>
+          <td>Email y mensaje (obligatorios); nombre, teléfono, región y país (opcionales); idioma; dirección IP para la verificación anti-bots.</td>
+          <td>Atender tu consulta y, en su caso, dirigirla a la marca adecuada (Xana System o Woman on Mars) o preparar una propuesta.</td>
+          <td>Tu consentimiento (art. 6.1.a RGPD) y la aplicación de medidas precontractuales a petición tuya (art. 6.1.b).</td>
+          <td>El tiempo necesario para gestionar la consulta y, después, los plazos exigidos para cumplir obligaciones legales o atender posibles responsabilidades.</td>
+        </tr>
+        <tr>
+          <td>Relación comercial</td>
+          <td>Datos identificativos y de contacto de clientes, colaboradores y sus representantes.</td>
+          <td>Gestionar la relación comercial y contractual.</td>
+          <td>Ejecución de un contrato (art. 6.1.b) e interés legítimo (art. 6.1.f).</td>
+          <td>Mientras dure la relación y, después, los plazos legales de prescripción.</td>
+        </tr>
+        <tr>
+          <td>Analítica web</td>
+          <td>Datos de uso seudonimizados recogidos mediante cookies (ver Política de Cookies).</td>
+          <td>Medir el uso del sitio y mejorarlo.</td>
+          <td>Tu consentimiento, otorgado a través del banner de cookies (art. 6.1.a).</td>
+          <td>Ver la duración de cada cookie en la Política de Cookies.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p>
+    Facilitar los datos marcados como obligatorios en el formulario de contacto es necesario para
+    atender tu consulta; sin ellos no podremos responderte. No utilizamos tus datos para tomar
+    decisiones automatizadas ni para elaborar perfiles.
+  </p>
+
+  <h2>3. Destinatarios</h2>
+  <p>
+    No vendemos tus datos personales. Podrán tratarlos proveedores que actúan por cuenta nuestra
+    como encargados del tratamiento, con el correspondiente contrato de encargo, en las siguientes
+    categorías:
+  </p>
+  <ul>
+    <li><strong>Alojamiento y entrega de la web y del formulario de contacto:</strong> Vercel Inc.</li>
+    <li><strong>Envío del correo transaccional del formulario:</strong> Brevo (Sendinblue SAS).</li>
+    <li><strong>Verificación anti-bots del formulario:</strong> Cloudflare, Inc. (Turnstile).</li>
+    <li><strong>Analítica web (solo con tu consentimiento):</strong> Google Ireland Ltd. (Google Tag Manager, Google Analytics).</li>
+  </ul>
+  <p>
+    Los datos también podrán comunicarse a autoridades u otros terceros cuando exista una obligación
+    legal u otra base jurídica válida.
+  </p>
+
+  <h2>4. Transferencias internacionales</h2>
+  <p>
+    Algunos de los proveedores indicados pueden tratar datos fuera del Espacio Económico Europeo (en
+    particular, en Estados Unidos). En ese caso, las transferencias se amparan en las garantías
+    exigidas por el RGPD: una decisión de adecuación de la Comisión Europea (incluido el Marco de
+    Privacidad de Datos UE-EE. UU., cuando el proveedor está certificado) y/o las Cláusulas
+    Contractuales Tipo aprobadas por la Comisión.
+  </p>
+
+  <h2>5. Conservación</h2>
+  <p>
+    Los datos se conservarán únicamente durante el tiempo necesario para las finalidades indicadas y,
+    posteriormente, durante los plazos exigidos para cumplir obligaciones legales o atender posibles
+    responsabilidades, tras lo cual se eliminarán de forma segura.
+  </p>
+
+  <h2>6. Tus derechos</h2>
+  <p>Puedes solicitar en cualquier momento:</p>
+  <ul>
+    <li>acceso a tus datos personales;</li>
+    <li>rectificación de los datos inexactos;</li>
+    <li>supresión;</li>
+    <li>limitación del tratamiento;</li>
+    <li>portabilidad;</li>
+    <li>oposición;</li>
+    <li>retirada del consentimiento, sin que ello afecte a la licitud del tratamiento previo.</li>
+  </ul>
+  <p>
+    Para ejercerlos, escribe a <a href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a> o a nuestro
+    domicilio social, indicando el derecho que deseas ejercer y adjuntando copia de un documento de
+    identidad válido. También puedes presentar una reclamación ante la autoridad de control
+    competente, la Agencia Española de Protección de Datos (AEPD,
+    <a href="https://www.aepd.es" rel="noopener" target="_blank">www.aepd.es</a>).
+  </p>
+
+  <h2>7. Seguridad</h2>
+  <p>
+    Aplicamos medidas técnicas y organizativas apropiadas para proteger tus datos personales frente a
+    accesos no autorizados, alteración, divulgación o pérdida, teniendo en cuenta el estado de la
+    técnica y los riesgos del tratamiento.
+  </p>
+
+  <h2>8. Cookies</h2>
+  <p>
+    La información sobre las cookies y tecnologías similares utilizadas en este sitio web está
+    disponible en nuestra <a href={LEGAL_ROUTES.es.cookies}>Política de Cookies</a>.
+  </p>
+
+  <h2>9. Política de Eliminación de Datos (App Catalog Platform)</h2>
+  <p>
+    Esta política de eliminación de cuentas se aplica a la aplicación App Catalog Platform,
+    desarrollada por Xana Technologies, disponible en la Play Store.
+  </p>
+  <p>Los usuarios pueden solicitar la eliminación de sus cuentas siguiendo estos pasos:</p>
+  <ol type="a">
+    <li>Envía un mail a <a href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a> con el asunto «Eliminación de cuenta». Debes incluir el correo electrónico con el que te registraste.</li>
+    <li>En un plazo de entre 7-10 días la compañía se pondrá en contacto con usted para confirmar la eliminación de sus datos del sistema.</li>
+  </ol>
+  <p>Se eliminarán todos los datos de la cuenta. No se conservará ningún registro.</p>
+  <p>
+    Por favor, ten en cuenta que esta política está sujeta a cambios y actualizaciones periódicas. Se
+    recomienda a los usuarios revisar regularmente esta política para estar al tanto de cualquier
+    modificación. Para cualquier pregunta o solicitud relacionada con esta política, no dudes en
+    ponerte en contacto con nosotros.
+  </p>
+
+  <h2>10. Cambios y contacto</h2>
+  <p>
+    Podremos actualizar esta Política cuando sea necesario. Cualquier cambio se publicará en esta
+    página con la fecha de revisión actualizada. Contacto de privacidad:
+    <a href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a>.
+  </p>
+</Legal>

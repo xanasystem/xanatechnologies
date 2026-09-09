@@ -1,0 +1,145 @@
+---
+// Legal Notice (EN). Text carried over verbatim from the previous
+// xanatechnologies.com/en/legal-notice/ (WordPress), 2026-09-09.
+import Legal from '../layouts/Legal.astro';
+import { COMPANY, LEGAL_ROUTES } from '../i18n/content';
+const alternates = { en: LEGAL_ROUTES.en.legal, es: LEGAL_ROUTES.es.legal };
+---
+
+<Legal
+  locale="en"
+  title="Legal Notice"
+  description="Legal notice of xanatechnologies.com: site owner, conditions of access and use, liability and applicable law."
+  alternates={alternates}
+  updated="9 September 2026"
+>
+  <h2>Purpose and Acceptance</h2>
+  <p>
+    This legal notice governs the use of our website, owned by {COMPANY.legalName}. Browsing the
+    {COMPANY.legalName} website grants you the status of user and implies full and unreserved
+    acceptance of each and every provision included in this Legal Notice, which may be subject to
+    change.
+  </p>
+
+  <h2>Identification and Communications</h2>
+  <p>
+    {COMPANY.legalName}, in compliance with Law 34/2002, of July 11, on Information Society Services
+    and Electronic Commerce, informs you that:
+  </p>
+  <ul>
+    <li><strong>Company name:</strong> {COMPANY.legalName}</li>
+    <li><strong>Tax ID (CIF):</strong> {COMPANY.taxId}</li>
+    <li><strong>Registered address:</strong> {COMPANY.addressEn}</li>
+    <li><strong>Email:</strong> <a href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a></li>
+  </ul>
+  <p>
+    To contact us, we provide various communication channels specified in our
+    <a href={LEGAL_ROUTES.en.privacy}>Privacy Policy</a>.
+  </p>
+  <p>
+    All notifications and communications made with {COMPANY.legalName} will be considered effective
+    for all purposes when carried out through the means specified above.
+  </p>
+
+  <h2>Conditions of Access and Use</h2>
+  <p>
+    The website and its services are freely accessible; however, {COMPANY.legalName} conditions the
+    use of certain services offered on its website upon prior completion of the corresponding form.
+  </p>
+  <p>
+    You guarantee the authenticity and accuracy of all data provided to {COMPANY.legalName} and will
+    be solely responsible for any false or inaccurate statements made.
+  </p>
+  <p>
+    You expressly agree to make appropriate use of the content and services of {COMPANY.legalName}
+    and not to use them for, among others:
+  </p>
+  <ul>
+    <li>Disseminating unlawful, violent, pornographic, racist, xenophobic, offensive content, content advocating terrorism, or content generally contrary to law or public order.</li>
+    <li>Introducing computer viruses into the network or carrying out actions likely to alter, damage, interrupt, or generate errors or harm to the electronic documents, data, or physical and logical systems of {COMPANY.legalName} or third parties; as well as obstructing other users’ access to the website and its services through massive consumption of the computing resources used by {COMPANY.legalName} to provide its services.</li>
+    <li>Attempting to access other users’ data or restricted areas of the computer systems of {COMPANY.legalName} or third parties and, where applicable, extracting information.</li>
+    <li>Infringing intellectual or industrial property rights, as well as violating the confidentiality of information belonging to {COMPANY.legalName} or third parties.</li>
+    <li>Impersonating another user, public authorities, or a third party.</li>
+    <li>Reproducing, copying, distributing, making available, publicly communicating, transforming, or modifying the content, unless authorized by the holder of the corresponding rights or legally permitted.</li>
+    <li>Collecting data for advertising purposes or sending advertising of any kind and communications for sales or other commercial purposes without prior request or consent.</li>
+  </ul>
+  <p>
+    All website content, including texts, photographs, graphics, images, icons, technology, software,
+    as well as its graphic design and source codes, constitutes a work owned by {COMPANY.legalName},
+    and none of the exploitation rights over them shall be understood as transferred beyond what is
+    strictly necessary for the proper use of the website.
+  </p>
+  <p>
+    In short, users accessing this website may view the content and, where appropriate, make
+    authorized private copies provided that the reproduced elements are not subsequently transferred
+    to third parties, installed on servers connected to networks, or subject to any form of
+    exploitation.
+  </p>
+  <p>
+    Likewise, all trademarks, trade names, or distinctive signs of any kind appearing on the website
+    are the property of {COMPANY.legalName}, and use or access to the website shall not be construed
+    as granting any rights over them.
+  </p>
+  <p>
+    The distribution, modification, assignment, or public communication of the content and any other
+    act not expressly authorized by the holder of the exploitation rights is prohibited.
+  </p>
+  <p>
+    The establishment of a hyperlink does not imply in any case the existence of a relationship
+    between {COMPANY.legalName} and the owner of the website on which it is established, nor the
+    acceptance or approval by {COMPANY.legalName} of its content or services. Those intending to
+    establish a hyperlink must first request written authorization from {COMPANY.legalName}. In any
+    case, the hyperlink will only allow access to the homepage of our website and must refrain from
+    making false, inaccurate, or incorrect statements about {COMPANY.legalName} or including unlawful
+    content contrary to good customs and public order.
+  </p>
+  <p>
+    {COMPANY.legalName} is not responsible for the use each user makes of the materials available on
+    this website or for actions taken based on them.
+  </p>
+
+  <h2>Disclaimer of Warranties and Liability</h2>
+  <p>{COMPANY.legalName} excludes, to the extent permitted by law, any liability for damages of any kind arising from:</p>
+  <ul>
+    <li>The impossibility of accessing the website or the lack of truthfulness, accuracy, completeness, and/or timeliness of the content, as well as the existence of defects in the content transmitted, disseminated, stored, or made available that has been accessed through the website or the services offered.</li>
+    <li>The presence of viruses or other elements in the content that may cause alterations in users’ computer systems, electronic documents, or data.</li>
+    <li>Non-compliance with laws, good faith, public order, commercial practices, and this legal notice as a result of improper use of the website. In particular, and by way of example, {COMPANY.legalName} is not responsible for actions by third parties that infringe intellectual and industrial property rights, trade secrets, rights to honor, personal and family privacy, and personal image, as well as regulations on unfair competition and unlawful advertising.</li>
+  </ul>
+  <p>
+    Furthermore, {COMPANY.legalName} disclaims any responsibility for information found outside this
+    website that is not directly managed by our webmaster. The purpose of the links appearing on this
+    website is exclusively to inform users about the existence of other sources that may expand on
+    the content offered on this website. {COMPANY.legalName} does not guarantee or assume
+    responsibility for the operation or accessibility of linked sites; nor does it suggest, invite,
+    or recommend visiting them, and therefore shall not be responsible for the results obtained.
+    {COMPANY.legalName} is not responsible for the establishment of hyperlinks by third parties.
+  </p>
+
+  <h2>Procedure in Case of Unlawful Activities</h2>
+  <p>
+    If you or a third party believe that there are facts or circumstances revealing the unlawful
+    nature of the use of any content and/or the performance of any activity on web pages included in
+    or accessible through the website, you must contact {COMPANY.legalName}, properly identifying
+    yourself, specifying the alleged infringements, and expressly declaring under your responsibility
+    that the information provided in the notification is accurate.
+  </p>
+  <p>
+    For any dispute concerning the {COMPANY.legalName} website, Spanish law shall apply, and the
+    Courts and Tribunals closest to the company’s registered office (Spain) shall have jurisdiction.
+  </p>
+
+  <h2>Publications</h2>
+  <p>
+    The administrative information provided through the website does not replace the legal
+    publication of laws, regulations, plans, general provisions, and acts that must be formally
+    published in the official journals of public administrations, which constitute the only
+    instrument that certifies their authenticity and content. The information available on this
+    website should be understood as a guide without legal validity.
+  </p>
+
+  <h2>Privacy and Cookies</h2>
+  <ul>
+    <li><a href={LEGAL_ROUTES.en.privacy}>Privacy Policy</a></li>
+    <li><a href={LEGAL_ROUTES.en.cookies}>Cookies Policy</a></li>
+  </ul>
+</Legal>

@@ -9,10 +9,26 @@ export type Locale = 'en' | 'es';
 
 export const locales: Locale[] = ['en', 'es'];
 
-export const XANA_SYSTEM_URL = 'https://xanasystem-web.vercel.app';
+export const XANA_SYSTEM_URL = 'https://xanasystem.com';
 export const WOMAN_ON_MARS_URL = 'https://womanonmars.com';
-/** TODO: replace with the real company page once it exists. */
-export const LINKEDIN_URL = 'https://www.linkedin.com/company/xana-technologies';
+/** Company page linked from the previous xanatechnologies.com footer. */
+export const LINKEDIN_URL = 'https://www.linkedin.com/company/xanasystem/';
+
+/** Legal identity (from the current Aviso Legal). Used by the legal pages. */
+export const COMPANY = {
+  legalName: 'Xana Technologies SL',
+  taxId: 'B02903169',
+  address: 'C/ Bélgica 135, bajo, 12006 Castellón, España',
+  addressEn: 'C/ Bélgica 135, ground floor, 12006 Castellón, Spain',
+  email: 'info@xanatechnologies.com',
+  website: 'https://xanatechnologies.com',
+};
+
+/** Routes of the legal pages per locale (EN at root, ES under /es/). */
+export const LEGAL_ROUTES: Record<Locale, { legal: string; privacy: string; cookies: string }> = {
+  en: { legal: '/legal-notice/', privacy: '/privacy-policy/', cookies: '/cookies-policy/' },
+  es: { legal: '/es/aviso-legal/', privacy: '/es/politica-de-privacidad/', cookies: '/es/politica-de-cookies/' },
+};
 
 /** One brand card (Figma node 80:567). `paragraphs` may carry **bold** spans. */
 export interface BrandCopy {
@@ -124,6 +140,8 @@ export interface SiteContent {
   funding: {
     h2: string;
     intro: string;
+    /** Official grant statements shown in the footer, each with its logo strip. */
+    programs: { logo: string; alt: string; text: string }[];
   };
   footer: {
     /** Closing statement band above the link columns (Figma node 88:802):
@@ -136,6 +154,8 @@ export interface SiteContent {
     contactButton: string;
     legalTitle: string;
     legalLinks: { label: string; href: string }[];
+    /** Opens the cookie-consent preferences modal (vanilla-cookieconsent). */
+    privacyPreferences: string;
     copyright: string;
     languageSwitch: string;
   };
@@ -293,6 +313,20 @@ export const content: Record<Locale, SiteContent> = {
       h2: 'Funding & Institutional Support',
       intro:
         'Xana Technologies has participated in the following programs and initiatives.',
+      programs: [
+        {
+          logo: '/img/funding/ivace-feder.webp',
+          alt: 'Generalitat Valenciana · IVACE · Funded by the European Union',
+          text:
+            'Project "Applying Artificial Intelligence to improve data quality in a centralised product and digital catalogue management system", funded by Ivace through the SME innovation programme (INNOVA TeiC-CV), file number IMINOK/2023/52, and co-funded by the European Union through the European Regional Development Fund (ERDF).',
+        },
+        {
+          logo: '/img/funding/xpande-feder.jpg',
+          alt: 'Co-funded by the European Union · Ministerio de Hacienda · Fondos Europeos · Cámara de Comercio de España',
+          text:
+            'XANA TECHNOLOGIES SOCIEDAD LIMITADA has benefited from European Funds aimed at strengthening the sustainable growth and competitiveness of SMEs, under which it has launched an Action Plan to improve its competitiveness through digital transformation, online promotion and e-commerce in international markets during 2025-2026. It has done so with the support of the XPANDE DIGITAL Programme of the Castellón Chamber of Commerce. #EuropaSeSiente',
+        },
+      ],
     },
     footer: {
       statement: {
@@ -305,9 +339,11 @@ export const content: Record<Locale, SiteContent> = {
       contactButton: 'Contact',
       legalTitle: 'Legal',
       legalLinks: [
-        { label: 'Privacy Policy', href: '/privacy' },
-        { label: 'Cookies Policy', href: '/cookies' },
+        { label: 'Privacy Policy', href: LEGAL_ROUTES.en.privacy },
+        { label: 'Legal Notice', href: LEGAL_ROUTES.en.legal },
+        { label: 'Cookies Policy', href: LEGAL_ROUTES.en.cookies },
       ],
+      privacyPreferences: 'Privacy Preferences',
       copyright: 'Xana Technologies. All rights reserved.',
       languageSwitch: 'Español',
     },
@@ -464,6 +500,21 @@ export const content: Record<Locale, SiteContent> = {
       h2: 'Ayudas y apoyo institucional',
       intro:
         'Xana Technologies ha participado en los siguientes programas e iniciativas.',
+      // Official wording — copied verbatim from the previous xanatechnologies.com footer.
+      programs: [
+        {
+          logo: '/img/funding/ivace-feder.webp',
+          alt: 'Generalitat Valenciana · IVACE · Financiado por la Unión Europea',
+          text:
+            'Proyecto “Aplicación de Inteligencia Artificial para mejorar la calidad de los datos en un sistema de gestión centralizada de productos y catálogos digitales”, financiado por Ivace a través del programa innovación de Pyme (INNOVA TeiC-CV), con número de expediente IMINOK/2023/52 y cofinanciado por la unión europea a través del fondo europeo de desarrollo regional (Feder).',
+        },
+        {
+          logo: '/img/funding/xpande-feder.jpg',
+          alt: 'Cofinanciado por la Unión Europea · Ministerio de Hacienda · Fondos Europeos · Cámara de Comercio de España',
+          text:
+            'XANA TECHNOLOGIES SOCIEDAD LIMITADA ha sido beneficiaria de Fondos Europeos, cuyo objetivo es el refuerzo del crecimiento sostenible y la competitividad de las PYMES, y gracias al cual ha puesto en marcha un Plan de Acción con el objetivo de mejorar su competitividad mediante la transformación digital, la promoción online y el comercio electrónico en mercados internacionales durante el año 2025-2026. Para ello ha contado con el apoyo del Programa XPANDE DIGITAL de la Cámara de Comercio de Castellón. #EuropaSeSiente',
+        },
+      ],
     },
     footer: {
       statement: {
@@ -476,9 +527,11 @@ export const content: Record<Locale, SiteContent> = {
       contactButton: 'Contacto',
       legalTitle: 'Legal',
       legalLinks: [
-        { label: 'Política de Privacidad', href: '/es/privacidad' },
-        { label: 'Política de Cookies', href: '/es/cookies' },
+        { label: 'Política de Privacidad', href: LEGAL_ROUTES.es.privacy },
+        { label: 'Aviso Legal', href: LEGAL_ROUTES.es.legal },
+        { label: 'Política de Cookies', href: LEGAL_ROUTES.es.cookies },
       ],
+      privacyPreferences: 'Preferencias de privacidad',
       copyright: 'Xana Technologies. Todos los derechos reservados.',
       languageSwitch: 'English',
     },

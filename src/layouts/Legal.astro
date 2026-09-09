@@ -1,0 +1,167 @@
+---
+/**
+ * Legal — shared shell for Legal Notice / Privacy Policy / Cookies Policy.
+ * Wraps Base (header, footer, SEO, cookie consent) with a narrow reading
+ * column on the site's dark space backdrop. Pages are `noindex, follow`
+ * (same as the Magna Cerámica site) and carry their own EN/ES alternates.
+ */
+import Base from './Base.astro';
+import PageBackground from '../components/PageBackground.astro';
+import { type Locale } from '../i18n/content';
+
+interface Props {
+  locale: Locale;
+  title: string;
+  description: string;
+  /** Path of this page in each language, for hreflang + canonical. */
+  alternates: Record<Locale, string>;
+  /** "Last updated" label + date. */
+  updated: string;
+}
+
+const { locale, title, description, alternates, updated } = Astro.props;
+const homeHref = locale === 'es' ? '/es/' : '/';
+const strings = {
+  en: { eyebrow: 'Legal', updated: 'Last updated', back: 'Back to site' },
+  es: { eyebrow: 'Legal', updated: 'Última actualización', back: 'Volver al sitio' },
+}[locale];
+---
+
+<Base
+  locale={locale}
+  title={`${title} | Xana Technologies`}
+  description={description}
+  alternates={alternates}
+  noindex
+>
+  <PageBackground />
+  <section class="legal section" aria-labelledby="legal-title">
+    <div class="container legal__wrap">
+      <a class="legal__back" href={homeHref}>&larr; {strings.back}</a>
+      <p class="eyebrow eyebrow--kicker">{strings.eyebrow}</p>
+      <h1 id="legal-title" class="legal__title">{title}</h1>
+      <p class="legal__updated">{strings.updated}: {updated}</p>
+      <article class="legal__body">
+        <slot />
+      </article>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .legal {
+    position: relative;
+    z-index: 1;
+    padding-top: clamp(2rem, 1rem + 4vw, 4rem);
+  }
+  .legal__wrap {
+    max-width: var(--container-narrow);
+  }
+  .legal__back {
+    display: block;
+    width: fit-content;
+    margin-bottom: var(--space-6);
+    font-size: 0.85rem;
+    color: var(--dim);
+  }
+  .legal__back:hover {
+    color: var(--text);
+  }
+  .legal__title {
+    margin-top: var(--space-4);
+    font-family: var(--font-display);
+    font-size: var(--fs-h2);
+    font-weight: var(--fw-h2);
+    letter-spacing: var(--ls-h2);
+    line-height: var(--lh-snug);
+    color: var(--text);
+  }
+  .legal__updated {
+    margin-top: var(--space-3);
+    font-size: 0.85rem;
+    color: var(--faint);
+  }
+  .legal__body {
+    margin-top: var(--space-7);
+    padding: clamp(1.5rem, 1rem + 2vw, 2.75rem);
+    border-radius: var(--radius-lg);
+    background: color-mix(in srgb, var(--bg-2) 72%, transparent);
+    border: 1px solid var(--line);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  .legal__body :global(h2) {
+    margin-top: var(--space-7);
+    margin-bottom: var(--space-3);
+    font-family: var(--font-display);
+    font-size: var(--fs-h3);
+    font-weight: var(--fw-h3);
+    letter-spacing: var(--ls-h3);
+    color: var(--text);
+  }
+  .legal__body :global(h2:first-child) {
+    margin-top: 0;
+  }
+  .legal__body :global(h3) {
+    margin-top: var(--space-5);
+    margin-bottom: var(--space-2);
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-weight: var(--fw-semibold);
+    color: var(--text);
+  }
+  .legal__body :global(p),
+  .legal__body :global(li) {
+    color: var(--dim);
+    line-height: 1.7;
+  }
+  .legal__body :global(p + p) {
+    margin-top: var(--space-3);
+  }
+  .legal__body :global(ul),
+  .legal__body :global(ol) {
+    margin: var(--space-3) 0;
+    padding-left: 1.25rem;
+  }
+  .legal__body :global(li) {
+    margin-bottom: var(--space-2);
+  }
+  .legal__body :global(strong) {
+    color: var(--text);
+    font-weight: var(--fw-semibold);
+  }
+  .legal__body :global(a) {
+    color: var(--text);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .legal__body :global(a:hover) {
+    color: var(--grad-statement-a);
+  }
+  .legal__body :global(.legal-table-wrap) {
+    overflow-x: auto;
+    margin: var(--space-4) 0 var(--space-5);
+  }
+  .legal__body :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+  }
+  .legal__body :global(th),
+  .legal__body :global(td) {
+    text-align: left;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid var(--line);
+    vertical-align: top;
+    color: var(--dim);
+  }
+  .legal__body :global(th) {
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--text);
+    font-family: var(--font-display);
+    font-weight: var(--fw-semibold);
+  }
+  .legal__body :global(.cta) {
+    margin-top: var(--space-2);
+  }
+</style>

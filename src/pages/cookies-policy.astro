@@ -1,0 +1,225 @@
+---
+// Cookies Policy (EN). General text carried over from the previous
+// xanatechnologies.com/en/cookies-policy/ (WordPress); the cookie inventory is
+// updated to what this site actually sets (consent cookie + Google Analytics
+// via Tag Manager, only after consent). The "Privacy Preferences" button opens
+// the consent modal (CookieConsent.astro).
+import Legal from '../layouts/Legal.astro';
+import { COMPANY, LEGAL_ROUTES } from '../i18n/content';
+const alternates = { en: LEGAL_ROUTES.en.cookies, es: LEGAL_ROUTES.es.cookies };
+---
+
+<Legal
+  locale="en"
+  title="Cookies Policy"
+  description="Which cookies xanatechnologies.com uses, what they are for, and how to accept, reject or manage them."
+  alternates={alternates}
+  updated="9 September 2026"
+>
+  <h2>General Information About Cookies</h2>
+  <p>
+    User trust is important to us, and therefore, at {COMPANY.legalName}, we are committed to
+    protecting your privacy. An important part of this is providing you with as much information as
+    possible about how we use your personal data, including how we use local data storage and
+    similar technologies.
+  </p>
+  <p>
+    Local data storage involves storing different types of data locally on your device through your
+    web browser. Data stored locally may include, for example, user settings, information about how
+    you navigate our website, which web browser you use, and similar behavior on websites we
+    collaborate with. Locally stored data may be used to personalize content and features in our
+    services so that your visits are more convenient and meaningful.
+  </p>
+  <p>
+    One method of local data storage is cookies. Cookies are small text files stored on your device
+    (PC, mobile phone, or tablet) that allow us to recognize your web browser. Cookies primarily
+    contain information about your web browser and any activity that has taken place within it. They
+    help us ensure the security and optimal functioning of our website (security and session cookies)
+    and collect information about how visitors navigate our website so that our online offerings can
+    be made more attractive to users (tracking cookies).
+  </p>
+
+  <h2>Additional Information About Cookies</h2>
+  <p>
+    We use local data storage for a number of purposes, such as: enabling us to provide our
+    services; remembering your choices; and measuring and analyzing traffic on our website in order
+    to improve our services. More details on these topics are provided below:
+  </p>
+  <h3>To analyze and improve our services</h3>
+  <p>
+    We use measurement tools that provide us with statistics and analysis related to our services.
+    These tools allow us to recognize the web browser over time and determine whether the user has
+    previously visited the website and, if so, how frequently. They give us insight into how many
+    unique users we have and how they use our services. We also use the information we collect and
+    analyze to develop and improve our services; for example, by identifying which content generates
+    high traffic or determining whether a service is functioning optimally.
+  </p>
+  <h3>To deliver and adapt services to your usage</h3>
+  <p>
+    Local data storage is required and necessary to allow you to use our services, such as storing
+    your cookie preferences so that they are respected on every visit.
+  </p>
+
+  <h2>Cookies Used on This Website</h2>
+  <p>
+    Cookies that require consent stay disabled until you accept them. The inventory below reflects
+    the cookies this site can set; it will be kept up to date as services are added.
+  </p>
+  <div class="legal-table-wrap">
+    <table>
+      <thead>
+        <tr><th>Cookie</th><th>Type</th><th>Provider</th><th>Purpose</th><th>Duration</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>cc_cookie</td><td>Necessary</td><td>xanatechnologies.com</td><td>Stores your cookie consent choices so the banner is not shown again and your preferences are respected.</td><td>6 months</td></tr>
+        <tr><td>_ga</td><td>Analytics</td><td>Google Analytics</td><td>Enables unique visit tracking. The first time a user accesses the website through a browser, this cookie is installed; on later visits with the same browser the user is recognized as the same user. Only if the user changes browsers will they be considered a different user.</td><td>2 years</td></tr>
+        <tr><td>_ga_*</td><td>Analytics</td><td>Google Analytics</td><td>Keeps the session state for Google Analytics 4.</td><td>2 years</td></tr>
+        <tr><td>_gid</td><td>Analytics</td><td>Google Analytics</td><td>Used to distinguish users.</td><td>24 hours</td></tr>
+        <tr><td>_gat</td><td>Analytics</td><td>Google Analytics</td><td>Used to limit request rates, meaning it limits data collection on high-traffic sites.</td><td>1 minute</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>
+    Analytics cookies are loaded through Google Tag Manager only after you accept the "Tracking"
+    category. The contact form is protected by Cloudflare Turnstile, a strictly necessary anti-bot
+    verification that does not set tracking cookies. More information about the processing carried
+    out by Google Analytics is available at
+    <a href="https://policies.google.com/technologies/cookies" rel="noopener" target="_blank">policies.google.com</a>.
+  </p>
+
+  <h2 id="preferences">Cookie Management on This Website</h2>
+  <p>
+    You can accept, reject or configure cookies at any time through our privacy preferences panel,
+    and later modify or withdraw your consent from the same place:
+  </p>
+  <p>
+    <button type="button" class="cta cta--grad" data-cc="show-preferencesModal">
+      <span>Manage cookie preferences</span>
+    </button>
+  </p>
+
+  <h2>Cookie Management in Your Browser</h2>
+  <p>You can also disable cookies or configure your browser to notify you when a cookie is sent.</p>
+  <p>
+    Your web browser settings typically display a list of all stored cookies to provide you with an
+    overview and, if desired, to delete unwanted cookies. You can generally choose to accept the
+    storage of cookies from websites you visit or from third parties affiliated with those websites.
+    You may also choose to be notified each time a new cookie is stored. Guidance on how to do this
+    in different web browsers is provided below. Your web browser typically stores cookies in a
+    specific folder on your hard drive so you can review their contents in more detail.
+  </p>
+  <p>
+    However, cookies on the website change frequently, and not all cookies are equally important.
+    Therefore, if {COMPANY.legalName} changes the use of tracking cookies, you will be notified via a
+    message. Please note that if you disable cookies, you may not be able to enjoy all the features
+    of our website.
+  </p>
+  <p>
+    Below is a summary of how locally stored data can be managed in different web browsers. Please
+    note that this process may change and that the descriptions provided here may not be up to date.
+  </p>
+
+  <h3>Managing Cookies in Google Chrome</h3>
+  <p>How to delete cookies:</p>
+  <ul>
+    <li>Go to Settings in your browser menu.</li>
+    <li>Click Show advanced settings.</li>
+    <li>Click Clear browsing data.</li>
+    <li>Select the time range for which you want to delete information from the menu at the top. If you want to delete all cookies in the browser, select All time.</li>
+    <li>Check Cookies and other site and plugin data.</li>
+    <li>Click Clear browsing data.</li>
+    <li>Close the window.</li>
+  </ul>
+  <p>How to prevent cookies from being stored in your web browser:</p>
+  <ul>
+    <li>Go to Settings in your browser menu.</li>
+    <li>Click Show advanced settings and then click Content settings.</li>
+    <li>Under Cookies, select your preferred option. If you want to prevent all cookies from being stored, select Do not allow any site to save data.</li>
+    <li>Click Done.</li>
+    <li>Close the window.</li>
+  </ul>
+
+  <h3>Managing Cookies in Safari</h3>
+  <p>How to delete cookies:</p>
+  <ul>
+    <li>Go to Preferences in your browser menu.</li>
+    <li>Click the Privacy tab.</li>
+    <li>Click Remove All Website Data and then click Remove to delete all cookies.</li>
+    <li>Close the window.</li>
+  </ul>
+  <p>How to prevent cookies from being stored in your web browser:</p>
+  <ul>
+    <li>Go to Preferences in your browser menu.</li>
+    <li>Click the Privacy tab.</li>
+    <li>Under Cookies and website data, select your preferred option. If you want to prevent all cookies from being stored, select Always block.</li>
+    <li>Close the window.</li>
+  </ul>
+
+  <h3>Managing Cookies in Mozilla Firefox</h3>
+  <p>How to delete cookies:</p>
+  <ul>
+    <li>Go to Options in your browser menu.</li>
+    <li>Click the Privacy tab.</li>
+    <li>Click Show Cookies.</li>
+    <li>Select the cookies you want to delete and click Remove Selected. Click Remove All if you want to delete all cookies in your web browser.</li>
+    <li>Close the window. Any changes you make will be saved automatically.</li>
+  </ul>
+  <p>How to prevent cookies from being stored in your web browser:</p>
+  <ul>
+    <li>Go to Settings in your browser menu.</li>
+    <li>Select the Privacy tab.</li>
+    <li>Under History, click Use custom settings for history.</li>
+    <li>Select your preferred options under Accept cookies from websites. If you want to prevent all cookies from being stored, uncheck Accept cookies from websites.</li>
+    <li>Close the window. Any changes you make will be saved automatically.</li>
+  </ul>
+
+  <h3>Managing Cookies in Microsoft Edge / Internet Explorer</h3>
+  <p>How to delete cookies:</p>
+  <ul>
+    <li>Go to Tools (gear icon) in your browser menu.</li>
+    <li>Click Internet Options.</li>
+    <li>Under the General tab – Browsing history, click Delete.</li>
+    <li>Make sure the Cookies and website data option is checked.</li>
+    <li>Click Delete.</li>
+    <li>Click OK.</li>
+  </ul>
+  <p>How to prevent cookies from being stored in your web browser:</p>
+  <ul>
+    <li>Go to Tools (gear icon) in your browser menu.</li>
+    <li>Click Internet Options and then the Privacy tab.</li>
+    <li>Move the slider to the desired level. If you want to prevent all cookies from being stored, select the level Block all cookies.</li>
+    <li>Click OK.</li>
+  </ul>
+
+  <h3>Managing Cookies in Opera</h3>
+  <p>How to delete cookies:</p>
+  <ul>
+    <li>Go to Settings in your browser menu.</li>
+    <li>Select the Privacy &amp; Security tab.</li>
+    <li>Click Cookies and then All cookies and site data.</li>
+    <li>Select the cookies you want to delete and click Delete. Click Delete All if you want to delete all cookies in your web browser.</li>
+    <li>Click Done.</li>
+    <li>Close the window.</li>
+  </ul>
+  <p>How to prevent cookies from being stored in your web browser:</p>
+  <ul>
+    <li>Go to Settings in your browser menu.</li>
+    <li>Select the Privacy &amp; Security tab.</li>
+    <li>Under Cookies, select your preferred option. If you want to prevent all cookies from being stored, select Do not allow any site to save data.</li>
+    <li>Close the window.</li>
+  </ul>
+
+  <h2>Third Parties and Transfers</h2>
+  <p>
+    Some of these technologies belong to third parties and may, in certain cases, involve
+    international data transfers. More information in our
+    <a href={LEGAL_ROUTES.en.privacy}>Privacy Policy</a>.
+  </p>
+
+  <h2>Contact Information</h2>
+  <p>
+    For greater transparency, if you have any questions regarding the use of local storage on our
+    website, please contact us at <a href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a>,
+    indicating in the subject line “Cookie Policy.”
+  </p>
+</Legal>

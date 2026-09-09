@@ -5,23 +5,38 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Cursor from '../components/Cursor.astro';
 import SmoothScroll from '../components/SmoothScroll.astro';
+import CookieConsent from '../components/CookieConsent.astro';
 
 interface Props {
   locale: Locale;
-  /** When true, keep this route out of search engines (used for the /v2 variant). */
+  /** When true, keep this route out of search engines (v2 variants, legal pages). */
   noindex?: boolean;
   /** Optional palette theme applied via data-theme on <html> (e.g. 'v2'). */
   theme?: string;
+  /** Per-page <title> / description; default to the landing's metadata. */
+  title?: string;
+  description?: string;
+  /** Path of this page in each language (hreflang + canonical). Defaults to the homes. */
+  alternates?: Record<Locale, string>;
 }
 
-const { locale, noindex = false, theme } = Astro.props;
+const {
+  locale,
+  noindex = false,
+  theme,
+  title: pageTitle,
+  description: pageDescription,
+  alternates = { en: '/', es: '/es/' },
+} = Astro.props;
 const t = content[locale];
+const title = pageTitle ?? t.meta.title;
+const description = pageDescription ?? t.meta.description;
 
 // Canonical + alternate URLs for hreflang. English lives at "/", Spanish at "/es/".
 const site = Astro.site ?? new URL('https://xanatechnologies.com');
 const urls: Record<Locale, string> = {
-  en: new URL('/', site).href,
-  es: new URL('/es/', site).href,
+  en: new URL(alternates.en, site).href,
+  es: new URL(alternates.es, site).href,
 };
 const canonical = urls[locale];
 const ogImage = new URL('/og-image.jpg', site).href;
@@ -63,9 +78,9 @@ const websiteSchema = {
     <link rel="preload" href="/fonts/mona-sans-var.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin />
 
-    <title>{t.meta.title}</title>
-    <meta name="description" content={t.meta.description} />
-    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
     <link rel="canonical" href={canonical} />
 
     <!-- Bilingual hreflang -->
@@ -77,15 +92,18 @@ const websiteSchema = {
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Xana Technologies" />
     <meta property="og:locale" content={t.meta.ogLocale} />
-    <meta property="og:title" content={t.meta.title} />
-    <meta property="og:description" content={t.meta.description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Xana Technologies" />
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={t.meta.title} />
-    <meta name="twitter:description" content={t.meta.description} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
 
     <script
@@ -106,6 +124,7 @@ const websiteSchema = {
     <Footer locale={locale} />
     <Cursor />
     <SmoothScroll />
+    <CookieConsent locale={locale} />
 
     <!-- Reveal-on-scroll: progressive enhancement, respects reduced motion.
          Each element gets a --reveal-i index among its data-reveal siblings so
