@@ -1,0 +1,16 @@
+// Contact form delivery config. Values come from env vars (.env locally,
+// Vercel → Settings → Environment Variables in production); see .env.example.
+// Same pattern as the Magna Cerámica project (docs/forms in that repo).
+const parseList = (v: string | undefined) =>
+  v ? v.split(',').map((s) => s.trim()).filter(Boolean) : [];
+
+export const formConfig = {
+  to: parseList(import.meta.env.FORM_TO ?? 'sales@xanasystem.com'),
+  cc: parseList(import.meta.env.FORM_CC),
+  bcc: parseList(import.meta.env.FORM_BCC),
+  fromName: import.meta.env.FORM_FROM_NAME ?? 'Xana Technologies Web',
+  fromEmail: import.meta.env.FORM_FROM_EMAIL ?? 'no-reply@forms.xanasystem.com',
+  subject: import.meta.env.FORM_SUBJECT ?? 'New contact from xanatechnologies.com',
+  sendConfirmation: false,
+  confirmationSubject: 'We have received your message',
+};
