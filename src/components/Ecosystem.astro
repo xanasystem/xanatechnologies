@@ -30,6 +30,10 @@ const t = content[locale];
 const { line1, line2, body, closing } = t.ecosystem.statement;
 const words1 = line1.split(' ');
 const words2 = line2.split(' ');
+
+// Tiny inline markup: `**bold**` in the body, `_italic_` in the closing line.
+const bodyParts = body.split('**').map((text, i) => ({ text, strong: i % 2 === 1 }));
+const closingParts = closing.split('_').map((text, i) => ({ text, em: i % 2 === 1 }));
 ---
 
 <section
@@ -52,8 +56,12 @@ const words2 = line2.split(' ');
       <span class="arrival__rule" aria-hidden="true" data-rule></span>
 
       <div class="arrival__after">
-        <p class="arrival__body" data-body>{body}</p>
-        <p class="arrival__closing" data-closing>{closing}</p>
+        <p class="arrival__body" data-body>
+          {bodyParts.map((p) => (p.strong ? <strong>{p.text}</strong> : p.text))}
+        </p>
+        <p class="arrival__closing" data-closing>
+          {closingParts.map((p) => (p.em ? <em>{p.text}</em> : p.text))}
+        </p>
       </div>
     </div>
   </div>
@@ -199,19 +207,34 @@ const words2 = line2.split(' ');
     max-width: 68ch;
     text-wrap: pretty;
   }
+  .arrival__body strong {
+    font-weight: 600;
+    color: var(--text);
+  }
+  .arrival__closing em {
+    font-style: italic;
+  }
   .arrival__closing {
     font-family: var(--font-display);
     font-weight: 700;
-    font-size: clamp(1.15rem, 1rem + 0.6vw, 1.5rem);
-    line-height: 1.3;
+    font-size: clamp(1.4rem, 1.15rem + 0.9vw, 1.95rem);
+    line-height: 1.25;
     color: var(--text);
     text-wrap: balance;
   }
 
   @media (max-width: 640px) {
     .arrival { height: 420vh; }
-    .arrival__title { max-width: 18ch; }
-    .arrival__pin { --rule-h: clamp(72px, 14vh, 140px); }
+    .arrival__title {
+      max-width: 16ch;
+      font-size: clamp(2.1rem, 1.4rem + 3.6vw, 2.6rem);
+      line-height: 1.15;
+    }
+    /* Phones: shorter rule, composition back at true centre and the second
+       beat hugging the rule, so body + closing don't sink to the bottom. */
+    .arrival__pin { --rule-h: clamp(48px, 8vh, 80px); }
+    .arrival__content { translate: 0 0; }
+    .arrival__after { margin-top: calc(var(--gap) * 0.25); gap: 1.1rem; }
   }
 
   @media (prefers-reduced-motion: reduce) {

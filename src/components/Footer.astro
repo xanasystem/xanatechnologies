@@ -4,6 +4,7 @@ import {
   type Locale,
   XANA_SYSTEM_URL,
   WOMAN_ON_MARS_URL,
+  LINKEDIN_URL,
 } from '../i18n/content';
 
 interface Props {
@@ -15,49 +16,45 @@ const t = content[locale];
 const f = t.footer;
 
 const year = 2026; // Update or make dynamic at build time as needed.
+
+// `**span**` in the headline carries the cyan→magenta gradient (Figma 88:802).
+const headlineParts = f.statement.headline
+  .split('**')
+  .map((text, i) => ({ text, grad: i % 2 === 1 }));
 const homeHref = locale === 'es' ? '/es/' : '/';
 const altHref = locale === 'es' ? '/' : '/es/';
 
-// Force the CTA headline onto two rows in both languages by breaking after the
-// question (EN "Have a challenge?" / ES "¿Tienes un reto?").
-const ctaParts = f.ctaHeadline.split('?');
-const ctaLine1 = ctaParts[0].trim() + '?';
-const ctaLine2 = ctaParts.slice(1).join('?').trim();
-
 // Link columns built from the single source of truth so they never drift.
-const columns = [
-  {
-    title: f.brandsTitle,
-    links: [
-      { label: 'Xana System', href: XANA_SYSTEM_URL, external: true },
-      { label: 'Woman on Mars', href: WOMAN_ON_MARS_URL, external: true },
-    ],
-  },
-  {
-    title: f.exploreTitle,
-    links: t.nav.sections.map((s) => ({
-      label: s.label,
-      href: `#${s.id}`,
-      external: false,
-    })),
-  },
-  {
-    title: f.legalTitle,
-    links: f.legalLinks.map((l) => ({ ...l, external: false })),
-  },
-];
+const linkColumn = {
+  title: f.linksTitle,
+  links: [
+    { label: 'Xana System', href: XANA_SYSTEM_URL, external: true },
+    { label: 'Woman on Mars', href: WOMAN_ON_MARS_URL, external: true },
+  ],
+};
+const contactColumn = {
+  title: f.contactTitle,
+  links: [{ label: 'LinkedIn', href: LINKEDIN_URL, external: true }],
+};
+const legalColumn = {
+  title: f.legalTitle,
+  links: f.legalLinks.map((l) => ({ ...l, external: false })),
+};
 ---
 
 <footer class="site-footer section--dark">
   <div class="container">
-    <!-- CTA band -->
-    <div class="footer-cta">
-      <div class="footer-cta__text">
-        <p class="eyebrow eyebrow--pill">{f.ctaEyebrow}</p>
-        <h2 class="footer-cta__headline"><span>{ctaLine1}</span><span>{ctaLine2}</span></h2>
+    <!-- Closing statement band -->
+    <div class="footer-statement">
+      <div class="footer-statement__text">
+        <p class="eyebrow footer-statement__eyebrow">{f.statement.eyebrow}</p>
+        <p class="footer-statement__headline">
+          {headlineParts.map((p) => (p.grad ? <span class="footer-statement__grad">{p.text}</span> : p.text))}
+        </p>
+        <p class="footer-statement__sub">{f.statement.sub}</p>
       </div>
-      <a class="cta cta--grad footer-cta__btn" href="#contact">
-        <span>{f.ctaButton}</span>
+      <a class="cta cta--grad footer-statement__btn" href="#contact">
+        <span>{f.contactButton}</span>
         <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
           <path d="M4.5 13.5 13.5 4.5M6 4.5h7.5V12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
           <path d="M4.5 13.5 13.5 4.5M6 4.5h7.5V12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
@@ -71,20 +68,16 @@ const columns = [
         <a class="brand" href={homeHref} aria-label="Xana Technologies — home">
           <img
             class="brand__logo"
-            src="/logo/xana-wordmark-white.png"
+            src="/logo/xana-stacked-color.png"
             alt="Xana Technologies"
-            width="658"
-            height="151"
+            width="449"
+            height="443"
           />
         </a>
-        <p class="footer-grid__tagline">
-          <span>{locale === 'es' ? 'Startup tecnológica' : 'Technology startup'}</span>
-          <span>Spain — USA</span>
-        </p>
       </div>
 
       {
-        columns.map((col) => (
+        [linkColumn, legalColumn, contactColumn].map((col) => (
           <nav class="footer-col" aria-label={col.title}>
             <p class="footer-col__title">{col.title}</p>
             <ul>
@@ -142,32 +135,58 @@ const columns = [
     padding-top: var(--space-9);
   }
 
-  /* --- CTA band -------------------------------------------------------- */
-  .footer-cta {
+  /* --- Closing statement band ------------------------------------------ */
+  .footer-statement {
     display: flex;
-    flex-wrap: wrap;
     align-items: flex-end;
     justify-content: space-between;
     gap: var(--space-6);
     padding-bottom: var(--space-8);
     border-bottom: 1px solid var(--line);
   }
-
-
-  .footer-cta__headline {
-    margin-top: var(--space-3);
+  /* The text column yields, the button never does: the CTA stays on the
+     right of the row and only drops below the text on narrow screens. */
+  .footer-statement__text {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  .footer-statement__btn {
+    flex: none;
+  }
+  /* Figma 88:802: 14px eyebrow · 60px bold headline with a gradient span ·
+     32px light sub-line, the button bottom-right. */
+  .footer-statement__eyebrow {
+    font-size: 0.875rem; /* 14px */
+  }
+  .footer-statement__headline {
+    margin: 0;
+    max-width: 26ch;
     font-family: var(--font-display);
-    font-size: clamp(2.25rem, 1.4rem + 3.2vw, 3.75rem);
+    font-size: clamp(2rem, 1.2rem + 2.9vw, 3.75rem);
     font-weight: var(--fw-h2);
+    line-height: 1.1;
     letter-spacing: var(--ls-h2);
-    line-height: var(--lh-snug);
+    color: var(--text);
+    text-wrap: balance;
+  }
+  .footer-statement__grad {
+    background: linear-gradient(90deg, var(--grad-statement-a), var(--grad-statement-b) 70%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+  .footer-statement__sub {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.3rem, 0.85rem + 1.3vw, 2rem); /* 32px from 1440px up */
+    font-weight: 300;
+    line-height: 1.3;
     color: var(--text);
   }
-  .footer-cta__headline span {
-    display: block;
-  }
-
-  /* Button styling lives in the shared .cta / .cta--grad recipe (global.css). */
 
   /* --- Link columns ---------------------------------------------------- */
   .footer-grid {
@@ -177,19 +196,12 @@ const columns = [
     padding-block: var(--space-8);
   }
 
+  /* Stacked lockup: colour X icon above the wordmark. */
   .footer-grid__brand .brand__logo {
-    height: 30px;
-    width: auto;
+    width: clamp(120px, 10vw, 150px);
+    height: auto;
   }
 
-  .footer-grid__tagline {
-    margin-top: var(--space-3);
-    color: var(--dim);
-    font-size: 0.9rem;
-  }
-  .footer-grid__tagline span {
-    display: block;
-  }
 
   .footer-col__title {
     font-family: var(--font-display);
@@ -281,8 +293,18 @@ const columns = [
     }
   }
 
+  @media (max-width: 700px) {
+    .footer-statement {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .footer-statement__text {
+      flex: none;
+      width: 100%;
+    }
+  }
   @media (max-width: 520px) {
-    .footer-cta__btn {
+    .footer-statement__btn {
       width: 100%;
       justify-content: center;
     }

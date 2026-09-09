@@ -74,6 +74,7 @@ const langs: { code: Locale; label: string; href: string; name: string }[] = [
       </div>
     </div>
 
+    <!-- Phone menu: the same EN | ES pill as the desktop bar, then Contact. -->
     <nav
       id="mobile-nav"
       class="mobile-nav"
@@ -81,34 +82,33 @@ const langs: { code: Locale; label: string; href: string; name: string }[] = [
       data-mobile-nav
       hidden
     >
-      <ul class="mobile-nav__list">
-        <li class="mobile-nav__langs">
+      <div class="mobile-nav__row">
+        <span class="mobile-nav__label">{locale === 'es' ? 'Idioma' : 'Language'}</span>
+        <div class="lang lang--menu" role="group" aria-label={t.nav.languageLabel} data-lang={locale}>
+          <span class="lang__thumb" aria-hidden="true"></span>
           {
             langs.map((l) => (
               <a
-                class:list={['mobile-nav__link', 'mobile-nav__lang', { 'is-active': l.code === locale }]}
+                class:list={['lang__link', { 'is-active': l.code === locale }]}
                 href={l.href}
                 hreflang={l.code}
                 lang={l.code}
+                aria-label={l.name}
                 aria-current={l.code === locale ? 'page' : undefined}
               >
-                {l.name}
+                {l.label}
               </a>
             ))
           }
-        </li>
-        {
-          t.nav.sections
-            .filter((section) => section.id === 'contact')
-            .map((section) => (
-              <li class="mobile-nav__cta-item">
-                <a class="mobile-nav__link mobile-nav__link--cta" href={`#${section.id}`} data-mobile-link>
-                  {section.label}
-                </a>
-              </li>
-            ))
-        }
-      </ul>
+        </div>
+      </div>
+      <a class="cta cta--white mobile-nav__cta" href="#contact" data-mobile-link>
+        <span>{locale === 'es' ? 'Contacto' : 'Contact'}</span>
+        <svg viewBox="0 0 18 18" fill="none" aria-hidden="true">
+          <path d="M4.5 13.5 13.5 4.5M6 4.5h7.5V12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M4.5 13.5 13.5 4.5M6 4.5h7.5V12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </a>
     </nav>
   </div>
 </header>
@@ -253,8 +253,7 @@ const langs: { code: Locale; label: string; href: string; name: string }[] = [
       opacity var(--dur-base) var(--ease-out);
   }
   /* The two bars are the last two children (a visually-hidden label is the
-     first child), so anchor from the end — not :first-child, which matched
-     the label and left the top bar un-rotated. */
+     first child), so anchor from the end. */
   .nav-toggle[aria-expanded='true'] .nav-toggle__bar:nth-last-child(2) {
     transform: translateY(3.5px) rotate(45deg);
   }
@@ -262,12 +261,16 @@ const langs: { code: Locale; label: string; href: string; name: string }[] = [
     transform: translateY(-3.5px) rotate(-45deg);
   }
 
+  /* Compact dropdown: one row with the language pill, then the Contact CTA. */
   .mobile-nav {
     pointer-events: auto;
     position: absolute;
     top: calc(100% - var(--space-3));
     left: var(--gutter);
     right: var(--gutter);
+    display: grid;
+    gap: var(--space-4);
+    padding: var(--space-4);
     background: color-mix(in srgb, var(--bg-2) 90%, transparent);
     backdrop-filter: saturate(170%) blur(18px);
     -webkit-backdrop-filter: saturate(170%) blur(18px);
@@ -275,69 +278,34 @@ const langs: { code: Locale; label: string; href: string; name: string }[] = [
     border-radius: var(--radius-lg);
     box-shadow: 0 20px 48px -16px rgba(0, 0, 0, 0.7);
   }
-  .mobile-nav__list {
-    list-style: none;
-    padding: var(--space-3);
-    display: grid;
-    gap: var(--space-1);
+  .mobile-nav[hidden] {
+    display: none;
   }
-  .mobile-nav__link {
-    display: block;
-    padding: var(--space-3) var(--space-2);
-    color: var(--dim);
-    border-radius: var(--radius-sm);
-  }
-  .mobile-nav__link:hover {
-    background: color-mix(in srgb, var(--text) 6%, transparent);
-    color: var(--text);
-  }
-  .mobile-nav__langs {
+  .mobile-nav__row {
     display: flex;
-    gap: var(--space-2);
-  }
-  .mobile-nav__lang {
-    flex: 1;
-    text-align: center;
-    border: 1px solid var(--line);
-  }
-  .mobile-nav__lang.is-active {
-    color: var(--text);
-    border-color: var(--line-2);
-    background: color-mix(in srgb, var(--text) 8%, transparent);
-  }
-
-  /* Contact rendered as a full-width primary CTA at the foot of the menu,
-     set off from the plain links above by a hairline + extra spacing. */
-  .mobile-nav__cta-item {
-    margin-top: var(--space-2);
-    padding-top: var(--space-3);
-    border-top: 1px solid var(--line);
-  }
-  /* Same recipe as every CTA (white variant), stretched to the menu width */
-  .mobile-nav__link--cta {
-    display: inline-flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     gap: var(--space-3);
-    width: 100%;
-    text-align: center;
-    background: #ffffff;
-    color: #282828;
-    font-family: var(--font-body);
-    font-weight: var(--fw-semibold);
-    font-size: 1rem;
-    line-height: 1.2;
-    padding: 0.9rem 1.6rem;
-    border-radius: var(--radius-pill);
+    padding-inline: var(--space-1);
   }
-  .mobile-nav__link--cta:hover {
-    background: #ffffff;
-    color: #282828;
-    filter: brightness(0.96);
+  .mobile-nav__label {
+    font-family: var(--font-display);
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--dim);
+  }
+  /* The menu's pill is the same recipe as the bar's, only never hidden. */
+  .lang--menu {
+    display: grid;
+  }
+  .mobile-nav__cta {
+    width: 100%;
+    justify-content: center;
   }
 
   @media (max-width: 900px) {
-    .lang,
+    .lang:not(.lang--menu),
     .header-cta {
       display: none;
     }
@@ -346,24 +314,6 @@ const langs: { code: Locale; label: string; href: string; name: string }[] = [
     }
     .nav-toggle {
       display: inline-flex;
-    }
-
-    /* Tall menu: nav links at the top, Contact CTA anchored near the bottom
-       so the panel reaches almost to the foot of the screen. */
-    .mobile-nav:not([hidden]) {
-      display: flex;
-      flex-direction: column;
-      height: 50dvh;
-    }
-    .mobile-nav__list {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-    }
-    .mobile-nav__cta-item {
-      margin-top: auto;
-      padding-top: 0;
-      border-top: none;
     }
   }
 </style>

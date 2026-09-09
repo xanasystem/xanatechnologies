@@ -18,15 +18,18 @@ const { locale } = Astro.props;
 const t = content[locale];
 const c = t.contact;
 
+// Cloudflare Turnstile site key (public by design; the secret stays server-side).
+const TURNSTILE_SITE_KEY = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
+
 // Privacy policy link differs per locale.
 const privacyHref = locale === 'es' ? '/es/privacidad' : '/privacy';
 const privacyPolicyName = locale === 'es' ? 'Política de Privacidad' : 'Privacy Policy';
 const privacyPrefix = locale === 'es' ? 'He leído y acepto la ' : 'I have read and accept the ';
 
 // Headline: the closing word(s) carry the cyan→magenta gradient
-// (EN "working on." · ES "trabajando.").
+// (EN "working on." · ES "por la cabeza.").
 const titleWords = c.h2.trim().split(' ');
-const accentCount = locale === 'es' ? 1 : 2;
+const accentCount = locale === 'es' ? 3 : 2;
 const titleAccent = titleWords.slice(-accentCount).join(' ');
 const titleLead = titleWords.slice(0, -accentCount).join(' ');
 ---
@@ -53,10 +56,26 @@ const titleLead = titleWords.slice(0, -accentCount).join(' ');
           {titleLead}<br /><span class="contact-card__accent">{titleAccent}</span>
         </h2>
         <p class="contact-card__text">{c.text}</p>
-        <p class="contact-card__tagline">{c.tagline}</p>
       </div>
 
-      <form class="contact-form" data-contact-form novalidate method="post" action="">
+      <!--
+        Submissions POST as FormData to src/pages/api/contact.ts (Vercel
+        function), which validates, checks Turnstile and emails via Brevo. The
+        recipient address lives only in server env vars (FORM_TO).
+      -->
+      <form class="contact-form" data-contact-form novalidate method="post" action="/api/contact">
+        <input type="hidden" name="locale" value={locale} />
+
+        <!-- Honeypot: invisible to humans, bots fill it in. Do not remove. -->
+        <input
+          type="text"
+          name="company"
+          tabindex="-1"
+          autocomplete="off"
+          style="position:absolute;left:-9999px"
+          aria-hidden="true"
+        />
+
         <!-- Row 1: Full name (optional) · Email (required) -->
         <div class="contact-form__row contact-form__row--2">
           <div class="field">
@@ -140,6 +159,12 @@ const titleLead = titleWords.slice(0, -accentCount).join(' ');
           <p class="field__error" id="cf-privacy-error" data-error hidden></p>
         </div>
 
+        <!-- Cloudflare Turnstile anti-bot widget -->
+        <div class="field">
+          <div class="cf-turnstile" data-sitekey={TURNSTILE_SITE_KEY} data-language={locale}></div>
+          <p class="field__error" id="cf-turnstile-error" data-error hidden></p>
+        </div>
+
         <div class="contact-form__submit">
           <button class="cta cta--grad" type="submit" data-submit>
             <span>{c.submit}</span>
@@ -156,15 +181,19 @@ const titleLead = titleWords.slice(0, -accentCount).join(' ');
   </div>
 </section>
 
+<script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <script
   define:vars={{
     strings: {
       required: c.errors.required,
       email: c.errors.email,
+      phone: c.errors.phone,
       privacy: c.errors.privacy,
+      verification: c.errors.verification,
       sending: c.stateSending,
       success: c.stateSuccess,
       error: c.stateError,
+      rateLimited: c.stateRateLimited,
     },
   }}
 >
@@ -172,7 +201,13 @@ const titleLead = titleWords.slice(0, -accentCount).join(' ');
   if (form) {
     const status = form.querySelector('[data-status]');
     const submitBtn = form.querySelector('[data-submit]');
+    const turnstileError = form.querySelector('#cf-turnstile-error');
     const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    // Same rule as the server: 7–15 digits, allows +, spaces, -, (), .
+    const isPhone = (v) => {
+      const digits = v.replace(/\D/g, '');
+      return /^[+]?[\d\s()\-.]{6,}$/.test(v) && digits.length >= 7 && digits.length <= 15;
+    };
 
     function fieldError(input) {
       const wrap = input.closest('.field');
@@ -194,6 +229,9 @@ const titleLead = titleWords.slice(0, -accentCount).join(' ');
         if (!emailRe.test(input.value.trim())) return showError(input, strings.email), false;
       } else if (input.type === 'checkbox' && input.name === 'privacy') {
         if (!input.checked) return showError(input, strings.privacy), false;
+      } else if (input.name === 'phone') {
+        // Optional, but must be a valid number when filled in.
+        if (input.value.trim() && !isPhone(input.value.trim())) return showError(input, strings.phone), false;
       } else if (input.required) {
         if (!input.value.trim()) return showError(input, strings.required), false;
       }
@@ -213,10 +251,10 @@ const titleLead = titleWords.slice(0, -accentCount).join(' ');
 
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
-      const required = form.querySelectorAll('[required]');
+      const controls = form.querySelectorAll('[required], [name="phone"]');
       let firstInvalid = null;
       let valid = true;
-      required.forEach((input) => {
+      controls.forEach((input) => {
         if (!validateField(input)) {
           valid = false;
           if (!firstInvalid) firstInvalid = input;
@@ -228,33 +266,47 @@ const titleLead = titleWords.slice(0, -accentCount).join(' ');
         return;
       }
 
+      // Turnstile must have produced a token before we call the endpoint.
+      const token = form.querySelector('[name="cf-turnstile-response"]');
+      if (!token || !token.value) {
+        if (turnstileError) { turnstileError.textContent = strings.verification; turnstileError.hidden = false; }
+        status.hidden = true;
+        return;
+      }
+      if (turnstileError) { turnstileError.textContent = ''; turnstileError.hidden = true; }
+
       // --- Async submission --------------------------------------------------
-      // NOTE: wire `action`/endpoint to the chosen form backend (API route,
-      // Formspree, email service…). Until then this simulates the state flow.
+      // POST as FormData to /api/contact (src/pages/api/contact.ts).
       status.hidden = false;
       status.dataset.state = 'sending';
       status.textContent = strings.sending;
       submitBtn.disabled = true;
       try {
-        const endpoint = form.getAttribute('action');
-        if (endpoint) {
-          const res = await fetch(endpoint, {
-            method: 'POST',
-            body: new FormData(form),
-            headers: { Accept: 'application/json' },
-          });
-          if (!res.ok) throw new Error('Bad response');
+        const res = await fetch(form.getAttribute('action'), {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { Accept: 'application/json' },
+        });
+        const data = await res.json().catch(() => ({}));
+        if (res.status === 429) {
+          // Vercel Firewall rate limit (5 / 10 min per IP)
+          status.dataset.state = 'error';
+          status.textContent = strings.rateLimited;
+        } else if (res.ok && data.ok) {
+          status.dataset.state = 'success';
+          status.textContent = strings.success;
+          form.reset();
         } else {
-          await new Promise((r) => setTimeout(r, 700));
+          status.dataset.state = 'error';
+          status.textContent = strings.error;
         }
-        status.dataset.state = 'success';
-        status.textContent = strings.success;
-        form.reset();
       } catch (err) {
         status.dataset.state = 'error';
         status.textContent = strings.error;
       } finally {
         submitBtn.disabled = false;
+        // Tokens are single-use: get a fresh one for the next attempt.
+        window.turnstile?.reset();
       }
     });
   }
@@ -363,12 +415,6 @@ const titleLead = titleWords.slice(0, -accentCount).join(' ');
     line-height: 1.45;
     color: #3f3f3f;
   }
-  .contact-card__tagline {
-    margin-top: 0.8rem;
-    font-weight: 600;
-    font-size: 1.25rem; /* Figma: 20px */
-    color: #3f3f3f;
-  }
 
   /* ---- Form -------------------------------------------------------------- */
   .contact-form {
@@ -472,16 +518,18 @@ const titleLead = titleWords.slice(0, -accentCount).join(' ');
     .contact-card { width: min(100%, 66%); margin-left: 0; }
   }
   @media (max-width: 900px) {
-    /* the video becomes a short banner above the card */
+    /* The video becomes a banner flush with the top of the section (no
+       padding above it, so no empty strip), framed on the face. */
+    .contact { padding-top: 0; }
     .contact__media {
       position: relative;
       width: 100%;
-      height: clamp(220px, 40vw, 360px);
+      height: clamp(380px, 95vw, 620px);
       margin-bottom: -3rem;
-      mask-image: linear-gradient(to bottom, #000 60%, transparent);
-      -webkit-mask-image: linear-gradient(to bottom, #000 60%, transparent);
+      mask-image: linear-gradient(to bottom, #000 72%, transparent);
+      -webkit-mask-image: linear-gradient(to bottom, #000 72%, transparent);
     }
-    .contact__video { object-position: center 20%; }
+    .contact__video { object-position: center 0%; }
     .contact-card { width: 100%; }
     .contact-form__row--3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }

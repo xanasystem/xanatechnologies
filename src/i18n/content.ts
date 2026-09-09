@@ -11,6 +11,8 @@ export const locales: Locale[] = ['en', 'es'];
 
 export const XANA_SYSTEM_URL = 'https://xanasystem-web.vercel.app';
 export const WOMAN_ON_MARS_URL = 'https://womanonmars.com';
+/** TODO: replace with the real company page once it exists. */
+export const LINKEDIN_URL = 'https://www.linkedin.com/company/xana-technologies';
 
 /** One brand card (Figma node 80:567). `paragraphs` may carry **bold** spans. */
 export interface BrandCopy {
@@ -54,7 +56,8 @@ export interface SiteContent {
     h2: string;
     text: string;
     /** Pinned statement (Figma node 83:585): line 1 plain, line 2 gradient,
-     *  then a second beat: supporting paragraph + bold closing line. */
+     *  then a second beat: supporting paragraph + bold closing line.
+     *  `body` may carry **bold** spans; `closing` may carry _italic_ spans. */
     statement: { line1: string; line2: string; body: string; closing: string };
   };
   /** Brands section header (Figma node 80:567). */
@@ -91,7 +94,7 @@ export interface SiteContent {
     label: string;
     h2: string;
     text: string;
-    /** Bold line under the intro (Figma): where the company operates. */
+    /** Where the company operates; shown in the footer brand block. */
     tagline: string;
     fields: {
       name: string;
@@ -109,10 +112,13 @@ export interface SiteContent {
     stateSending: string;
     stateSuccess: string;
     stateError: string;
+    stateRateLimited: string;
     errors: {
       required: string;
       email: string;
+      phone: string;
       privacy: string;
+      verification: string;
     };
   };
   funding: {
@@ -120,13 +126,15 @@ export interface SiteContent {
     intro: string;
   };
   footer: {
-    ctaEyebrow: string;
-    ctaHeadline: string;
-    ctaButton: string;
-    brandsTitle: string;
-    exploreTitle: string;
+    /** Closing statement band above the link columns (Figma node 88:802):
+     *  small eyebrow, bold headline (a `**span**` carries the brand gradient),
+     *  light sub-line. */
+    statement: { eyebrow: string; headline: string; sub: string };
+    linksTitle: string;
+    contactTitle: string;
+    /** Label of the highlighted contact button in the footer. */
+    contactButton: string;
     legalTitle: string;
-    customSolutionsLink: string;
     legalLinks: { label: string; href: string }[];
     copyright: string;
     languageSwitch: string;
@@ -179,7 +187,7 @@ export const content: Record<Locale, SiteContent> = {
       headline1: 'Different Challenges.',
       headline2: 'Two ways to approach them',
       intro:
-        'Not every challenge calls for the same solution. That’s why we approach Digital Acceleration in two different ways.',
+        'Not every challenge calls for the same solution. That’s why we take two different approaches.',
     },
     xanaSystem: {
       label: 'PRODUCT TECHNOLOGY',
@@ -200,8 +208,8 @@ export const content: Record<Locale, SiteContent> = {
       text: 'A digital strategy and marketing brand for companies that need clearer positioning, stronger communication, automation, AI-powered content, business applications, web and app design, and custom digital solutions.',
       tagline: 'Strategy + Innovation + Marketing',
       paragraphs: [
-        'We combine **strategy, innovation, marketing, AI and technology** to create smarter ways to bring products to market, connect with customers and support sales.',
-        'We explore and apply new digital opportunities with a clear commercial focus: **turning ideas into action and bringing products closer to the market.**',
+        'We define the strategy and use **innovation, AI and technology** to explore smarter ways to bring products to market, connect with customers and support sales.',
+        'We apply emerging technologies to marketing with a clear commercial focus, **turning ideas into action and accelerating time to market.**',
       ],
       closing: 'Woman on Mars. Where marketing meets technology.',
       cta: 'Woman on Mars',
@@ -251,7 +259,7 @@ export const content: Record<Locale, SiteContent> = {
     contact: {
       label: 'CONTACT',
       h2: "Tell us what you're working on.",
-      text: "Share your challenge with Xana Technologies. We'll identify the right brand, product, team, or development path.",
+      text: "Share your project with us. We'll help you find the right way to accelerate it.",
       tagline: 'Based in Spain and the U.S. Serving clients worldwide.',
       fields: {
         name: 'Full name',
@@ -272,10 +280,13 @@ export const content: Record<Locale, SiteContent> = {
         "Thank you. We've received your message and will route it to the right team.",
       stateError:
         "We couldn't send your message. Please check the highlighted fields and try again.",
+      stateRateLimited: 'Too many requests. Please wait a few minutes and try again.',
       errors: {
         required: 'This field is required.',
         email: 'Enter a valid email address.',
+        phone: 'Enter a valid phone number.',
         privacy: 'You must accept the Privacy Policy to continue.',
+        verification: 'Please complete the anti-bot verification.',
       },
     },
     funding: {
@@ -284,13 +295,15 @@ export const content: Record<Locale, SiteContent> = {
         'Xana Technologies has participated in the following programs and initiatives.',
     },
     footer: {
-      ctaEyebrow: "Let's work together",
-      ctaHeadline: 'Have a challenge? Let’s find the right route.',
-      ctaButton: 'Get in touch',
-      brandsTitle: 'Brands',
-      exploreTitle: 'Explore',
+      statement: {
+        eyebrow: 'Based in Spain and the U.S. Serving clients worldwide.',
+        headline: '**15+ years of experience** built into how we think.',
+        sub: 'Still curious.',
+      },
+      linksTitle: 'Links',
+      contactTitle: 'Contact',
+      contactButton: 'Contact',
       legalTitle: 'Legal',
-      customSolutionsLink: 'Custom Solutions',
       legalLinks: [
         { label: 'Privacy Policy', href: '/privacy' },
         { label: 'Cookies Policy', href: '/cookies' },
@@ -334,29 +347,29 @@ export const content: Record<Locale, SiteContent> = {
       h2: 'Una startup. Dos marcas especializadas.',
       text: 'Xana System aporta la tecnología de producto. Woman on Mars suma estrategia y ejecución digital. Xana Technologies conecta ambas capacidades cuando un reto necesita más de una respuesta.',
       statement: {
-        line1: 'La tecnología debería hacer las cosas',
-        line2: 'más simples, rápidas y fáciles.',
+        line1: 'La tecnología debe hacer las cosas',
+        line2: 'más sencillas, rápidas y fáciles.',
         body:
-          'Y funciona mejor cuando acompaña a la estrategia y al marketing. Creamos soluciones tecnológicas construidas alrededor de la estrategia de tu negocio para reducir la complejidad, facilitar el trabajo diario y ayudar a tu empresa a avanzar más rápido.',
-        closing: 'Eso es lo que significa para nosotros la Aceleración Digital.',
+          'Y debe estar al servicio de la estrategia y el marketing. Creamos soluciones tecnológicas alineadas con tu estrategia de negocio para reducir la complejidad, facilitar el día a día y ayudar a tu empresa a avanzar más rápido.',
+        closing: 'Eso es lo que significa para nosotros la _Aceleración Digital_.',
       },
     },
     brands: {
-      headline1: 'Retos distintos.',
-      headline2: 'Dos formas de abordarlos',
+      headline1: 'Cada reto es único.',
+      headline2: 'Dos maneras de abordarlo.',
       intro:
-        'No todos los retos piden la misma solución. Por eso abordamos la Aceleración Digital de dos maneras distintas.',
+        'No todo requiere la misma solución. Por eso trabajamos desde dos enfoques diferentes.',
     },
     xanaSystem: {
       label: 'TECNOLOGÍA DE PRODUCTO',
       h2: 'Xana System',
       text: 'Una plataforma de producto que combina Product Information Management (PIM) y Digital Asset Management (DAM) para organizar, enriquecer y publicar contenido de producto en catálogos digitales, apps de catálogo y sistemas B2B.',
-      tagline: 'Enriquecimiento de producto + Velocidad al mercado',
+      tagline: 'Enriquecimiento de Producto + Speed to Market',
       paragraphs: [
-        'Gestiona y enriquece **la información de producto y los activos digitales** para convertir datos básicos en contenido de producto completo, visual y listo para el mercado.',
-        'Publica tu contenido de producto en **cualquier canal o plataforma**. Y cuando la velocidad importa, nuestros propios **catálogos web y app** te permiten salir antes, con todo sincronizado.',
+        'Gestiona y enriquece **datos, imágenes, vídeos y otros activos digitales** para convertir información básica en contenido de producto completo, visual y preparado para vender.',
+        'Publica en **cualquier canal o plataforma** o llega aún más rápido al mercado con nuestros propios **catálogos web y app**, siempre sincronizados con Xana System.',
       ],
-      closing: 'Gestiona en un solo lugar. Publica en todas partes. Siempre actualizado.',
+      closing: 'Gestiona desde un solo lugar. Publica en múltiples canales. Siempre actualizado.',
       cta: 'Xana System',
       externalLabel: 'Abre xanasystem.com',
     },
@@ -366,10 +379,10 @@ export const content: Record<Locale, SiteContent> = {
       text: 'Una marca de estrategia y marketing digital para empresas que necesitan un posicionamiento más claro, una comunicación más sólida, automatización, contenidos con IA, aplicaciones de negocio, diseño web y app y soluciones digitales a medida.',
       tagline: 'Estrategia + Innovación + Marketing',
       paragraphs: [
-        'Combinamos **estrategia, innovación, marketing, IA y tecnología** para crear formas más inteligentes de llevar productos al mercado, conectar con los clientes e impulsar las ventas.',
-        'Exploramos y aplicamos nuevas oportunidades digitales con un enfoque comercial claro: **convertir ideas en acción y acercar los productos al mercado.**',
+        'Definimos la estrategia y, a partir de la **innovación, la IA y la tecnología**, exploramos nuevas formas de llevar productos al mercado, conectar con los clientes y apoyar las ventas.',
+        'Aplicamos nuevas oportunidades tecnológicas al marketing con un claro enfoque comercial, **transformando ideas en acciones y acelerando la llegada al mercado.**',
       ],
-      closing: 'Woman on Mars. Donde el marketing se encuentra con la tecnología.',
+      closing: 'Woman on Mars. Where marketing meets technology.',
       cta: 'Woman on Mars',
       externalLabel: 'Abre womanonmars.com',
     },
@@ -416,8 +429,8 @@ export const content: Record<Locale, SiteContent> = {
     },
     contact: {
       label: 'CONTACTO',
-      h2: 'Cuéntanos en qué estás trabajando.',
-      text: 'Comparte tu reto con Xana Technologies. Identificaremos la marca, el producto, el equipo o la vía de desarrollo más adecuada.',
+      h2: 'Cuéntanos qué te ronda por la cabeza.',
+      text: 'Te ayudaremos a encontrar la mejor forma de acelerarlo.',
       tagline: 'Con base en España y EE. UU. Trabajamos con clientes en todo el mundo.',
       fields: {
         name: 'Nombre completo',
@@ -438,10 +451,13 @@ export const content: Record<Locale, SiteContent> = {
         'Gracias. Hemos recibido tu mensaje y lo dirigiremos al equipo adecuado.',
       stateError:
         'No hemos podido enviar tu mensaje. Revisa los campos indicados e inténtalo de nuevo.',
+      stateRateLimited: 'Has enviado demasiadas solicitudes. Espera unos minutos e inténtalo de nuevo.',
       errors: {
         required: 'Este campo es obligatorio.',
         email: 'Introduce un email válido.',
+        phone: 'Introduce un teléfono válido.',
         privacy: 'Debes aceptar la Política de Privacidad para continuar.',
+        verification: 'Completa la verificación anti-bots.',
       },
     },
     funding: {
@@ -450,13 +466,15 @@ export const content: Record<Locale, SiteContent> = {
         'Xana Technologies ha participado en los siguientes programas e iniciativas.',
     },
     footer: {
-      ctaEyebrow: 'Trabajemos juntos',
-      ctaHeadline: '¿Tienes un reto? Encontremos la ruta adecuada.',
-      ctaButton: 'Hablemos',
-      brandsTitle: 'Marcas',
-      exploreTitle: 'Explorar',
+      statement: {
+        eyebrow: 'Con presencia en España y Estados Unidos. Trabajamos con clientes en todo el mundo.',
+        headline: 'Más de **15 años de experiencia** forman parte de nuestra manera de pensar.',
+        sub: 'Y seguimos siendo curiosos e innovando.',
+      },
+      linksTitle: 'Enlaces',
+      contactTitle: 'Contacto',
+      contactButton: 'Contacto',
       legalTitle: 'Legal',
-      customSolutionsLink: 'Soluciones a medida',
       legalLinks: [
         { label: 'Política de Privacidad', href: '/es/privacidad' },
         { label: 'Política de Cookies', href: '/es/cookies' },
