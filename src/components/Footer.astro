@@ -28,16 +28,14 @@ const contactHref = `${homeHref}#contact`;
 const programs = t.funding.programs;
 
 // Link columns built from the single source of truth so they never drift.
+// Two columns only: Links (brands + LinkedIn) and Legal.
 const linkColumn = {
   title: f.linksTitle,
   links: [
     { label: 'Xana System', href: XANA_SYSTEM_URL, external: true },
     { label: 'Woman on Mars', href: WOMAN_ON_MARS_URL, external: true },
+    { label: 'LinkedIn', href: LINKEDIN_URL, external: true },
   ],
-};
-const contactColumn = {
-  title: f.contactTitle,
-  links: [{ label: 'LinkedIn', href: LINKEDIN_URL, external: true }],
 };
 // The last legal link opens the cookie-consent preferences modal
 // (CookieConsent.astro listens for [data-cc="show-preferencesModal"]); its
@@ -86,7 +84,7 @@ const legalColumn = {
       </div>
 
       {
-        [linkColumn, legalColumn, contactColumn].map((col) => (
+        [linkColumn, legalColumn].map((col) => (
           <nav class="footer-col" aria-label={col.title}>
             <p class="footer-col__title">{col.title}</p>
             <ul>
@@ -215,7 +213,7 @@ const legalColumn = {
   /* --- Link columns ---------------------------------------------------- */
   .footer-grid {
     display: grid;
-    grid-template-columns: 1.6fr repeat(3, 1fr);
+    grid-template-columns: 2fr repeat(2, 1fr);
     gap: var(--space-7) var(--space-6);
     padding-block: var(--space-8);
   }
