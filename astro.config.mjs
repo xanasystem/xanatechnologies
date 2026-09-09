@@ -27,6 +27,10 @@ const OLD_EN_PAGES = [
   '/en/orders-b2b-commerce', '/en/digital-web-catalog', '/en/app-digital-catalog',
 ];
 
+// NOTE: Astro strips trailing slashes from redirect sources, so the generated
+// Vercel rules only match `/kit-consulting`, while WordPress linked
+// `/kit-consulting/`. `scripts/fix-redirect-slashes.mjs` (run after
+// `astro build`, see package.json) makes every 301 rule accept both forms.
 /** @type {Record<string, import('astro').RedirectConfig>} */
 const redirects = {
   '/en': '/',
