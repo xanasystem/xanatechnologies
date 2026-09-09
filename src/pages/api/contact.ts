@@ -36,7 +36,7 @@ interface Lead {
 
 // Brand palette mirrored from src/styles/tokens.css (emails can't load CSS).
 const BRAND = {
-  navy: '#0b0f1a',
+  navy: '#0c182b',
   cyan: '#4dd4ec',
   magenta: '#e6007e',
   ink: '#1c1c1c',
@@ -84,26 +84,16 @@ export function renderNotificationEmail(d: Lead) {
       <td align="center" style="padding:32px 16px;">
         <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:600px;max-width:100%;background:#ffffff;border-radius:14px;overflow:hidden;border:1px solid ${BRAND.line};">
 
-          <!-- Header: navy band with the white lockup -->
+          <!-- Header: navy band with the white lockup, centred -->
           <tr>
-            <td style="background:${BRAND.navy};padding:30px 36px 26px;">
-              <img src="${logoUrl}" alt="Xana Technologies" width="188" height="62" style="display:block;width:188px;height:auto;border:0;outline:none;text-decoration:none;" />
-            </td>
-          </tr>
-          <!-- Brand gradient rule (two solid cells: gradients don't render in Outlook) -->
-          <tr>
-            <td style="padding:0;font-size:0;line-height:0;">
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
-                <td width="50%" style="height:4px;background:${BRAND.cyan};"></td>
-                <td width="50%" style="height:4px;background:${BRAND.magenta};"></td>
-              </tr></table>
+            <td align="center" style="background:${BRAND.navy};padding:32px 36px;text-align:center;">
+              <img src="${logoUrl}" alt="Xana Technologies" width="188" height="62" style="display:block;margin:0 auto;width:188px;height:auto;border:0;outline:none;text-decoration:none;" />
             </td>
           </tr>
 
           <!-- Title -->
           <tr>
             <td style="padding:32px 36px 8px;">
-              <p style="margin:0 0 6px;font-family:${FONT};font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:${BRAND.magenta};">Website enquiry</p>
               <h1 style="margin:0;font-family:${FONT};font-size:24px;line-height:1.25;font-weight:700;letter-spacing:-0.01em;color:${BRAND.ink};">New contact from ${name || email}</h1>
               <p style="margin:10px 0 0;font-family:${FONT};font-size:14px;line-height:1.5;color:${BRAND.muted};">Received ${when} via the contact form on xanatechnologies.com.</p>
             </td>
@@ -128,19 +118,20 @@ export function renderNotificationEmail(d: Lead) {
               <p style="margin:0 0 10px;font-family:${FONT};font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:${BRAND.muted};">Message</p>
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
                 <tr>
-                  <td style="background:${BRAND.paper};border-left:3px solid ${BRAND.cyan};border-radius:0 8px 8px 0;padding:18px 20px;font-family:${FONT};font-size:15px;line-height:1.65;color:${BRAND.ink};">${message}</td>
+                  <td style="background:${BRAND.paper};border-radius:8px;padding:18px 20px;font-family:${FONT};font-size:15px;line-height:1.65;color:${BRAND.ink};">${message}</td>
                 </tr>
               </table>
             </td>
           </tr>
 
-          <!-- CTA -->
+          <!-- CTA: same recipe as the site's .cta--grad (cyan→magenta, 115deg).
+               Solid magenta bgcolor is the fallback where gradients don't render. -->
           <tr>
             <td style="padding:28px 36px 36px;">
               <table role="presentation" cellpadding="0" cellspacing="0">
                 <tr>
-                  <td style="background:${BRAND.navy};border-radius:999px;">
-                    <a href="mailto:${email}?subject=${encodeURIComponent('Re: your enquiry to Xana Technologies')}" style="display:inline-block;padding:13px 26px;font-family:${FONT};font-size:14px;font-weight:600;color:#ffffff;text-decoration:none;">Reply to ${name || 'sender'} &rarr;</a>
+                  <td bgcolor="${BRAND.magenta}" style="background:${BRAND.magenta};background-image:linear-gradient(115deg,${BRAND.cyan} -10%,${BRAND.magenta} 110%);border-radius:999px;">
+                    <a href="mailto:${email}?subject=${encodeURIComponent('Re: your enquiry to Xana Technologies')}" style="display:inline-block;padding:14px 28px;font-family:${FONT};font-size:14px;font-weight:600;color:#ffffff;text-decoration:none;">Reply to ${name || 'sender'} &nearr;</a>
                   </td>
                 </tr>
               </table>
