@@ -56,7 +56,17 @@ const legalColumn = {
       <div class="footer-statement__text">
         <p class="eyebrow footer-statement__eyebrow">{f.statement.eyebrow}</p>
         <p class="footer-statement__headline">
-          {headlineParts.map((p) => (p.grad ? <span class="footer-statement__grad">{p.text}</span> : p.text))}
+          {headlineParts.map((p) =>
+            p.grad ? (
+              <>
+                <span class="footer-statement__grad">{p.text}</span>
+                {/* EN: the plain half always starts a new line ("built into how we think."). */}
+                {locale === 'en' && <br class="footer-statement__br" />}
+              </>
+            ) : (
+              p.text
+            )
+          )}
         </p>
         <p class="footer-statement__sub">{f.statement.sub}</p>
       </div>
@@ -183,6 +193,8 @@ const legalColumn = {
   .footer-statement__eyebrow {
     font-size: 0.875rem; /* 14px */
   }
+  /* Line breaks per language: EN "15+ years of experience / built into how we
+     think.", ES "Más de 15 años de experiencia / forman parte de nuestra / …". */
   .footer-statement__headline {
     margin: 0;
     max-width: 26ch;
@@ -194,12 +206,29 @@ const legalColumn = {
     color: var(--text);
     text-wrap: balance;
   }
+  :global(html[lang='es']) .footer-statement__headline {
+    max-width: 30ch;
+  }
+  /* Phones wrap naturally; the forced EN break only applies where the
+     gradient phrase fits on one line. */
+  @media (max-width: 699px) {
+    .footer-statement__br {
+      display: none;
+    }
+  }
   .footer-statement__grad {
     background: linear-gradient(90deg, var(--grad-statement-a), var(--grad-statement-b) 70%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
     color: transparent;
+  }
+  /* Keep the gradient phrase ("15 años de experiencia") on one line where
+     there is room; phones fall back to normal wrapping. */
+  @media (min-width: 700px) {
+    .footer-statement__grad {
+      white-space: nowrap;
+    }
   }
   .footer-statement__sub {
     margin: 0;
@@ -263,7 +292,8 @@ const legalColumn = {
   .footer-funding {
     display: grid;
     gap: var(--space-5);
-    padding-top: var(--space-6);
+    margin-top: var(--space-6);
+    padding-top: var(--space-7);
     border-top: 1px solid var(--line);
   }
   .footer-funding__item {
@@ -279,15 +309,16 @@ const legalColumn = {
   }
   .footer-funding__logo img {
     display: block;
-    height: 60px;
+    height: 48px;
     width: auto;
     max-width: 100%;
     object-fit: contain;
     opacity: 0.92;
   }
+  /* Full container width so the statements run to the edge and wrap less. */
   .footer-funding__text {
     margin: 0;
-    max-width: 110ch;
+    max-width: none;
     font-size: 0.8rem;
     line-height: 1.55;
     color: var(--faint);
@@ -370,7 +401,7 @@ const legalColumn = {
     .footer-funding__logo img {
       height: auto;
       width: 100%;
-      max-height: 60px;
+      max-height: 48px;
     }
   }
 </style>
