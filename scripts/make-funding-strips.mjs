@@ -63,14 +63,15 @@ async function strip(items, out) {
   return { width };
 }
 
+// ivace-white / hacienda-white / camara-white are the white PNGs supplied by
+// Xana (official negatives); the rest come from the public sources above.
 const gva = await fit(path.join(SRC, 'gva-blanco.png'));
-const ivace = await fit(await whitePng('ivace-header.png'), H, 22);
+const ivace = await fit(path.join(SRC, 'ivace-white.png'), H, 4);
 const euFunded = await fit(path.join(SRC, 'eu-funded-white.png'), H, 4);
 const euCofunded = await fit(path.join(SRC, 'eu-cofunded-white.png'), H, 4);
-// Drop the hairline frame (.st0 rect) the footer version of the logo ships with.
-const hacienda = await fit(whiteSvg('hacienda-pie.svg', { drop: [/<rect class="st0"[^>]*\/>/g] }), H, 2);
+const hacienda = await fit(path.join(SRC, 'hacienda-white.png'), H, 0);
 const fondos = await fit(whiteSvg('fondos-europeos.svg'), H, 18);
-const camara = await fit(whiteSvg('camara.svg'), H, 20);
+const camara = await fit(path.join(SRC, 'camara-white.png'), H, 22);
 
 await strip([gva, ivace, { sep: true }, euFunded], 'ivace-feder-white.png');
 await strip([euCofunded, hacienda, { sep: true }, fondos, camara], 'xpande-feder-white.png');
