@@ -31,8 +31,8 @@ Done in the repo (follows the Xana "Protocolo de publicación estándar"):
 Still pending (needs the user / third parties):
 
 - Form env vars are all set in Vercel (`BREVO_API_KEY`, Turnstile keys, `FORM_*` with `FORM_FROM_EMAIL=no-reply@xanatechnologies.com`, `PUBLIC_GTM_ID`). Firewall rate limit on `/api/contact` + office IP allowlist still to confirm in the dashboard.
-- Domain: add `xanatechnologies.com` + `www` to the Vercel project from the dashboard (CLI returned `domain_not_owned`: needs the TXT verification or the domain is attached to another Vercel account), then at DonDominio: A `@` → `76.76.21.21`, CNAME `www` → `cname.vercel-dns.com`. Canonical is without `www`.
-- Real form test EN + ES once keys are in; Search Console: submit `sitemap-index.xml`.
+- **Live since 2026-09-09 ~15:30**: `https://xanatechnologies.com` is served by Vercel (DonDominio zone: A `@` → `216.198.79.1`, TXT `_vercel` verification; the domain was linked to another Vercel account, hence the TXT). `www` CNAME still points at the apex; Vercel must show it verified and be set to 308-redirect to the apex (canonical is without `www`). Old WordPress is no longer reachable on the domain.
+- Real form test EN + ES from the live domain; Search Console: submit `sitemap-index.xml`; check GA4 receives data after 24 h.
 - Official brand manual (logo SVG, colors, fonts) → `tokens.css`; confirm "tile" vs "cerámica" in ES.
 
 ## Contact form
