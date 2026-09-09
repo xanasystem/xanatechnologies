@@ -82,68 +82,72 @@ export function renderNotificationEmail(d: Lead) {
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${BRAND.paper};">
     <tr>
       <td align="center" style="padding:32px 16px;">
-        <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:600px;max-width:100%;background:#ffffff;border-radius:14px;overflow:hidden;border:1px solid ${BRAND.line};">
-
-          <!-- Header: navy band with the white lockup, centred -->
+        <!-- One card = ONE cell. Some clients (Outlook, Windows Mail) restyle each
+             <tr> of a table that carries background/border/radius as its own box,
+             which showed up as white blocks with gaps between them. Everything
+             below therefore lives inside a single white <td>; the visual
+             sections are nested tables with no spacing of their own. -->
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:600px;max-width:100%;">
           <tr>
-            <td align="center" style="background:${BRAND.navy};padding:32px 36px;text-align:center;">
-              <img src="${logoUrl}" alt="Xana Technologies" width="188" height="62" style="display:block;margin:0 auto;width:188px;height:auto;border:0;outline:none;text-decoration:none;" />
-            </td>
-          </tr>
+            <td bgcolor="#ffffff" style="background:#ffffff;border:1px solid ${BRAND.line};border-radius:14px;padding:0;">
 
-          <!-- Title -->
-          <tr>
-            <td style="padding:32px 36px 8px;">
-              <h1 style="margin:0;font-family:${FONT};font-size:24px;line-height:1.25;font-weight:700;letter-spacing:-0.01em;color:${BRAND.ink};">New contact from ${name || email}</h1>
-              <p style="margin:10px 0 0;font-family:${FONT};font-size:14px;line-height:1.5;color:${BRAND.muted};">Received ${when} via the contact form on xanatechnologies.com.</p>
-            </td>
-          </tr>
-
-          <!-- Contact details -->
-          <tr>
-            <td style="padding:16px 36px 0;">
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-                ${row('Name', name || `<span style="color:${BRAND.muted};">Not provided</span>`)}
-                ${row('Email', `<a href="mailto:${email}" style="color:${BRAND.ink};text-decoration:underline;text-underline-offset:2px;">${email}</a>`)}
-                ${d.phone ? row('Phone', `<a href="tel:${escapeHtml(d.phone.replace(/[^\d+]/g, ''))}" style="color:${BRAND.ink};text-decoration:none;">${escapeHtml(d.phone)}</a>`) : ''}
-                ${location ? row('Location', location) : ''}
-                ${row('Language', langLabel)}
-              </table>
-            </td>
-          </tr>
-
-          <!-- Message -->
-          <tr>
-            <td style="padding:28px 36px 0;">
-              <p style="margin:0 0 10px;font-family:${FONT};font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:${BRAND.muted};">Message</p>
+              <!-- Header: navy band with the white lockup, centred -->
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
                 <tr>
-                  <td style="background:${BRAND.paper};border-radius:8px;padding:18px 20px;font-family:${FONT};font-size:15px;line-height:1.65;color:${BRAND.ink};">${message}</td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-
-          <!-- CTA: same recipe as the site's .cta--grad (cyan→magenta, 115deg).
-               Solid magenta bgcolor is the fallback where gradients don't render. -->
-          <tr>
-            <td style="padding:28px 36px 36px;">
-              <table role="presentation" cellpadding="0" cellspacing="0">
-                <tr>
-                  <td bgcolor="${BRAND.magenta}" style="background:${BRAND.magenta};background-image:linear-gradient(115deg,${BRAND.cyan} -10%,${BRAND.magenta} 110%);border-radius:999px;">
-                    <a href="mailto:${email}?subject=${encodeURIComponent('Re: your enquiry to Xana Technologies')}" style="display:inline-block;padding:14px 28px;font-family:${FONT};font-size:14px;font-weight:600;color:#ffffff;text-decoration:none;">Reply to ${name || 'sender'}</a>
+                  <td align="center" bgcolor="${BRAND.navy}" style="background:${BRAND.navy};border-radius:14px 14px 0 0;padding:32px 36px;text-align:center;">
+                    <img src="${logoUrl}" alt="Xana Technologies" width="188" height="62" style="display:block;margin:0 auto;width:188px;height:auto;border:0;outline:none;text-decoration:none;" />
                   </td>
                 </tr>
               </table>
-              <p style="margin:14px 0 0;font-family:${FONT};font-size:13px;line-height:1.5;color:${BRAND.muted};">Or simply hit reply: this email's reply-to is set to the sender's address.</p>
-            </td>
-          </tr>
 
-          <!-- Footer -->
-          <tr>
-            <td style="background:${BRAND.paper};border-top:1px solid ${BRAND.line};padding:20px 36px;font-family:${FONT};font-size:12px;line-height:1.6;color:${BRAND.muted};">
-              <strong style="color:${BRAND.ink};">Xana Technologies SL</strong> &middot; Castellón, Spain &middot; <a href="https://xanatechnologies.com" style="color:${BRAND.muted};">xanatechnologies.com</a><br />
-              Sent automatically from the website contact form. The sender accepted the Privacy Policy.
+              <!-- Body -->
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td style="padding:32px 36px 36px;">
+                    <h1 style="margin:0;font-family:${FONT};font-size:24px;line-height:1.25;font-weight:700;letter-spacing:-0.01em;color:${BRAND.ink};">New contact from ${name || email}</h1>
+                    <p style="margin:10px 0 24px;font-family:${FONT};font-size:14px;line-height:1.5;color:${BRAND.muted};">Received ${when} via the contact form on xanatechnologies.com.</p>
+
+                    <!-- Contact details -->
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                      ${row('Name', name || `<span style="color:${BRAND.muted};">Not provided</span>`)}
+                      ${row('Email', `<a href="mailto:${email}" style="color:${BRAND.ink};text-decoration:underline;text-underline-offset:2px;">${email}</a>`)}
+                      ${d.phone ? row('Phone', `<a href="tel:${escapeHtml(d.phone.replace(/[^\d+]/g, ''))}" style="color:${BRAND.ink};text-decoration:none;">${escapeHtml(d.phone)}</a>`) : ''}
+                      ${location ? row('Location', location) : ''}
+                      ${row('Language', langLabel)}
+                    </table>
+
+                    <!-- Message -->
+                    <p style="margin:28px 0 10px;font-family:${FONT};font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:${BRAND.muted};">Message</p>
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td bgcolor="${BRAND.paper}" style="background:${BRAND.paper};border-radius:8px;padding:18px 20px;font-family:${FONT};font-size:15px;line-height:1.65;color:${BRAND.ink};">${message}</td>
+                      </tr>
+                    </table>
+
+                    <!-- CTA: same recipe as the site's .cta--grad (cyan→magenta, 115deg).
+                         Solid magenta bgcolor is the fallback where gradients don't render. -->
+                    <table role="presentation" cellpadding="0" cellspacing="0" style="margin-top:28px;">
+                      <tr>
+                        <td bgcolor="${BRAND.magenta}" style="background:${BRAND.magenta};background-image:linear-gradient(115deg,${BRAND.cyan} -10%,${BRAND.magenta} 110%);border-radius:999px;">
+                          <a href="mailto:${email}?subject=${encodeURIComponent('Re: your enquiry to Xana Technologies')}" style="display:inline-block;padding:14px 28px;font-family:${FONT};font-size:14px;font-weight:600;color:#ffffff;text-decoration:none;">Reply to ${name || 'sender'}</a>
+                        </td>
+                      </tr>
+                    </table>
+                    <p style="margin:14px 0 0;font-family:${FONT};font-size:13px;line-height:1.5;color:${BRAND.muted};">Or simply hit reply: this email's reply-to is set to the sender's address.</p>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Footer -->
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td bgcolor="${BRAND.paper}" style="background:${BRAND.paper};border-top:1px solid ${BRAND.line};border-radius:0 0 14px 14px;padding:20px 36px;font-family:${FONT};font-size:12px;line-height:1.6;color:${BRAND.muted};">
+                    <strong style="color:${BRAND.ink};">Xana Technologies SL</strong> &middot; Castellón, Spain &middot; <a href="https://xanatechnologies.com" style="color:${BRAND.muted};">xanatechnologies.com</a><br />
+                    Sent automatically from the website contact form. The sender accepted the Privacy Policy.
+                  </td>
+                </tr>
+              </table>
+
             </td>
           </tr>
         </table>
