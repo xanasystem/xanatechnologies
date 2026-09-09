@@ -23,15 +23,14 @@ Done in the repo (follows the Xana "Protocolo de publicación estándar"):
 
 - Legal pages: `/legal-notice/`, `/privacy-policy/`, `/cookies-policy/` and `/es/aviso-legal/`, `/es/politica-de-privacidad/`, `/es/politica-de-cookies/` (`src/layouts/Legal.astro`, `noindex, follow`, own hreflang). Aviso Legal + Cookies carried over from the old WordPress site; Privacy rewritten to the protocol's GDPR template (the WP one was CMS boilerplate) and keeps the App Catalog Platform deletion policy. Legal identity lives in `COMPANY` in `content.ts`.
 - Cookie wall + "Privacy Preferences" (`src/components/CookieConsent.astro`, vanilla-cookieconsent, same as Magna Cerámica). GTM `PUBLIC_GTM_ID` (default `GTM-NFJ2KXRX`, the old site's container; its GA4 is `G-FWMNKS93QR`) loads only after the Tracking category is accepted; Consent Mode v2 defaults denied. Footer links open the modal via `data-cc="show-preferencesModal"`.
-- Footer: 4 legal links + grant statements (IVACE/FEDER, XPANDE DIGITAL) with the official logo strips in `public/img/funding/` (`content.ts → funding.programs`, ES wording verbatim from the old footer, EN translated).
+- Footer: 4 legal links + grant statements (IVACE/FEDER, XPANDE DIGITAL) with white (negative) logo strips in `public/img/funding/`, built by `node scripts/make-funding-strips.mjs` from the official assets in `scripts/funding-src/` (EU emblem WHITE from the Commission download center, Generalitat white from labora.gva.es, IVACE+i / Hacienda / Fondos Europeos / Cámara recoloured). Wording in `content.ts → funding.programs` (ES verbatim from the old footer, EN translated). Note IVACE uses its current IVACE+i mark, not the pre-2024 one of the old strip.
 - SEO: `@astrojs/sitemap` (`/sitemap-index.xml`, legal + `/v2/` excluded), `public/robots.txt`, `public/og-image.jpg` (regenerate with `node scripts/make-og-image.mjs`), per-page title/description via `Base` props.
 - 301s from every URL of the old WordPress sitemap in `astro.config.mjs`; `scripts/fix-redirect-slashes.mjs` runs after `astro build` so `/old-url/` (trailing slash) also matches. Vercel builds with `npm run build` (`vercel.json`).
 - Kit Consulting page archived (unpublished) in `docs/archive/kit-consulting/`; `/kit-consulting/` → `/es/`.
 
 Still pending (needs the user / third parties):
 
-- Vercel env vars: `BREVO_API_KEY`, `TURNSTILE_SECRET_KEY`, `PUBLIC_TURNSTILE_SITE_KEY` (Turnstile widget for `xanatechnologies.com`). The non-secret `FORM_*` + `PUBLIC_GTM_ID` are already set (Production + Preview).
-- Vercel Firewall rate limit on `/api/contact` + office IP allowlist (dashboard).
+- Form env vars are all set in Vercel (`BREVO_API_KEY`, Turnstile keys, `FORM_*` with `FORM_FROM_EMAIL=no-reply@xanatechnologies.com`, `PUBLIC_GTM_ID`). Firewall rate limit on `/api/contact` + office IP allowlist still to confirm in the dashboard.
 - Domain: add `xanatechnologies.com` + `www` to the Vercel project from the dashboard (CLI returned `domain_not_owned`: needs the TXT verification or the domain is attached to another Vercel account), then at DonDominio: A `@` → `76.76.21.21`, CNAME `www` → `cname.vercel-dns.com`. Canonical is without `www`.
 - Real form test EN + ES once keys are in; Search Console: submit `sitemap-index.xml`.
 - Official brand manual (logo SVG, colors, fonts) → `tokens.css`; confirm "tile" vs "cerámica" in ES.

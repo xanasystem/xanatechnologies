@@ -315,13 +315,13 @@ export const content: Record<Locale, SiteContent> = {
         'Xana Technologies has participated in the following programs and initiatives.',
       programs: [
         {
-          logo: '/img/funding/ivace-feder.webp',
+          logo: '/img/funding/ivace-feder-white.png',
           alt: 'Generalitat Valenciana · IVACE · Funded by the European Union',
           text:
             'Project "Applying Artificial Intelligence to improve data quality in a centralised product and digital catalogue management system", funded by Ivace through the SME innovation programme (INNOVA TeiC-CV), file number IMINOK/2023/52, and co-funded by the European Union through the European Regional Development Fund (ERDF).',
         },
         {
-          logo: '/img/funding/xpande-feder.jpg',
+          logo: '/img/funding/xpande-feder-white.png',
           alt: 'Co-funded by the European Union · Ministerio de Hacienda · Fondos Europeos · Cámara de Comercio de España',
           text:
             'XANA TECHNOLOGIES SOCIEDAD LIMITADA has benefited from European Funds aimed at strengthening the sustainable growth and competitiveness of SMEs, under which it has launched an Action Plan to improve its competitiveness through digital transformation, online promotion and e-commerce in international markets during 2025-2026. It has done so with the support of the XPANDE DIGITAL Programme of the Castellón Chamber of Commerce. #EuropaSeSiente',
@@ -503,13 +503,13 @@ export const content: Record<Locale, SiteContent> = {
       // Official wording — copied verbatim from the previous xanatechnologies.com footer.
       programs: [
         {
-          logo: '/img/funding/ivace-feder.webp',
+          logo: '/img/funding/ivace-feder-white.png',
           alt: 'Generalitat Valenciana · IVACE · Financiado por la Unión Europea',
           text:
             'Proyecto “Aplicación de Inteligencia Artificial para mejorar la calidad de los datos en un sistema de gestión centralizada de productos y catálogos digitales”, financiado por Ivace a través del programa innovación de Pyme (INNOVA TeiC-CV), con número de expediente IMINOK/2023/52 y cofinanciado por la unión europea a través del fondo europeo de desarrollo regional (Feder).',
         },
         {
-          logo: '/img/funding/xpande-feder.jpg',
+          logo: '/img/funding/xpande-feder-white.png',
           alt: 'Cofinanciado por la Unión Europea · Ministerio de Hacienda · Fondos Europeos · Cámara de Comercio de España',
           text:
             'XANA TECHNOLOGIES SOCIEDAD LIMITADA ha sido beneficiaria de Fondos Europeos, cuyo objetivo es el refuerzo del crecimiento sostenible y la competitividad de las PYMES, y gracias al cual ha puesto en marcha un Plan de Acción con el objetivo de mejorar su competitividad mediante la transformación digital, la promoción online y el comercio electrónico en mercados internacionales durante el año 2025-2026. Para ello ha contado con el apoyo del Programa XPANDE DIGITAL de la Cámara de Comercio de Castellón. #EuropaSeSiente',
