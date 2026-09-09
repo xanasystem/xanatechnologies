@@ -41,6 +41,14 @@ const urls: Record<Locale, string> = {
 const canonical = urls[locale];
 const ogImage = new URL('/og-image.jpg', site).href;
 
+// Browser-language detection: English pages send visitors whose browser
+// prefers Spanish to the Spanish equivalent (everyone else stays in English,
+// the default). Skipped once the visitor has picked a language with the
+// EN | ES switch (stored in localStorage by the script at the end of <body>)
+// and for the /v2 design variants.
+const detectLanguage = locale === 'en' && !theme;
+const spanishPath = alternates.es;
+
 // Structured data: Organization + WebSite (JSON-LD).
 const organizationSchema = {
   '@context': 'https://schema.org',
@@ -67,6 +75,18 @@ const websiteSchema = {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {
+      detectLanguage && (
+        <script is:inline define:vars={{ spanishPath }}>
+          try {
+            var chosen = localStorage.getItem('xana-lang');
+            var langs = navigator.languages || [navigator.language || ''];
+            var wantsEs = langs.some(function (l) { return /^es\b/i.test(l); });
+            if (!chosen && wantsEs) location.replace(spanishPath + location.hash);
+          } catch (e) {}
+        </script>
+      )
+    }
 
     <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
@@ -125,6 +145,16 @@ const websiteSchema = {
     <Cursor />
     <SmoothScroll />
     <CookieConsent locale={locale} />
+
+    <!-- Remember an explicit language choice (header/footer EN | ES switch) so
+         the browser-language redirect in <head> stops overriding it. -->
+    <script>
+      document.querySelectorAll<HTMLAnchorElement>('a[hreflang]').forEach((a) => {
+        a.addEventListener('click', () => {
+          try { localStorage.setItem('xana-lang', a.hreflang); } catch {}
+        });
+      });
+    </script>
 
     <!-- Reveal-on-scroll: progressive enhancement, respects reduced motion.
          Each element gets a --reveal-i index among its data-reveal siblings so
