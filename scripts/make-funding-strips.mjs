@@ -38,7 +38,10 @@ async function whitePng(file) {
 }
 
 async function fit(input, h = H, pad = 0) {
-  const buf = await sharp(input, { density: 400 }).resize({ height: h - pad * 2, fit: 'inside' }).png().toBuffer();
+  // trim() drops the transparent margins some PNGs ship with, so the gaps
+  // between marks are the real GAP and not padding baked into the file.
+  const trimmed = await sharp(input, { density: 400 }).trim().png().toBuffer();
+  const buf = await sharp(trimmed).resize({ height: h - pad * 2, fit: 'inside' }).png().toBuffer();
   const m = await sharp(buf).metadata();
   return { buf, w: m.width, h: m.height };
 }
