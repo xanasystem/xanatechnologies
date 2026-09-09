@@ -345,13 +345,16 @@ const slices = [
   .hero__tagline {
     margin-top: clamp(3rem, 2rem + 3.2vw, 6.25rem);
     max-width: 32ch;
+    /* Figma 136:98: Poppins SemiBold 50px, sentence case, no tracking —
+       rendered in the site's display face (Mona Sans stands in for Poppins). */
     font-family: var(--font-display);
-    font-size: clamp(1.3rem, 1.05rem + 0.9vw, 2.1rem);
-    font-weight: var(--fw-regular);
-    letter-spacing: 0.047em;
-    text-transform: uppercase;
+    font-size: clamp(1.75rem, 1.2rem + 1.9vw, 3.125rem);
+    font-weight: var(--fw-semibold);
+    font-style: italic;
+    letter-spacing: 0;
+    text-transform: none;
     line-height: 1.2;
-    color: var(--text);
+    color: #ffffff;
     text-wrap: balance;
     opacity: 0;
     animation: fade-in 1.2s var(--ease-expo) both paused;

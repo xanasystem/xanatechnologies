@@ -12,6 +12,16 @@
   font-display: swap;
 }
 
+/* True italic (the upright file has no ital axis; browsers were synthesising
+   a slant). Loaded lazily by the browser only when italic text is on the page. */
+@font-face {
+  font-family: 'Mona Sans';
+  src: url('/fonts/mona-sans-italic-var.woff2') format('woff2');
+  font-weight: 200 900;
+  font-style: italic;
+  font-display: swap;
+}
+
 @font-face {
   font-family: 'Mona Sans Mono';
   src: url('/fonts/mona-sans-mono-var.woff2') format('woff2');

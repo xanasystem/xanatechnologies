@@ -190,7 +190,7 @@ export const content: Record<Locale, SiteContent> = {
       ctaSecondary: 'Discover Woman on Mars',
       scrollCue: 'Explore',
       loaderLabel: 'Connecting systems',
-      tagline: 'Digital acceleration',
+      tagline: 'Digital Acceleration',
     },
     ecosystem: {
       h2: 'One startup. Two specialized brands.',
@@ -200,7 +200,7 @@ export const content: Record<Locale, SiteContent> = {
         line2: 'simpler, faster and easier.',
         body:
           'And it works best when it supports strategy and marketing. We create technology-driven solutions built around your business strategy to reduce complexity, make everyday work easier and help your company move forward faster.',
-        closing: 'That’s what Digital Acceleration means to us.',
+        closing: 'That’s what _Digital Acceleration_ means to us.',
       },
     },
     brands: {
@@ -377,7 +377,7 @@ export const content: Record<Locale, SiteContent> = {
       ctaSecondary: 'Descubre Woman on Mars',
       scrollCue: 'Explora',
       loaderLabel: 'Conectando sistemas',
-      tagline: 'Aceleración digital',
+      tagline: 'Aceleración Digital',
     },
     ecosystem: {
       h2: 'Una startup. Dos marcas especializadas.',
