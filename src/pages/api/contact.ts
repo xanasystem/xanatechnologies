@@ -52,9 +52,11 @@ const FONT = "-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif";
  * from the deployed site (override with FORM_LOGO_URL if hosted elsewhere).
  */
 export function renderNotificationEmail(d: Lead) {
-  // Stacked lockup (gradient X above the wordmark) — the same file the site
-  // footer uses. The horizontal one with the colour X is a retired logo.
-  const logoUrl = import.meta.env.FORM_LOGO_URL || `${d.siteOrigin}/logo/xana-stacked-color.png`;
+  // Stacked lockup (gradient X above the wordmark) flattened onto the navy
+  // header colour (public/logo/xana-email.png): an opaque image is left alone
+  // by dark-mode mail clients, whereas the transparent PNG got its white
+  // wordmark inverted to black. The horizontal colour-X logo is retired.
+  const logoUrl = import.meta.env.FORM_LOGO_URL || `${d.siteOrigin}/logo/xana-email.png`;
   const name = d.name ? escapeHtml(d.name) : '';
   const email = escapeHtml(d.email);
   const message = escapeHtml(d.message).replace(/\n/g, '<br>');
@@ -75,7 +77,9 @@ export function renderNotificationEmail(d: Lead) {
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="color-scheme" content="light" />
+  <meta name="color-scheme" content="light only" />
+  <meta name="supported-color-schemes" content="light only" />
+  <style>:root { color-scheme: light only; supported-color-schemes: light only; }</style>
   <title>New enquiry — xanatechnologies.com</title>
 </head>
 <body style="margin:0;padding:0;background:${BRAND.paper};">
@@ -96,8 +100,8 @@ export function renderNotificationEmail(d: Lead) {
               <!-- Header: navy band with the white lockup, centred -->
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
                 <tr>
-                  <td align="center" bgcolor="${BRAND.navy}" style="background:${BRAND.navy};border-radius:14px 14px 0 0;padding:32px 36px;text-align:center;">
-                    <img src="${logoUrl}" alt="Xana Technologies" width="120" height="118" style="display:block;margin:0 auto;width:120px;height:auto;border:0;outline:none;text-decoration:none;" />
+                  <td align="center" bgcolor="${BRAND.navy}" style="background:${BRAND.navy};border-radius:14px 14px 0 0;padding:20px 36px;text-align:center;">
+                    <img src="${logoUrl}" alt="Xana Technologies" width="152" height="145" style="display:block;margin:0 auto;width:152px;height:auto;border:0;outline:none;text-decoration:none;" />
                   </td>
                 </tr>
               </table>
