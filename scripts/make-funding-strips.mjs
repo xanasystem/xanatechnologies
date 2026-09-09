@@ -17,7 +17,7 @@ const SRC = path.join(dir, 'funding-src');
 const OUT = path.join(dir, '..', 'public', 'img', 'funding');
 const H = 150; // strip height at 2x (rendered at 60px CSS in the footer)
 const GAP = 56; // between logos
-const SEP = 72; // around the separator line
+const SEP = 44; // around the separator line
 
 /** SVG with every fill/stroke colour forced to white (and hairline rects dropped). */
 function whiteSvg(file, { drop = [] } = {}) {
