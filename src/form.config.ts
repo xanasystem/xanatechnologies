@@ -9,7 +9,8 @@ export const formConfig = {
   cc: parseList(import.meta.env.FORM_CC),
   bcc: parseList(import.meta.env.FORM_BCC),
   fromName: import.meta.env.FORM_FROM_NAME ?? 'Xana Technologies Web',
-  fromEmail: import.meta.env.FORM_FROM_EMAIL ?? 'no-reply@forms.xanasystem.com',
+  // Sender registered in Brevo on the authenticated xanatechnologies.com domain.
+  fromEmail: import.meta.env.FORM_FROM_EMAIL ?? 'no-reply@xanatechnologies.com',
   subject: import.meta.env.FORM_SUBJECT ?? 'New contact from xanatechnologies.com',
   sendConfirmation: false,
   confirmationSubject: 'We have received your message',
