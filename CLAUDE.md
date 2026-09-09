@@ -14,15 +14,27 @@ Solutions** route that leads to the corporate contact form.
 - `src/layouts/Base.astro` — `<head>`, SEO (canonical, hreflang, OG, JSON-LD Organization + WebSite), header/footer, reveal-on-scroll.
 - `src/components/` — one component per content block: Hero, Ecosystem, Brands (Xana System + Woman on Mars, equal weight), Numbers, Industry, CustomSolutions, SpainUsa, Contact, Funding, Header, Footer, Landing (composes all).
 - `src/pages/index.astro` (EN, `/`) and `src/pages/es/index.astro` (ES, `/es/`).
+- `src/layouts/Legal.astro` + `src/pages/{legal-notice,privacy-policy,cookies-policy}.astro` and `src/pages/es/{aviso-legal,politica-de-privacidad,politica-de-cookies}.astro` — legal pages. Routes are centralised in `LEGAL_ROUTES` (`content.ts`).
+- `src/components/CookieConsent.astro` — cookie wall / privacy preferences + GTM loader (consent-gated).
 
-## Pending before publish (from briefing)
+## Go-live status (2026-09-09)
 
-- Apply official brand manual (logo SVG, colors, fonts) → `tokens.css` + Header/Footer wordmark.
-- Contact form (see "Contact form" section below): set the env vars in Vercel (Brevo key + Turnstile keys from engineering), publish the Firewall rate-limit rule on `/api/contact`, allowlist the office IP, send a real test.
-- Legal pages: `/privacy`, `/cookies`, `/es/privacidad`, `/es/cookies` — copy the exact current legal text (EN + ES).
-- Funding & grants: real program logos + official wording in `Funding.astro`.
-- OG image at `public/og-image.jpg`.
-- Confirm: Company/Phone optional vs required; legal company name for footer; whether "tile" stays or becomes "cerámica" in ES; social profile URLs; sitemap/robots.
+Done in the repo (follows the Xana "Protocolo de publicación estándar"):
+
+- Legal pages: `/legal-notice/`, `/privacy-policy/`, `/cookies-policy/` and `/es/aviso-legal/`, `/es/politica-de-privacidad/`, `/es/politica-de-cookies/` (`src/layouts/Legal.astro`, `noindex, follow`, own hreflang). Aviso Legal + Cookies carried over from the old WordPress site; Privacy rewritten to the protocol's GDPR template (the WP one was CMS boilerplate) and keeps the App Catalog Platform deletion policy. Legal identity lives in `COMPANY` in `content.ts`.
+- Cookie wall + "Privacy Preferences" (`src/components/CookieConsent.astro`, vanilla-cookieconsent, same as Magna Cerámica). GTM `PUBLIC_GTM_ID` (default `GTM-NFJ2KXRX`, the old site's container; its GA4 is `G-FWMNKS93QR`) loads only after the Tracking category is accepted; Consent Mode v2 defaults denied. Footer links open the modal via `data-cc="show-preferencesModal"`.
+- Footer: 4 legal links + grant statements (IVACE/FEDER, XPANDE DIGITAL) with the official logo strips in `public/img/funding/` (`content.ts → funding.programs`, ES wording verbatim from the old footer, EN translated).
+- SEO: `@astrojs/sitemap` (`/sitemap-index.xml`, legal + `/v2/` excluded), `public/robots.txt`, `public/og-image.jpg` (regenerate with `node scripts/make-og-image.mjs`), per-page title/description via `Base` props.
+- 301s from every URL of the old WordPress sitemap in `astro.config.mjs`; `scripts/fix-redirect-slashes.mjs` runs after `astro build` so `/old-url/` (trailing slash) also matches. Vercel builds with `npm run build` (`vercel.json`).
+- Kit Consulting page archived (unpublished) in `docs/archive/kit-consulting/`; `/kit-consulting/` → `/es/`.
+
+Still pending (needs the user / third parties):
+
+- Vercel env vars: `BREVO_API_KEY`, `TURNSTILE_SECRET_KEY`, `PUBLIC_TURNSTILE_SITE_KEY` (Turnstile widget for `xanatechnologies.com`). The non-secret `FORM_*` + `PUBLIC_GTM_ID` are already set (Production + Preview).
+- Vercel Firewall rate limit on `/api/contact` + office IP allowlist (dashboard).
+- Domain: add `xanatechnologies.com` + `www` to the Vercel project from the dashboard (CLI returned `domain_not_owned`: needs the TXT verification or the domain is attached to another Vercel account), then at DonDominio: A `@` → `76.76.21.21`, CNAME `www` → `cname.vercel-dns.com`. Canonical is without `www`.
+- Real form test EN + ES once keys are in; Search Console: submit `sitemap-index.xml`.
+- Official brand manual (logo SVG, colors, fonts) → `tokens.css`; confirm "tile" vs "cerámica" in ES.
 
 ## Contact form
 
