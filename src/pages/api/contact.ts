@@ -131,7 +131,7 @@ export function renderNotificationEmail(d: Lead) {
               <table role="presentation" cellpadding="0" cellspacing="0">
                 <tr>
                   <td bgcolor="${BRAND.magenta}" style="background:${BRAND.magenta};background-image:linear-gradient(115deg,${BRAND.cyan} -10%,${BRAND.magenta} 110%);border-radius:999px;">
-                    <a href="mailto:${email}?subject=${encodeURIComponent('Re: your enquiry to Xana Technologies')}" style="display:inline-block;padding:14px 28px;font-family:${FONT};font-size:14px;font-weight:600;color:#ffffff;text-decoration:none;">Reply to ${name || 'sender'} &nearr;</a>
+                    <a href="mailto:${email}?subject=${encodeURIComponent('Re: your enquiry to Xana Technologies')}" style="display:inline-block;padding:14px 28px;font-family:${FONT};font-size:14px;font-weight:600;color:#ffffff;text-decoration:none;">Reply to ${name || 'sender'}</a>
                   </td>
                 </tr>
               </table>
