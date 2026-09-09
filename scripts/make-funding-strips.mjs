@@ -15,7 +15,7 @@ import path from 'node:path';
 const dir = path.dirname(fileURLToPath(import.meta.url));
 const SRC = path.join(dir, 'funding-src');
 const OUT = path.join(dir, '..', 'public', 'img', 'funding');
-const H = 120; // strip height at 2x (rendered at 60px CSS → 44px in the footer)
+const H = 150; // strip height at 2x (rendered at 60px CSS in the footer)
 const GAP = 56; // between logos
 const SEP = 72; // around the separator line
 
@@ -65,13 +65,15 @@ async function strip(items, out) {
 
 // ivace-white / hacienda-white / camara-white are the white PNGs supplied by
 // Xana (official negatives); the rest come from the public sources above.
-const gva = await fit(path.join(SRC, 'gva-blanco.png'));
-const ivace = await fit(path.join(SRC, 'ivace-white.png'), H, 4);
-const euFunded = await fit(path.join(SRC, 'eu-funded-white.png'), H, 4);
-const euCofunded = await fit(path.join(SRC, 'eu-cofunded-white.png'), H, 4);
+// Padding sets each mark's visual weight inside the strip: the EU emblem,
+// Generalitat and IVACE keep their size; Hacienda, Fondos Europeos and Cámara run bigger.
+const gva = await fit(path.join(SRC, 'gva-blanco.png'), H, 15);
+const ivace = await fit(path.join(SRC, 'ivace-white.png'), H, 19);
+const euFunded = await fit(path.join(SRC, 'eu-funded-white.png'), H, 19);
+const euCofunded = await fit(path.join(SRC, 'eu-cofunded-white.png'), H, 19);
 const hacienda = await fit(path.join(SRC, 'hacienda-white.png'), H, 0);
-const fondos = await fit(whiteSvg('fondos-europeos.svg'), H, 18);
-const camara = await fit(path.join(SRC, 'camara-white.png'), H, 22);
+const fondos = await fit(whiteSvg('fondos-europeos.svg'), H, 12);
+const camara = await fit(path.join(SRC, 'camara-white.png'), H, 18);
 
 await strip([gva, ivace, { sep: true }, euFunded], 'ivace-feder-white.png');
 await strip([euCofunded, hacienda, { sep: true }, fondos, camara], 'xpande-feder-white.png');
