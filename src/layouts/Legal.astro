@@ -22,8 +22,8 @@ interface Props {
 const { locale, title, description, alternates, updated } = Astro.props;
 const homeHref = locale === 'es' ? '/es/' : '/';
 const strings = {
-  en: { eyebrow: 'Legal', updated: 'Last updated', back: 'Back to site' },
-  es: { eyebrow: 'Legal', updated: 'Última actualización', back: 'Volver al sitio' },
+  en: { updated: 'Last updated', back: 'Back to site' },
+  es: { updated: 'Última actualización', back: 'Volver al sitio' },
 }[locale];
 ---
 
@@ -38,7 +38,6 @@ const strings = {
   <section class="legal section" aria-labelledby="legal-title">
     <div class="container legal__wrap">
       <a class="legal__back" href={homeHref}>&larr; {strings.back}</a>
-      <p class="eyebrow eyebrow--kicker">{strings.eyebrow}</p>
       <h1 id="legal-title" class="legal__title">{title}</h1>
       <p class="legal__updated">{strings.updated}: {updated}</p>
       <article class="legal__body">
@@ -68,7 +67,7 @@ const strings = {
     color: var(--text);
   }
   .legal__title {
-    margin-top: var(--space-4);
+    margin-top: 0;
     font-family: var(--font-display);
     font-size: var(--fs-h2);
     font-weight: var(--fw-h2);
