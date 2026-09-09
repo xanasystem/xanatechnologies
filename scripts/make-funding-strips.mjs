@@ -75,8 +75,8 @@ const ivace = await fit(path.join(SRC, 'ivace-white.png'), H, 19);
 const euFunded = await fit(path.join(SRC, 'eu-funded-white.png'), H, 19);
 const euCofunded = await fit(path.join(SRC, 'eu-cofunded-white.png'), H, 19);
 const hacienda = await fit(path.join(SRC, 'hacienda-white.png'), H, 0);
-const fondos = await fit(whiteSvg('fondos-europeos.svg'), H, 12);
-const camara = await fit(path.join(SRC, 'camara-white.png'), H, 18);
+const fondos = await fit(whiteSvg('fondos-europeos.svg'), H, 22);
+const camara = await fit(path.join(SRC, 'camara-white.png'), H, 28);
 
 await strip([gva, ivace, { sep: true }, euFunded], 'ivace-feder-white.png');
 await strip([euCofunded, hacienda, { sep: true }, fondos, camara], 'xpande-feder-white.png');
