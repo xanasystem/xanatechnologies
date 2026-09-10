@@ -19,7 +19,7 @@ const XANASYSTEM_PIM = 'https://xanasystem.com/pim';
 const XANASYSTEM_CATALOGS = 'https://xanasystem.com/catalogos';
 
 const OLD_ES_PAGES_TO_HOME = [
-  '/somos-xana-technologies', '/xana-technologies', '/contacto',
+  '/somos-xana-technologies', '/xana-technologies',
   '/business-performance-aplications', '/soluciones-b2b-performance-applications',
   '/soluciones-innovacion-ia', '/soluciones-inteligencia-artificial',
   '/soluciones-inteligencia-artificial-old', '/implantacion-inteligencia-artificial',
@@ -27,7 +27,7 @@ const OLD_ES_PAGES_TO_HOME = [
   '/kit-consulting',
 ];
 const OLD_EN_PAGES_TO_HOME = [
-  '/en', '/en/we-are-xana-technologies', '/en/contact-us',
+  '/en', '/en/we-are-xana-technologies',
   '/en/business-performance-apps', '/en/ai-innovation-solutions',
   '/en/artificial-intelligence-solutions', '/en/artificial-inteligence-solutions',
   '/en/artificial-inteligence-solutions-old',
@@ -46,6 +46,8 @@ const OLD_PAGES_TO_XANASYSTEM_CATALOGS = [
 // `astro build`, see package.json) makes every 301 rule accept both forms.
 /** @type {Record<string, import('astro').RedirectConfig>} */
 const redirects = {
+  '/contacto': '/es/#contact',
+  '/en/contact-us': '/#contact',
   '/en/legal-notice': '/legal-notice/',
   '/en/privacy-policy': '/privacy-policy/',
   '/en/cookies-policy': '/cookies-policy/',
