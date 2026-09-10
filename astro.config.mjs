@@ -16,9 +16,11 @@ const NOINDEX = [
 // Spanish at the root and English under /en/; the new one is the opposite.
 // Product pages belong to Xana System now and go to xanasystem.com.
 // Catalog pages will live at xanasystem.com/catalogos, which does not exist
-// yet: point them at the Xana System home until the new site ships.
+// yet: point them at the Xana System home (ES or EN, matching the old page's
+// language) until the new site ships.
 const XANASYSTEM_PIM = 'https://xanasystem.com/product-manager-pim/';
-const XANASYSTEM_CATALOGS = 'https://xanasystem.com/';
+const XANASYSTEM_CATALOGS_ES = 'https://xanasystem.com/es';
+const XANASYSTEM_CATALOGS_EN = 'https://xanasystem.com/';
 
 const OLD_ES_PAGES_TO_HOME = [
   '/somos-xana-technologies', '/xana-technologies',
@@ -35,9 +37,11 @@ const OLD_EN_PAGES_TO_HOME = [
   '/en/artificial-inteligence-solutions-old',
 ];
 const OLD_PAGES_TO_XANASYSTEM_PIM = ['/product-manager-pim', '/en/pim-product-manager'];
-const OLD_PAGES_TO_XANASYSTEM_CATALOGS = [
+const OLD_ES_PAGES_TO_XANASYSTEM_CATALOGS = [
   '/catalogo-digital-web', '/catalogo-digital-app', '/soluciones-digital-merchandising',
   '/digital-merchandising', '/portal-pedidos-b2b-commerce', '/b2b-commerce',
+];
+const OLD_EN_PAGES_TO_XANASYSTEM_CATALOGS = [
   '/en/digital-web-catalog', '/en/app-digital-catalog', '/en/orders-b2b-commerce',
   '/en/digital-merchandising',
 ];
@@ -60,7 +64,8 @@ const redirects = {
   ...Object.fromEntries(OLD_ES_PAGES_TO_HOME.map((p) => [p, '/es/'])),
   ...Object.fromEntries(OLD_EN_PAGES_TO_HOME.map((p) => [p, '/'])),
   ...Object.fromEntries(OLD_PAGES_TO_XANASYSTEM_PIM.map((p) => [p, XANASYSTEM_PIM])),
-  ...Object.fromEntries(OLD_PAGES_TO_XANASYSTEM_CATALOGS.map((p) => [p, XANASYSTEM_CATALOGS])),
+  ...Object.fromEntries(OLD_ES_PAGES_TO_XANASYSTEM_CATALOGS.map((p) => [p, XANASYSTEM_CATALOGS_ES])),
+  ...Object.fromEntries(OLD_EN_PAGES_TO_XANASYSTEM_CATALOGS.map((p) => [p, XANASYSTEM_CATALOGS_EN])),
 };
 
 // https://astro.build/config
