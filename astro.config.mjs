@@ -15,10 +15,10 @@ const NOINDEX = [
 // "XT26_XanaTechnologies_Redirecciones_301", 2026-09-10). The old site had
 // Spanish at the root and English under /en/; the new one is the opposite.
 // Product pages belong to Xana System now and go to xanasystem.com.
-// xanasystem.com/pim does not exist yet — point PIM pages at the Xana System home
-// until it does.
+// Final destinations are xanasystem.com/pim and xanasystem.com/catalogos, which
+// do not exist yet: point both at the Xana System home until the new site ships.
 const XANASYSTEM_PIM = 'https://xanasystem.com/';
-const XANASYSTEM_CATALOGS = 'https://xanasystem.com/catalogos';
+const XANASYSTEM_CATALOGS = 'https://xanasystem.com/';
 
 const OLD_ES_PAGES_TO_HOME = [
   '/somos-xana-technologies', '/xana-technologies',
