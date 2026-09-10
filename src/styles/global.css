@@ -17,6 +17,8 @@
 html {
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
+  /* Declared dark so mobile "force dark" modes don't invert the page/images. */
+  color-scheme: dark;
 }
 @media (prefers-reduced-motion: reduce) {
   html {
@@ -139,6 +141,7 @@ p {
 
   background: var(--bg);
   color: var(--text);
+  color-scheme: light; /* native form controls stay light on this surface */
 }
 .surface-light .btn--secondary {
   background: color-mix(in srgb, var(--text) 3%, transparent);

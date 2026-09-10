@@ -75,6 +75,10 @@ const websiteSchema = {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- The site is dark by design: tell browsers so their "force dark" /
+         auto-dark modes leave it (and the logo images) alone. -->
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#05050f" />
     {
       detectLanguage && (
         <script is:inline define:vars={{ spanishPath }}>
