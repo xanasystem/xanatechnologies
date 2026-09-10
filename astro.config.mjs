@@ -11,20 +11,33 @@ const NOINDEX = [
   '/es/aviso-legal/', '/es/politica-de-privacidad/', '/es/politica-de-cookies/',
 ];
 
-// 301s from the previous WordPress site (page-sitemap.xml, 2026-09-09). The old
-// site had Spanish at the root and English under /en/; the new one is the
-// opposite. Product pages belong to Xana System now — sent to the ES/EN home.
-const OLD_ES_PAGES = [
-  '/xana-technologies', '/kit-consulting', '/soluciones-digital-merchandising',
-  '/soluciones-inteligencia-artificial-old', '/soluciones-innovacion-ia',
-  '/business-performance-aplications', '/product-manager-pim',
-  '/portal-pedidos-b2b-commerce', '/catalogo-digital-web', '/catalogo-digital-app',
+// 301s from the previous WordPress site (page-sitemap.xml + SEO sheet
+// "XT26_XanaTechnologies_Redirecciones_301", 2026-09-10). The old site had
+// Spanish at the root and English under /en/; the new one is the opposite.
+// Product pages belong to Xana System now and go to xanasystem.com.
+const XANASYSTEM_PIM = 'https://xanasystem.com/pim';
+const XANASYSTEM_CATALOGS = 'https://xanasystem.com/catalogos';
+
+const OLD_ES_PAGES_TO_HOME = [
+  '/somos-xana-technologies', '/xana-technologies',
+  '/business-performance-aplications', '/soluciones-b2b-performance-applications',
+  '/soluciones-innovacion-ia', '/soluciones-inteligencia-artificial',
+  '/soluciones-inteligencia-artificial-old', '/implantacion-inteligencia-artificial',
+  '/innovacion-aceleracion-digital', '/transformacion-digital', '/desarrollo-a-medida',
+  '/kit-consulting',
 ];
-const OLD_EN_PAGES = [
-  '/en/we-are-xana-technologies', '/en/artificial-inteligence-solutions-old',
-  '/en/ai-innovation-solutions', '/en/digital-merchandising',
-  '/en/business-performance-apps', '/en/pim-product-manager',
-  '/en/orders-b2b-commerce', '/en/digital-web-catalog', '/en/app-digital-catalog',
+const OLD_EN_PAGES_TO_HOME = [
+  '/en', '/en/we-are-xana-technologies',
+  '/en/business-performance-apps', '/en/ai-innovation-solutions',
+  '/en/artificial-intelligence-solutions', '/en/artificial-inteligence-solutions',
+  '/en/artificial-inteligence-solutions-old',
+];
+const OLD_PAGES_TO_XANASYSTEM_PIM = ['/product-manager-pim', '/en/pim-product-manager'];
+const OLD_PAGES_TO_XANASYSTEM_CATALOGS = [
+  '/catalogo-digital-web', '/catalogo-digital-app', '/soluciones-digital-merchandising',
+  '/digital-merchandising', '/portal-pedidos-b2b-commerce', '/b2b-commerce',
+  '/en/digital-web-catalog', '/en/app-digital-catalog', '/en/orders-b2b-commerce',
+  '/en/digital-merchandising',
 ];
 
 // NOTE: Astro strips trailing slashes from redirect sources, so the generated
@@ -33,17 +46,19 @@ const OLD_EN_PAGES = [
 // `astro build`, see package.json) makes every 301 rule accept both forms.
 /** @type {Record<string, import('astro').RedirectConfig>} */
 const redirects = {
-  '/en': '/',
-  '/en/contact-us': '/#contact',
   '/contacto': '/es/#contact',
+  '/en/contact-us': '/#contact',
   '/en/legal-notice': '/legal-notice/',
   '/en/privacy-policy': '/privacy-policy/',
   '/en/cookies-policy': '/cookies-policy/',
   '/aviso-legal': '/es/aviso-legal/',
+  '/politica-privacidad': '/es/politica-de-privacidad/',
   '/politica-de-privacidad': '/es/politica-de-privacidad/',
   '/politica-de-cookies': '/es/politica-de-cookies/',
-  ...Object.fromEntries(OLD_ES_PAGES.map((p) => [p, '/es/'])),
-  ...Object.fromEntries(OLD_EN_PAGES.map((p) => [p, '/'])),
+  ...Object.fromEntries(OLD_ES_PAGES_TO_HOME.map((p) => [p, '/es/'])),
+  ...Object.fromEntries(OLD_EN_PAGES_TO_HOME.map((p) => [p, '/'])),
+  ...Object.fromEntries(OLD_PAGES_TO_XANASYSTEM_PIM.map((p) => [p, XANASYSTEM_PIM])),
+  ...Object.fromEntries(OLD_PAGES_TO_XANASYSTEM_CATALOGS.map((p) => [p, XANASYSTEM_CATALOGS])),
 };
 
 // https://astro.build/config
