@@ -1,11 +1,5 @@
 ---
-import {
-  content,
-  type Locale,
-  XANA_SYSTEM_URL,
-  WOMAN_ON_MARS_URL,
-  LINKEDIN_URL,
-} from '../i18n/content';
+import { content, type Locale, BRAND_URLS, LINKEDIN_URL } from '../i18n/content';
 
 interface Props {
   locale: Locale;
@@ -32,8 +26,8 @@ const programs = t.funding.programs;
 const linkColumn = {
   title: f.linksTitle,
   links: [
-    { label: 'Xana System', href: XANA_SYSTEM_URL, external: true },
-    { label: 'Woman on Mars', href: WOMAN_ON_MARS_URL, external: true },
+    { label: 'Xana System', href: BRAND_URLS.xanaSystem[locale], external: true },
+    { label: 'Woman on Mars', href: BRAND_URLS.womanOnMars[locale], external: true },
     { label: 'LinkedIn', href: LINKEDIN_URL, external: true },
   ],
 };
@@ -217,7 +211,8 @@ const legalColumn = {
     }
   }
   .footer-statement__grad {
-    background: linear-gradient(90deg, var(--grad-statement-a), var(--grad-statement-b) 70%);
+    /* Magenta pushed past the end so cyan carries most of the phrase. */
+    background: linear-gradient(90deg, var(--grad-statement-a) 15%, var(--grad-statement-b) 125%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;

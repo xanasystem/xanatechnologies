@@ -1,10 +1,5 @@
 ---
-import {
-  content,
-  type Locale,
-  XANA_SYSTEM_URL,
-  WOMAN_ON_MARS_URL,
-} from '../i18n/content';
+import { content, type Locale, BRAND_URLS } from '../i18n/content';
 
 interface Props {
   locale: Locale;
@@ -63,7 +58,7 @@ const textB = {
           <div class="shrinkhero__actions">
             <a
               class="btn btn--primary"
-              href={XANA_SYSTEM_URL}
+              href={BRAND_URLS.xanaSystem[locale]}
               rel="noopener"
               aria-label={`${t.hero.ctaPrimary} — ${t.xanaSystem.externalLabel}`}
             >
@@ -71,7 +66,7 @@ const textB = {
             </a>
             <a
               class="btn btn--secondary"
-              href={WOMAN_ON_MARS_URL}
+              href={BRAND_URLS.womanOnMars[locale]}
               rel="noopener"
               aria-label={`${t.hero.ctaSecondary} — ${t.womanOnMars.externalLabel}`}
             >

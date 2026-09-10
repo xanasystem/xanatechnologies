@@ -70,6 +70,13 @@ const cookiesHref = LEGAL_ROUTES[locale].cookies;
     onChange: () => {
       if (CookieConsent.acceptedCategory('analytics')) loadTagManager();
     },
+    // Lenis (SmoothScroll.astro) hijacks the wheel for the page, which left the
+    // preferences modal unscrollable: `data-lenis-prevent` keeps wheel/touch
+    // inside the consent UI. (SmoothScroll itself pauses the page scroll while
+    // a modal is open, keyed off the show--consent / show--preferences classes.)
+    onModalReady: ({ modal }) => {
+      modal?.setAttribute('data-lenis-prevent', '');
+    },
 
     categories: {
       necessary: { enabled: true, readOnly: true },
@@ -164,6 +171,7 @@ const cookiesHref = LEGAL_ROUTES[locale].cookies;
       },
     },
   });
+
 </script>
 
 <style is:global>
@@ -206,11 +214,21 @@ const cookiesHref = LEGAL_ROUTES[locale].cookies;
     --cc-footer-border-color: rgba(255, 255, 255, 0.08);
     --cc-link-color: var(--grad-statement-a);
     --cc-modal-border-radius: var(--radius-lg);
-    --cc-btn-border-radius: var(--radius-pill);
+    /* The library reuses the button radius for the category blocks and inputs,
+       so keep it modest here and make the actual buttons pills below. */
+    --cc-btn-border-radius: 10px;
+  }
+  #cc-main .cm .cm__btn,
+  #cc-main .pm .pm__btn {
+    border-radius: var(--radius-pill);
   }
   #cc-main .cm,
   #cc-main .pm {
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.8);
+  }
+  /* Never taller than the viewport: the body scrolls, the text isn't cut. */
+  #cc-main .pm {
+    max-height: min(37.5em, calc(100vh - 2rem));
   }
 </style>

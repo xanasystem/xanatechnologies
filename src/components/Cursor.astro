@@ -16,7 +16,9 @@
     position: fixed;
     top: 0;
     left: 0;
-    z-index: 100;
+    /* Above everything, including the cookie-consent layer (2147483647),
+       otherwise the pointer vanished inside the banner and modal. */
+    z-index: 2147483647;
     pointer-events: none;
     border-radius: 50%;
     translate: -50% -50%;

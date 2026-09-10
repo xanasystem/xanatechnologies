@@ -29,13 +29,23 @@
     });
     (window as any).__lenis = lenis;
 
-    // Hold still while the intro loader is on screen.
-    const syncLoading = () => {
-      if (document.body.classList.contains('is-loading')) lenis.stop();
+    // Hold still while the intro loader is on screen or a cookie-consent modal
+    // is open (vanilla-cookieconsent flags those on <html>). Re-evaluated on
+    // every class change of <html>/<body>, so nothing else can restart Lenis
+    // behind an open modal.
+    const html = document.documentElement;
+    const sync = () => {
+      const hold =
+        document.body.classList.contains('is-loading') ||
+        html.classList.contains('show--consent') ||
+        html.classList.contains('show--preferences');
+      if (hold) lenis.stop();
       else lenis.start();
     };
-    new MutationObserver(syncLoading).observe(document.body, { attributes: true, attributeFilter: ['class'] });
-    syncLoading();
+    const opts = { attributes: true, attributeFilter: ['class'] };
+    new MutationObserver(sync).observe(document.body, opts);
+    new MutationObserver(sync).observe(html, opts);
+    sync();
 
     // In-page anchors glide instead of jumping.
     document.addEventListener('click', (e) => {

@@ -6,12 +6,7 @@
  * pill link. Both cards share one structure and weight so neither dominates
  * (briefing: "visibilidad equivalente").
  */
-import {
-  content,
-  type Locale,
-  XANA_SYSTEM_URL,
-  WOMAN_ON_MARS_URL,
-} from '../i18n/content';
+import { content, type Locale, BRAND_URLS } from '../i18n/content';
 
 interface Props {
   locale: Locale;
@@ -33,7 +28,7 @@ const brands = [
   {
     id: 'xana-system',
     copy: t.xanaSystem,
-    href: XANA_SYSTEM_URL,
+    href: BRAND_URLS.xanaSystem[locale],
     logo: { src: '/logo/xana-system-white.png', w: 444, h: 152, alt: 'Xana System' },
     // Figma: cyan → deep blue
     grad: 'linear-gradient(90deg, #4dd4ec, #1d71b8)',
@@ -42,7 +37,7 @@ const brands = [
   {
     id: 'woman-on-mars',
     copy: t.womanOnMars,
-    href: WOMAN_ON_MARS_URL,
+    href: BRAND_URLS.womanOnMars[locale],
     logo: { src: '/logo/woman-on-mars-white.png', w: 588, h: 212, alt: 'Woman on Mars' },
     // Figma: magenta → purple
     grad: 'linear-gradient(90deg, #e6007e, #82368c)',

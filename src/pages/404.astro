@@ -1,0 +1,134 @@
+---
+/**
+ * 404 — bilingual "page not found".
+ *
+ * Rendered on demand (Vercel function, like the contact endpoint) instead of
+ * as a static 404.html so the language can follow the URL that was requested:
+ * anything under /es/ gets the Spanish shell (header, footer, cookie banner and
+ * copy), everything else the English one. Astro sets the 404 status itself.
+ * The browser-language redirect in Base is disabled here so a Spanish browser
+ * hitting an English dead link still sees the error instead of the ES home.
+ */
+import Base from '../layouts/Base.astro';
+import PageBackground from '../components/PageBackground.astro';
+import { content, type Locale } from '../i18n/content';
+
+export const prerender = false;
+
+const locale: Locale = /^\/es(\/|$)/i.test(Astro.url.pathname) ? 'es' : 'en';
+const t = content[locale];
+const n = t.notFound;
+const homeHref = locale === 'es' ? '/es/' : '/';
+const contactHref = `${homeHref}#contact`;
+---
+
+<Base
+  locale={locale}
+  title={`${n.title} | Xana Technologies`}
+  description={n.text}
+  noindex
+  detectLanguage={false}
+>
+  <PageBackground />
+  <section class="nf section" aria-labelledby="nf-title">
+    <div class="container nf__wrap">
+      <p class="nf__code" aria-hidden="true">404</p>
+      <p class="nf__eyebrow">{n.eyebrow}</p>
+      <h1 id="nf-title" class="nf__title">{n.h1}</h1>
+      <p class="nf__text">{n.text}</p>
+      <div class="nf__actions">
+        <a class="cta cta--grad" href={homeHref}>
+          <span>{n.ctaHome}</span>
+          <svg viewBox="0 0 18 18" fill="none" aria-hidden="true">
+            <path d="M4.5 13.5 13.5 4.5M6 4.5h7.5V12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M4.5 13.5 13.5 4.5M6 4.5h7.5V12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </a>
+        <a class="cta cta--white" href={contactHref}>
+          <span>{n.ctaContact}</span>
+          <svg viewBox="0 0 18 18" fill="none" aria-hidden="true">
+            <path d="M4.5 13.5 13.5 4.5M6 4.5h7.5V12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M4.5 13.5 13.5 4.5M6 4.5h7.5V12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .nf {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    /* Fill the viewport under the header so the footer sits below the fold. */
+    min-height: calc(100svh - 72px);
+    padding-block: clamp(3rem, 2rem + 6vh, 6rem);
+    text-align: center;
+  }
+  .nf__wrap {
+    max-width: var(--container-narrow);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  /* Big "404" in the brand gradient, kept airy like the hero tagline. */
+  .nf__code {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(6rem, 4rem + 12vw, 12rem);
+    font-weight: var(--fw-semibold);
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+    background: linear-gradient(115deg, var(--grad-statement-a) -10%, var(--grad-statement-b) 110%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 0 40px color-mix(in srgb, var(--grad-statement-b) 25%, transparent));
+  }
+  .nf__eyebrow {
+    margin-top: var(--space-6);
+    font-family: var(--font-display);
+    font-size: 0.78rem;
+    font-weight: 400;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--text) 62%, transparent);
+  }
+  .nf__title {
+    margin-top: var(--space-3);
+    max-width: 22ch;
+    font-family: var(--font-display);
+    font-size: var(--fs-h2);
+    font-weight: var(--fw-h2);
+    font-style: italic;
+    letter-spacing: var(--ls-h2);
+    line-height: var(--lh-snug);
+    color: var(--text);
+    text-wrap: balance;
+  }
+  .nf__text {
+    margin-top: var(--space-4);
+    max-width: 48ch;
+    color: var(--dim);
+    line-height: 1.7;
+    text-wrap: pretty;
+  }
+  .nf__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-3);
+    margin-top: var(--space-7);
+  }
+  @media (max-width: 560px) {
+    .nf__actions {
+      flex-direction: column;
+      width: 100%;
+    }
+    .nf__actions .cta {
+      width: 100%;
+    }
+  }
+</style>

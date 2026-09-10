@@ -18,6 +18,9 @@ interface Props {
   description?: string;
   /** Path of this page in each language (hreflang + canonical). Defaults to the homes. */
   alternates?: Record<Locale, string>;
+  /** Set false to skip the browser-language redirect (e.g. the 404 page, which
+   *  picks its language from the requested URL and must not hide the error). */
+  detectLanguage?: boolean;
 }
 
 const {
@@ -27,6 +30,7 @@ const {
   title: pageTitle,
   description: pageDescription,
   alternates = { en: '/', es: '/es/' },
+  detectLanguage: detectLanguageProp = true,
 } = Astro.props;
 const t = content[locale];
 const title = pageTitle ?? t.meta.title;
@@ -46,7 +50,7 @@ const ogImage = new URL('/og-image.jpg', site).href;
 // the default). Skipped once the visitor has picked a language with the
 // EN | ES switch (stored in localStorage by the script at the end of <body>)
 // and for the /v2 design variants.
-const detectLanguage = locale === 'en' && !theme;
+const detectLanguage = detectLanguageProp && locale === 'en' && !theme;
 const spanishPath = alternates.es;
 
 // Structured data: Organization + WebSite (JSON-LD).

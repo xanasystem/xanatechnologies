@@ -11,6 +11,16 @@ export const locales: Locale[] = ['en', 'es'];
 
 export const XANA_SYSTEM_URL = 'https://xanasystem.com';
 export const WOMAN_ON_MARS_URL = 'https://womanonmars.com';
+
+/**
+ * Brand sites per language. xanasystem.com is Spanish at the root with an
+ * English version under /en/ (hreflang en-US); womanonmars.com is Spanish only
+ * (no /en/ as of 2026-09-10), so both languages land on its home.
+ */
+export const BRAND_URLS: Record<'xanaSystem' | 'womanOnMars', Record<Locale, string>> = {
+  xanaSystem: { en: `${XANA_SYSTEM_URL}/en/`, es: `${XANA_SYSTEM_URL}/` },
+  womanOnMars: { en: `${WOMAN_ON_MARS_URL}/`, es: `${WOMAN_ON_MARS_URL}/` },
+};
 /** Company page linked from the previous xanatechnologies.com footer. */
 export const LINKEDIN_URL = 'https://www.linkedin.com/company/xanasystem/';
 
@@ -159,6 +169,15 @@ export interface SiteContent {
     copyright: string;
     languageSwitch: string;
   };
+  /** 404 page (src/pages/404.astro). */
+  notFound: {
+    title: string;
+    eyebrow: string;
+    h1: string;
+    text: string;
+    ctaHome: string;
+    ctaContact: string;
+  };
 }
 
 export const content: Record<Locale, SiteContent> = {
@@ -168,9 +187,9 @@ export const content: Record<Locale, SiteContent> = {
   en: {
     meta: {
       lang: 'en',
-      title: 'Xana Technologies | Product Technology & Digital Strategy',
+      title: 'Xana Technologies | Technology for Real Business Challenges',
       description:
-        'Xana Technologies is the technology startup behind Xana System and Woman on Mars, connecting product technology, digital strategy, AI, design, and development.',
+        'At Xana Technologies, we believe technology should make things simpler, faster and easier. We create technology solutions connected to strategy and real business needs.',
       ogLocale: 'en_US',
     },
     nav: {
@@ -347,6 +366,14 @@ export const content: Record<Locale, SiteContent> = {
       copyright: 'Xana Technologies. All rights reserved.',
       languageSwitch: 'Español',
     },
+    notFound: {
+      title: 'Page not found',
+      eyebrow: 'Error 404',
+      h1: 'This page drifted out of orbit.',
+      text: 'The page you are looking for does not exist or has moved. Let us get you back on course.',
+      ctaHome: 'Back to home',
+      ctaContact: 'Contact us',
+    },
   },
 
   // ---------------------------------------------------------------------------
@@ -355,9 +382,9 @@ export const content: Record<Locale, SiteContent> = {
   es: {
     meta: {
       lang: 'es',
-      title: 'Xana Technologies | Tecnología de Producto y Estrategia Digital',
+      title: 'Xana Technologies | Tecnología aplicada a retos reales',
       description:
-        'Xana Technologies es la startup tecnológica detrás de Xana System y Woman on Mars, conectando tecnología de producto, estrategia digital, IA, diseño y desarrollo.',
+        'En Xana Technologies creemos que la tecnología debe hacer las cosas más sencillas, rápidas y fáciles. Creamos soluciones tecnológicas conectadas con la estrategia y las necesidades reales de negocio.',
       ogLocale: 'es_ES',
     },
     nav: {
@@ -534,6 +561,14 @@ export const content: Record<Locale, SiteContent> = {
       privacyPreferences: 'Preferencias de privacidad',
       copyright: 'Xana Technologies. Todos los derechos reservados.',
       languageSwitch: 'English',
+    },
+    notFound: {
+      title: 'Página no encontrada',
+      eyebrow: 'Error 404',
+      h1: 'Esta página se ha salido de órbita.',
+      text: 'La página que buscas no existe o ha cambiado de dirección. Te ayudamos a volver al rumbo.',
+      ctaHome: 'Volver al inicio',
+      ctaContact: 'Contactar',
     },
   },
 };
